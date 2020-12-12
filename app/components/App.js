@@ -22,6 +22,7 @@ const theme = createMuiTheme({
 });
 
 function App(props) { 
+  console.log(props)
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex" flexDirection="column" height="1">

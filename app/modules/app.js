@@ -1,24 +1,24 @@
 import {createAction, handleActions} from 'redux-actions';
  
 const cctvFromConfig = require('../lib/getCCTVList');
-const cctvs = cctvFromConfig();
+const sources = cctvFromConfig();
 
 // action types
-const SET_CCTVS = 'app/SET_CCTVS';
+const SET_SOURCES = 'app/SET_SOURCES';
 
 // action creator
-export const setCCTVS = createAction(SET_CCTVS);
+export const setSources = createAction(SET_SOURCES);
 
 const initialState = {
-    cctvs: cctvs
+    sources
 }
 
 // reducer
 export default handleActions({
-    [SET_CCTVS]: (state, action) => {
-        const {cctvs} = action.payload;
+    [SET_SOURCES]: (state, action) => {
+        const {sources} = action.payload;
         return {
-            cctvs
+            sources
         }
     },
 }, initialState);

@@ -1,0 +1,20 @@
+{
+  "NUMBER_OF_RECORDERS": 4,
+  "CHANNEL_PREFIX": "channel",
+  "DEFAULT_PLAYER_PROPS": {
+    "player": null,
+    "url": "",
+    "type": "application/x-mpegURL",
+    "channelName": "preview",
+    "preservePlaybackRate": true,
+    "width": 320,
+    "height": 180,
+    "controls": false,
+    "autoplay": true,
+    "bigPlayButton": false,
+    "bigPlayButtonCentered": false,
+    "enableOverlay": true,
+    "overlayContent": "Default Overlay",
+    "enableAutoRefresh": true
+  }
+}

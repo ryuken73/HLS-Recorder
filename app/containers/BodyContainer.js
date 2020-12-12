@@ -8,7 +8,8 @@ function mapStateToProps(state, ownProps) {
   console.log('mapStateToProps:',state) 
   return {
     ...ownProps,
-    cctvs: state.body.cctvs
+    channels: state.body.channels,
+    sources: state.app.sources
   }
 }
 

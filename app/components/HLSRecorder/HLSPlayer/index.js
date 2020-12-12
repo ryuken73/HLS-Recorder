@@ -7,14 +7,15 @@ const Store = require('electron-store');
 const store = new Store({watch: true});
 
 const HLSPlayer = (props) => {
+    console.log('rerender hlsplayer', props.player)
     const {
         player=null, 
-        setPlayer=() => {}, 
-        refreshPlayer=null, 
+        enableAutoRefresh=null, 
         enableOverlay=true,
         overlayContent='Default Overlay Content'
     } = props;
     const {
+        channelNumber=1,
         channelName='preview',
         width=320, 
         height=180, 
@@ -22,14 +23,17 @@ const HLSPlayer = (props) => {
         autoplay=true, 
         bigPlayButton=false, 
         bigPlayButtonCentered=false, 
-        url='',
+        source={},
         type='application/x-mpegURL',
         reMountPlayer=false,
         restorePlaybackRate=true
     } = props;
 
+    const {setPlayer=()=>{}} = props.HLSPlayersActions;
+
+
     const srcObject = {
-        src: url,
+        src: source.url,
         type,
         handleManifestRedirects: true,
     }
@@ -58,9 +62,10 @@ const HLSPlayer = (props) => {
 
     const onPlayerReady = player => {
         channelLog.info("Player is ready");
-        setPlayer(player);
-        if(restorePlaybackRate){
+        setPlayer({channelNumber, player});
+        if(restorePlaybackRate && player){
             const playbackRate = getPlaybackRateStore();
+            console.log(`playerbackRate: ${playbackRate}`)
             player.playbackRate(playbackRate);
         }
         player.muted(true);
@@ -87,49 +92,44 @@ const HLSPlayer = (props) => {
     },[])
 
     const onVideoError = React.useCallback((error) => {
-        channelLog.error(`error occurred: ${error.message}`);
-        if(url === '') return;
-        // refreshPlayer()
+
+        channelLog.error(`error occurred: ${error && error.message}`);
+        if(source.url === '') return;
+        // enableAutoRefresh()
     },[])
 
     const onVideoEnd = React.useCallback(() => {
         // channelLog.info("Video ended");
     },[])
-    const onVideoCanPlay = React.useCallback(() => {
+    const onVideoCanPlay = () => {
         channelLog.info('can play');
-        if(restorePlaybackRate){
+        if(restorePlaybackRate && player){
             const playbackRate = getPlaybackRateStore();
-            setPlayer(player => {
-                player.playbackRate(playbackRate);
-                return player
-            })
+            player.playbackRate(playbackRate);
         }
-    },[player])
+    }
 
     const refreshHLSPlayer = () => {
-        setPlayer(player => {
-            channelLog.info(`refreshHLSPlayer : change hls src to ${url}`);
-            const srcObject = {
-                src: url,
-                type,
-                handleManifestRedirects: true,
-            }
-            player.src(srcObject)
-            return player;
-        })
+        const srcObject = {
+            src: source.url,
+            type,
+            handleManifestRedirects: true,
+        }
+        player.src(srcObject)
     }
 
     let refreshTimer = null;
-    const onVideoOtherEvent = React.useCallback(eventName => {
+
+    const onVideoOtherEvent = eventName => {
         channelLog.debug(`event occurred: ${eventName}`)
-        if(eventName === 'abort' && refreshPlayer !== null){
+        if(eventName === 'abort' && enableAutoRefresh !== null){
             refreshTimer = setInterval(() => {
                 channelLog.info('refresh player because of long buffering')
                 refreshHLSPlayer();
             },2000)
             return
-        } else if(eventName === 'abort' && refreshPlayer === null) {
-            channelLog.debug('abort but not start refresh timer because refreshPlayer parameter is null');
+        } else if(eventName === 'abort' && enableAutoRefresh === null) {
+            channelLog.debug('abort but not start refresh timer because enableAutoRefresh parameter is null');
             return
         }
         if(eventName === 'playing' || eventName === 'loadstart' || eventName === 'waiting'){
@@ -143,15 +143,13 @@ const HLSPlayer = (props) => {
             return
         }
         if(eventName === 'ratechange'){
-            setPlayer(player => {
-                // if ratechange occurred not manually but by changing media, just return
-                if(player.readyState() === 0) return player;
-                const currentPlaybackRate = player.playbackRate();
-                setPlaybackRateStore(currentPlaybackRate);
-                return player;
-            })
+            // if ratechange occurred not manually but by changing media, just return
+            if(player.readyState() === 0) return;
+            const currentPlaybackRate = player.playbackRate();
+            setPlaybackRateStore(currentPlaybackRate);
         }
-    }, [])
+    }
+
     return (
         <Box mr="3px" mb="3px">
             <VideoPlayer
@@ -175,7 +173,7 @@ const HLSPlayer = (props) => {
                 onOtherEvent={onVideoOtherEvent}
                 handleManifestRedirects={true}
                 liveui={true}
-                enableOverlay={true}
+                enableOverlay={enableOverlay}
                 overlayContent={overlayContent}
                 inactivityTimeout={0}
             />

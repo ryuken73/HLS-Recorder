@@ -1,26 +1,39 @@
 import {createAction, handleActions} from 'redux-actions';
  
-const cctvFromConfig = require('../lib/getCCTVList');
-const cctvs = cctvFromConfig();
-console.log('%%%', cctvs);
+const getConfig = require('../lib/getConfig');
+const config = getConfig();
+
+const {
+    NUMBER_OF_RECORDERS
+} = config;
+
+const arrayBetween = (from, to) => {
+    const resultArray = [];
+    for(let i=from;i<=to;i++){
+        resultArray.push(i)
+    }
+    return resultArray;
+}
+
+const channels = arrayBetween(1, NUMBER_OF_RECORDERS)
 
 // action types
-const SET_CCTVS = 'body/SET_CCTVS';
+const SET_CHANNELS = 'body/SET_CHANNELS';
 
 // action creator
-export const setCCTVS = createAction(SET_CCTVS);
+export const setChannels = createAction(SET_CHANNELS);
 
 const initialState = {
-    cctvs: cctvs
+    channels
 }
 
 // reducer
 export default handleActions({
-    [SET_CCTVS]: (state, action) => {
+    [SET_CHANNELS]: (state, action) => {
         // console.log('%%%%%%%%%%%%%%%%', action.payload);
-        const {cctvs} = action.payload;
+        const {channels} = action.payload;
         return {
-            cctvs
+            channels
         }
     },
 }, initialState);

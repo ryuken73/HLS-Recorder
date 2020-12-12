@@ -134,6 +134,7 @@ class VideoPlayer extends Component {
             props.onOtherEvent('ratechange');
         })
         this.player.on('durationchange', () => {
+            console.log('#####', this.player.duration())
             props.onOtherEvent('durationchange', this.player.duration())
         })
 
@@ -193,4 +194,4 @@ VideoPlayer.defaultProps = {
 }
 
 
-export default VideoPlayer;
+export default React.memo(VideoPlayer);

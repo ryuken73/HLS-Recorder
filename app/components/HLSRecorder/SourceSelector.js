@@ -3,26 +3,29 @@ import OptionSelectList from '../template/OptionSelectList';
 
 function Selection(props) {
     const {
-        currentUrl='', 
-        cctvs=[], 
+        channelNumber=1,
+        source={}, 
+        sources=[], 
         recorderStatus='stopped'
     } = props;
-    const {onChange=()=>{}} = props;
+    const {setHttpSource=()=>{}} = props.HLSPlayersActions;
+    const currentUrl = source.url;
     const inRecording = recorderStatus !== 'stopped';
-    const selectItems = cctvs.map(cctv => {
+    const selectItems = sources.map(source => {
         return {
-            value: cctv.url,
-            label: cctv.title
+            value: source.url,
+            label: source.title
         }
     })
     const onChangeSelect = React.useCallback((event) => {
-        onChange('url')(event);
-        onChange('title')(event);
-    }, [onChange])
+        const url = event.target.value;
+        const sourceNumber = sources.findIndex(source => source.url === url);
+        setHttpSource({channelNumber, sourceNumber});
+    }, [setHttpSource])
 
     return (
         <OptionSelectList 
-            subtitle='cctv'
+            subtitle='source'
             titlewidth={"80px"}
             minWidth='200px'
             currentItem={currentUrl}

@@ -1,7 +1,7 @@
 module.exports = () => {
     const electronUtil = require('./electronUtil')
-    const defaultJsonFile = electronUtil.getAbsolutePath('config/default/cctvs.json', true);
-    const customJsonFile = electronUtil.getAbsolutePath('config/cctvs.json', true);
+    const defaultJsonFile = electronUtil.getAbsolutePath('config/default/sources.json', true);
+    const customJsonFile = electronUtil.getAbsolutePath('config/sources.json', true);
     const defaultJson = electronUtil.readJSONFile(defaultJsonFile);
     const customJson = electronUtil.readJSONFile(customJsonFile);
     const distinctByKey = (arrayObject, key) => {
@@ -12,7 +12,7 @@ module.exports = () => {
         })
         return resultsUniq;
     }
-    const mergedCCTVs = distinctByKey([...defaultJson.cctvs, ...customJson.cctvs], 'title');
-    return mergedCCTVs;
+    const mergedSources = distinctByKey([...defaultJson.sources, ...customJson.sources], 'title');
+    return mergedSources;
 }
 
