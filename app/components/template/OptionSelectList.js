@@ -9,6 +9,7 @@ import {SmallPaddingSelect}  from './smallComponents';
 
 export default function OptionSelectList(props) {
     const {subtitle, minWidth, currentItem, menuItems, onChangeSelect, multiple=true, titlewidth="20%", bgcolor, selectColor, disabled=false} = props;
+    const {mb="0px", mt="0px"} = props;
     const {smallComponent} = props;
     const SelectComponent = smallComponent ? SmallPaddingSelect : Select;
     const optionSelect = {
@@ -40,8 +41,8 @@ export default function OptionSelectList(props) {
             subject={optionSelect.subject} 
             titlewidth={titlewidth}
             content={optionSelect.content} 
-            mb={0}
-            mt={0}
+            mb={mb}
+            mt={mt}
             bgcolor={bgcolor}
         ></BorderedList>
     )

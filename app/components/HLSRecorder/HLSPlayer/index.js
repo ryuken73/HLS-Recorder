@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Box from '@material-ui/core/Box';
 import VideoPlayer from './VideoPlayer';
 import log from 'electron-log';
 
@@ -152,7 +153,7 @@ const HLSPlayer = (props) => {
         }
     }, [])
     return (
-        <div>
+        <Box mr="3px" mb="3px">
             <VideoPlayer
                 controls={controls}
                 src={srcObject}
@@ -178,7 +179,7 @@ const HLSPlayer = (props) => {
                 overlayContent={overlayContent}
                 inactivityTimeout={0}
             />
-        </div>
+        </Box>
     );
 };
 
