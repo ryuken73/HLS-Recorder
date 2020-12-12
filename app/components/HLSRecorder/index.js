@@ -10,7 +10,7 @@ import Controls from './Controls';
 import Scheduler from './Scheduler';
 
 const HLSRecorder = (props) => {
-    const {channelNumber} = props;
+    const {channelNumber, playbackMode=true} = props;
     return (
         <SectionWithFullHeight m={"5px"} flexGrow={0} width="320px" bgcolor={"#2d2f3b"} border={1} borderColor={"black"} p="1px">
             <Duration 
@@ -23,9 +23,11 @@ const HLSRecorder = (props) => {
                 <Controls
                     channelNumber={channelNumber}
                 ></Controls>
-                <HLSPlayerContainer 
-                    channelNumber={channelNumber}
-                ></HLSPlayerContainer>
+                <Box border={2} borderColor={playbackMode ? 'red':'black'}>
+                    <HLSPlayerContainer 
+                        channelNumber={channelNumber}
+                    ></HLSPlayerContainer>
+                </Box>
             </Box>
             <Scheduler
                 channelNumber={channelNumber}

@@ -68,6 +68,7 @@ function IntervalSelection(props) {
             selectColor={"#2d2f3b"}
             disabled={inRecording}
             mb={"2px"}
+            mt={"4px"}
         ></OptionSelectButton>
     )
 }

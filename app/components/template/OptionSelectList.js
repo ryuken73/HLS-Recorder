@@ -9,14 +9,14 @@ import {SmallPaddingSelect}  from './smallComponents';
 
 export default function OptionSelectList(props) {
     const {subtitle, minWidth, currentItem, menuItems, onChangeSelect, multiple=true, titlewidth="20%", bgcolor, selectColor, disabled=false} = props;
-    const {mb="0px", mt="0px"} = props;
+    const {mb="0px", mt="0px", maxWidth} = props;
     const {smallComponent} = props;
     const SelectComponent = smallComponent ? SmallPaddingSelect : Select;
     const optionSelect = {
         subject: <Typography component={'span'} variant="body1">{subtitle}</Typography>,
         content: (
             <React.Fragment>
-                <FormControl style={{minWidth:minWidth, width:"100%"}}>
+                <FormControl style={{minWidth:minWidth, width:"100%", maxWidth:maxWidth}}>
                     <SelectComponent
                         labelId="select-label" 
                         variant="outlined"

@@ -28,6 +28,7 @@ function Selection(props) {
             subtitle='source'
             titlewidth={"80px"}
             minWidth='200px'
+            maxWidth='216px'
             currentItem={currentUrl}
             multiple={false}
             menuItems={selectItems}

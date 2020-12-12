@@ -10,7 +10,7 @@ const Controls = props => {
         refreshPlayer=()=>{},
     } = props;
     return (
-        <Box display="flex" flexDirection="column">
+        <Box display="flex" flexDirection="column" mr="3px">
             <SmallPaddingIconButton padding="1px" size="small">
                 <RefreshIcon color="primary" fontSize={"small"} onClick={refreshPlayer}></RefreshIcon>
             </SmallPaddingIconButton>

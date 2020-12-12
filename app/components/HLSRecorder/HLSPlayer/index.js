@@ -151,7 +151,7 @@ const HLSPlayer = (props) => {
     }
 
     return (
-        <Box mr="3px" mb="3px">
+        <Box>
             <VideoPlayer
                 controls={controls}
                 src={srcObject}

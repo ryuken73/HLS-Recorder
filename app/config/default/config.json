@@ -1,5 +1,5 @@
 {
-  "NUMBER_OF_RECORDERS": 4,
+  "NUMBER_OF_RECORDERS": 9,
   "CHANNEL_PREFIX": "channel",
   "DEFAULT_PLAYER_PROPS": {
     "player": null,
@@ -7,8 +7,8 @@
     "type": "application/x-mpegURL",
     "channelName": "preview",
     "preservePlaybackRate": true,
-    "width": 320,
-    "height": 180,
+    "width": 284,
+    "height": 170,
     "controls": false,
     "autoplay": true,
     "bigPlayButton": false,
