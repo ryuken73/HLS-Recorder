@@ -1,0 +1,185 @@
+import React, { Component } from 'react';
+import VideoPlayer from './VideoPlayer';
+import log from 'electron-log';
+
+const Store = require('electron-store');
+const store = new Store({watch: true});
+
+const HLSPlayer = (props) => {
+    const {
+        player=null, 
+        setPlayer=() => {}, 
+        refreshPlayer=null, 
+        enableOverlay=true,
+        overlayContent='Default Overlay Content'
+    } = props;
+    const {
+        channelName='preview',
+        width=320, 
+        height=180, 
+        controls=false, 
+        autoplay=true, 
+        bigPlayButton=false, 
+        bigPlayButtonCentered=false, 
+        url='',
+        type='application/x-mpegURL',
+        reMountPlayer=false,
+        restorePlaybackRate=true
+    } = props;
+
+    const srcObject = {
+        src: url,
+        type,
+        handleManifestRedirects: true,
+    }
+
+    // make util...
+    const createLogger = channelName => {
+        return {
+            debug: (msg) => {log.debug(`[${channelName}][player]${msg}`)},
+            info: (msg) => {log.info(`[${channelName}][player]${msg}`)},
+            error: (msg) => {log.error(`[${channelName}][player]${msg}`)},
+        }
+    }
+    const channelLog = createLogger(channelName);
+
+    channelLog.info(`[${channelName}] rerender HLSPlayer:${channelName}, restorePlaybackRate=${restorePlaybackRate}`);
+
+
+    const setPlaybackRateStore = (playbackRate) => {
+        store.set('playbackRate', playbackRate);
+    };
+
+    const getPlaybackRateStore = () => {
+        const playbackRate = store.get('playbackRate', 1);
+        return playbackRate
+    };
+
+    const onPlayerReady = player => {
+        channelLog.info("Player is ready");
+        setPlayer(player);
+        if(restorePlaybackRate){
+            const playbackRate = getPlaybackRateStore();
+            player.playbackRate(playbackRate);
+        }
+        player.muted(true);
+    }
+
+    const onVideoPlay = React.useCallback(duration => {
+        // channelLog.info("Video played at: ", duration);
+    },[]);
+
+    const onVideoPause = React.useCallback(duration =>{
+        // channelLog.info("Video paused at: ", duration);
+    },[]);
+
+    const onVideoTimeUpdate =  React.useCallback(duration => {
+        // channelLog.info("Time updated: ", duration);
+    },[]);
+
+    const onVideoSeeking =  React.useCallback(duration => {
+        // channelLog.info("Video seeking: ", duration);
+    },[]);
+
+    const onVideoSeeked =  React.useCallback((from, to) => {
+        // channelLog.info(`Video seeked from ${from} to ${to}`);
+    },[])
+
+    const onVideoError = React.useCallback((error) => {
+        channelLog.error(`error occurred: ${error.message}`);
+        if(url === '') return;
+        // refreshPlayer()
+    },[])
+
+    const onVideoEnd = React.useCallback(() => {
+        // channelLog.info("Video ended");
+    },[])
+    const onVideoCanPlay = React.useCallback(() => {
+        channelLog.info('can play');
+        if(restorePlaybackRate){
+            const playbackRate = getPlaybackRateStore();
+            setPlayer(player => {
+                player.playbackRate(playbackRate);
+                return player
+            })
+        }
+    },[player])
+
+    const refreshHLSPlayer = () => {
+        setPlayer(player => {
+            channelLog.info(`refreshHLSPlayer : change hls src to ${url}`);
+            const srcObject = {
+                src: url,
+                type,
+                handleManifestRedirects: true,
+            }
+            player.src(srcObject)
+            return player;
+        })
+    }
+
+    let refreshTimer = null;
+    const onVideoOtherEvent = React.useCallback(eventName => {
+        channelLog.debug(`event occurred: ${eventName}`)
+        if(eventName === 'abort' && refreshPlayer !== null){
+            refreshTimer = setInterval(() => {
+                channelLog.info('refresh player because of long buffering')
+                refreshHLSPlayer();
+            },2000)
+            return
+        } else if(eventName === 'abort' && refreshPlayer === null) {
+            channelLog.debug('abort but not start refresh timer because refreshPlayer parameter is null');
+            return
+        }
+        if(eventName === 'playing' || eventName === 'loadstart' || eventName === 'waiting'){
+            if(refreshTimer === null) {
+                channelLog.debug('playing, loadstart or waiting event emitted. but do not clearTimeout(refreshTimer) because refreshTimer is null. exit')
+                return;
+            }
+            channelLog.debug('clear refresh timer.')
+            clearTimeout(refreshTimer);
+            refreshTimer = null;
+            return
+        }
+        if(eventName === 'ratechange'){
+            setPlayer(player => {
+                // if ratechange occurred not manually but by changing media, just return
+                if(player.readyState() === 0) return player;
+                const currentPlaybackRate = player.playbackRate();
+                setPlaybackRateStore(currentPlaybackRate);
+                return player;
+            })
+        }
+    }, [])
+    return (
+        <div>
+            <VideoPlayer
+                controls={controls}
+                src={srcObject}
+                // poster={this.state.video.poster}
+                autoplay={autoplay}
+                bigPlayButton={bigPlayButton}
+                bigPlayButtonCentered={bigPlayButtonCentered}
+                width={width}
+                height={height}
+                onCanPlay={onVideoCanPlay}
+                onReady={onPlayerReady}
+                onPlay={onVideoPlay}
+                onPause={onVideoPause}
+                onTimeUpdate={onVideoTimeUpdate}
+                onSeeking={onVideoSeeking}
+                onSeeked={onVideoSeeked}
+                onError={onVideoError}
+                onEnd={onVideoEnd}
+                onOtherEvent={onVideoOtherEvent}
+                handleManifestRedirects={true}
+                liveui={true}
+                enableOverlay={true}
+                overlayContent={overlayContent}
+                inactivityTimeout={0}
+            />
+        </div>
+    );
+};
+
+export default React.memo(HLSPlayer);

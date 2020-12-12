@@ -1,9 +1,9 @@
 // @flow
 import React, { Component } from 'react';
-import AppContainer from './AppContainer';
+import App from '../components/App';
 
 export default class MainPage extends Component<Props> {
   render() {
-    return <AppContainer />;
+    return <App />;
   }
 }
