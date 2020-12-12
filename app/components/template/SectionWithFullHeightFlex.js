@@ -15,7 +15,7 @@ const defaultProps = {
 export default function SectionWithBorder({children, ...props}) {
     return (
         <Box className="SectionWithFullHeight" {...defaultProps} {...props}>
-            <BorderdBox className="SectionWithFullHeight BorderdBox" display="flex" flex={1} flexWrap="wrap" flexShrink={0}>
+            <BorderdBox className="SectionWithFullHeight BorderdBox" bgcolor={props.outerbgcolor} display="flex" flex={1} flexWrap="wrap" flexShrink={0}>
                 {children}
             </BorderdBox>
         </Box>

@@ -11,9 +11,9 @@ export default function MessagePanel(props) {
     const {logLevel="INFO", message="READY"} = props;
     const messageText = `[${logLevel}] ${message}`;
    return (
-        <SectionWithFullHeightFlex className="SectionWithFullHeightFlex ImageBox" flexGrow="0" width="1" mb="2px">
-            <BorderedBox display="flex" alignContent="center" flexGrow="1">
-                <Box bgcolor="midnightblue" display="flex" flexDirection="row" width="1">
+        <SectionWithFullHeightFlex outerbgcolor={"#2d2f3b"} className="SectionWithFullHeightFlex ImageBox" flexGrow="0" width="1" mb="2px" mt="auto">
+            <BorderedBox bgcolor={"#2d2f3b"} display="flex" alignContent="center" flexGrow="1">
+                <Box bgcolor="#232738" display="flex" flexDirection="row" width="1">
                     <Box mx="10px">
                         <Typography variant={"caption"}>{messageText}</Typography>
                     </Box>

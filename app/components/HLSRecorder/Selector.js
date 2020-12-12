@@ -22,7 +22,7 @@ function Selection(props) {
 
     return (
         <OptionSelectList 
-            subtitle='CCTV'
+            subtitle='cctv'
             titlewidth={"80px"}
             minWidth='200px'
             currentItem={currentUrl}
