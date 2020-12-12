@@ -2,36 +2,6 @@ const fs = require('fs');
 const mkdirp = require('mkdirp');
 const path = require('path');
 
-class LocalStorage {
-    constructor(localStorageKey, opts){
-        this.localStorageKey = localStorageKey;
-        this.store = window.localStorage;
-        this.data = parseData(this.store, localStorageKey, opts)
-        console.log(this.data)
-    }
-    get = (key) => {
-        return this.data[key]
-    }
-    set = (key,value) => {
-        this.data[key] = value;
-        console.log(this.data)
-        this.store.setItem(this.localStorageKey, JSON.stringify(this.data));
-    }
-    delete = (key) => {
-        delete this.data[key];
-        this.store.setItem(this.localStorageKey, JSON.stringify(this.data));
-    }
-}
-
-function parseData(localStorage, localStorageKey, opts){
-    const savedConfig = JSON.parse(localStorage.getItem(localStorageKey));
-    if(savedConfig === null){
-        localStorage.setItem(localStorageKey, JSON.stringify(opts));
-        return opts
-    }
-    return savedConfig;
-}
-
 const number = {
     group1000(number){
         return new Intl.NumberFormat().format(number)
@@ -43,19 +13,26 @@ const number = {
         if(unit === 'TB') return (toByteUnit({number, unit:'GB',point})/1024).toFixed(point);
         return number;
     },
-    niceBytes(number){
-        //from stackoverflow
-        const units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        let l = 0, n = parseInt(number, 10) || 0;
-
-        while(n >= 1024 && ++l){
-            n = n/1024;
+    padZero(num){
+        if(num < 10){
+            return `0${num}`;
         }
-        //include a decimal point and a tenths-place digit if presenting 
-        //less than ten of KB or greater units
-        return(n.toFixed(n < 10 && l > 0 ? 1 : 0) + ' ' + units[l]);
+        return num.toString();
     }
+}
 
+const string = {
+    toObject(string, itemSep, keySep){
+        if(typeof(string) !== 'string') return {};
+        const itemArray = string.replace(/^\?/,'').split(itemSep);
+        return itemArray.reduce((parsedObj, item) => {
+            const key = item.split(keySep)[0];
+            const value = item.split(keySep)[1];
+            // console.log('**',key,value)
+            parsedObj[key] = value;
+            return parsedObj
+        },{})
+    }
 }
 
 const clone = {
@@ -68,6 +45,20 @@ const clone = {
     }
 }
 
+const date = {
+    getString(date, {dateSep='', timeSep='', sep='.'}){
+        const year = date.getFullYear();
+        const month = number.padZero(date.getMonth() + 1);
+        const day = number.padZero(date.getDate());
+        const hour = number.padZero(date.getHours());
+        const minute = number.padZero(date.getMinutes());
+        const second = number.padZero(date.getSeconds());
+        const dateString = `${year}${dateSep}${month}${dateSep}${day}`;
+        const timeString = `${hour}${timeSep}${minute}${timeSep}${second}`;
+        return `${dateString}${sep}${timeString}`;
+    }
+}
+
 const file = {
     validType : {
         directory(dirname){
@@ -77,6 +68,21 @@ const file = {
     },
     async delete(fname){
         return fs.promises.unlink(fname);
+    },
+    async deleteFiles(baseDirectory, regexp){
+        try {
+            const files = await fs.promises.readdir(baseDirectory);
+            const deleteJob = files.map(file => {
+                const fullName = path.join(baseDirectory, file);
+                if(regexp.test(fullName)){
+                    return fs.promises.unlink(fullName);
+                }
+                return Promise.resolve(true);
+            })
+            return Promise.all(deleteJob)
+        } catch(err) {
+            Promise.reject(err);
+        }
     },
     async move(srcFile, dstFile){
         const dstDirectory = path.dirname(dstFile);
@@ -141,14 +147,34 @@ const file = {
     },
     async makeDirectory(dirname){
         if(!file.validType.directory(dirname)){
-            return Promise.resolve(false);
+            return Promise.reject(false);
         }
         try {
             mkdirp(dirname);
         } catch (err) {
             console.log(err)
-            return Promise.resolve(false);            
+            return Promise.reject(false);            
         }
+    },
+    async concatFiles(inFiles, outFile){
+        try {
+            const getNext =  getNextFile(inFiles);
+            let inFile = getNext();
+            const wStream = fs.createWriteStream(outFile);
+            while(inFile !== undefined){
+                console.log(`processing...${inFile}`);
+                const rStream = fs.createReadStream(inFile);
+                await appendToWriteStream(rStream, wStream);
+                inFile = getNext();
+            }
+            wStream.close();
+            return;
+        } catch(error) {
+            // console.error('some errors:')
+            throw new Error(error);
+            console.error(error)
+        }
+    
     }
 }
 
@@ -224,6 +250,21 @@ const fp = {
     }  
 }
 
+const getNextFile = inFiles => {
+    return () => inFiles.shift()
+}
+
+const appendToWriteStream = async (rStream, wStream) => {
+    return new Promise((resolve, reject) => {
+        try {
+            rStream.on('data', data => wStream.write(data));
+            rStream.on('end', () => resolve(true));
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
 const browserStorage = {
     storage : null,
     // storageAvailable : (type) => {
@@ -248,22 +289,14 @@ const browserStorage = {
     clear: () => this.storage.clear()
 }
 
-const store = {
-    getStore : (options) => {
-        const {type, key, fname, opts} = options;
-        if(type === 'localStorage') return new LocalStorage(key, opts);
-        if(type === 'jsonFile') return new FileStorage(fname, opts);
-        return null
-    }
-}
-
 module.exports = {
     browserStorage,
-    store,
     clone,
     fp,
     file,
     number,
+    date,
+    string
 }
 
 // const trottled = fp.throttle(100, console.log);

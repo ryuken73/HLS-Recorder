@@ -13,9 +13,20 @@ const intervals = [
 ]
 
 function IntervalSelection(props) {
-    const {channelName, currentInterval, recorderStatus} = props;
-    const {inTransition, scheduleStatus, scheduledFunction} = props;
-    const {startSchedule, stopSchedule} = props;
+    const {
+        channelName="channelX", 
+        currentInterval=3600000, 
+        recorderStatus="stopped"
+    } = props;
+    const {
+        inTransition=false, 
+        scheduleStatus="stopped", 
+        scheduledFunction=()=>{}
+    } = props;
+    const {
+        startSchedule=()=>{}, 
+        stopSchedule=()=>{}
+    } = props;
     const {onChange = () => {}} = props;
     const {autoStartSchedule=false} = props;
     const inRecording = recorderStatus !== 'stopped';
