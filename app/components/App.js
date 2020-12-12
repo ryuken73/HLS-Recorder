@@ -2,7 +2,8 @@ import React from 'react';
 import Box from '@material-ui/core/Box';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import Header from './Header';
-import Body from './Body';
+// import Body from './Body';
+import BodyContainer from '../containers/BodyContainer';
 import MessageContainer from './MessagePanel';
 const { BrowserView, getCurrentWindow } = require('electron').remote;
 const { ipcRenderer } = require('electron');
@@ -17,9 +18,6 @@ const theme = createMuiTheme({
       fontSize: 12,
       fontWeight: 500, 
     }
-  },
-  box: {
-    
   }
 });
 
@@ -28,7 +26,7 @@ function App(props) {
     <ThemeProvider theme={theme}>
       <Box display="flex" flexDirection="column" height="1">
         <Header></Header>
-        <Body></Body>
+        <BodyContainer></BodyContainer>
         <MessageContainer></MessageContainer>
       </Box>
     </ThemeProvider>

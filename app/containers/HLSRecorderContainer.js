@@ -1,6 +1,8 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import HLSRecorder from '../components/HLSRecorder';
+import * as hlsRecorderActions from '../modules/hlsRecorder';
+
 
 function mapStateToProps(state, ownProps) {
   // console.log('mapStateToProps:',state)
@@ -25,7 +27,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {ImageActions: bindActionCreators(imageActions, dispatch)};
+  return {HLSRecorderActions: bindActionCreators(hlsRecorderActions, dispatch)};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HLSRecorder);
