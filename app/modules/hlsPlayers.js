@@ -13,23 +13,26 @@ const {
 
 const mkOverlayContent = url => {
     const source = sources.find(source => source.url === url)
-    const {title} = source
-    const element = document.createElement('div');
-    element.innerHTML = title;
-    element.style = "color:black;font-weight:bold";
-    return element;
+    if(source !== undefined){
+        const {title} = source
+        const element = document.createElement('div');
+        element.innerHTML = title;
+        element.style = "color:black;font-weight:bold";
+        return element;
+    }
+    return false;
 }
 
 const players = new Map();
 for(let i=1;i<=NUMBER_OF_RECORDERS;i++){
     const {title, url} = sources[i];
-    const hlsPlayerProps = {
+    const hlsPlayer = {
         ...DEFAULT_PLAYER_PROPS,
         source: sources[i],
         channelName: `${CHANNEL_PREFIX}${i}`,
         overlayContent: mkOverlayContent(url)
     }
-    players.set(i, hlsPlayerProps);
+    players.set(i, hlsPlayer);
 }
 
 
@@ -63,13 +66,14 @@ export default handleActions({
     },
     [SET_HTTPSOURCE]: (state, action) => {
         console.log('%%%%%%%%%%%%%%%%', action.payload);
-        const {channelNumber, sourceNumber} = action.payload;
-        const {url} = sources[sourceNumber];
+        const {channelNumber, url} = action.payload;
         const overlayContent = mkOverlayContent(url);
 
+        const sourceNumber = sources.findIndex(source => source.url === url);
         const hlsPlayer = {...state.players.get(channelNumber)};
-        hlsPlayer.source = sources[sourceNumber];
-        hlsPlayer.overlayContent = overlayContent;
+        hlsPlayer.source.url = url;
+        hlsPlayer.source.title = sourceNumber !== -1 && sources[sourceNumber].title;
+        if(overlayContent) hlsPlayer.overlayContent = overlayContent;
 
         const players = new Map(state.players);
         players.set(channelNumber, hlsPlayer);

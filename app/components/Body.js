@@ -1,6 +1,7 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
-import HLSRecorder from './HLSRecorder';
+// import HLSRecorder from './HLSRecorder';
+import HLSRecorderContainer from '../containers/HLSRecorderContainer';
 
 const Body = (props) => {
   console.log('###', props);
@@ -8,10 +9,10 @@ const Body = (props) => {
   return (
     <Box display="flex" flexWrap="wrap" overflow="auto">
       {channels.map(channelNumber => {
-        return <HLSRecorder 
+        return <HLSRecorderContainer 
                   key={channelNumber} 
                   channelNumber={channelNumber}
-               ></HLSRecorder>
+               ></HLSRecorderContainer>
       })}
     </Box>
   );

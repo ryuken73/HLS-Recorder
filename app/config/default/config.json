@@ -16,5 +16,6 @@
     "enableOverlay": true,
     "overlayContent": "Default Overlay",
     "enableAutoRefresh": true
-  }
+  },
+  "BASE_DIRECTORY": "c:/cctv"
 }

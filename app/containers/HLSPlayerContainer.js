@@ -13,7 +13,6 @@ function mapStateToProps(state, ownProps) {
   return {
     player: hlsPlayer.player,
     source: hlsPlayer.source,
-    title: hlsPlayer.title,
     type: hlsPlayer.type,
     channelName: hlsPlayer.channelName,
     preservePlaybackRate: hlsPlayer.preservePlaybackRate,

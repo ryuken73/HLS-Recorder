@@ -46,7 +46,12 @@ const clone = {
 }
 
 const date = {
-    getString(date, {dateSep='', timeSep='', sep='.'}){
+    getString(date, separator={}){
+        const {
+            dateSep='', 
+            timeSep='', 
+            sep='.'
+        } = separator;
         const year = date.getFullYear();
         const month = number.padZero(date.getMonth() + 1);
         const day = number.padZero(date.getDate());

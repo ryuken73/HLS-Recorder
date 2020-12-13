@@ -1,28 +1,25 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import HLSRecorder from '../components/HLSRecorder';
-import * as hlsRecorderActions from '../modules/hlsRecorder';
+import * as hlsRecorderActions from '../modules/hlsRecorders';
 
 
 function mapStateToProps(state, ownProps) {
-  // console.log('mapStateToProps:',state)
-  const pageImages = state.imageList.pageImages;
-  const {pageIndex, hidden} = ownProps;
-  const imageData = pageImages.get(pageIndex) || [];
-  
+  console.log('mapStateToProps:',state)
+  const {channelNumber} = ownProps;
+  const hlsRecorder = state.hlsRecorders.recorders.get(channelNumber);
+
   return {
-    pageIndex,
-    imageData,
-    hidden,
-    fileTypes: state.displayFilters.fileTypes,
-    fileSizeMin: state.displayFilters.fileSizeMin,
-    fileSizeMax: state.displayFilters.fileSizeMax,
-    filePatterns: state.displayFilters.filePatterns,
-    imagePreviewOpen: state.imageList.imagePreviewOpen,
-    imagePreviewSrc: state.imageList.imagePreviewSrc,
-    imagePreviewSrcIndex: state.imageList.imagePreviewSrcIndex,
-    imagePreviewSrcName: state.imageList.imagePreviewSrcName,
-    imageShow: state.imageList.imageShow
+    ...ownProps,
+    channelName: hlsRecorder.channelName,
+    duration: hlsRecorder.duration,
+    channelDirectory: hlsRecorder.channelDirectory,
+    url: hlsRecorder.url,
+    recorder: hlsRecorder.recorder,
+    inTransition: hlsRecorder.inTransition,
+    scheduleFunction: hlsRecorder.scheduleFunction,
+    autoStartSchedule: hlsRecorder.autoStartSchedule,
+    recorderStatus: hlsRecorder.recorderStatus,
   }
 }
 

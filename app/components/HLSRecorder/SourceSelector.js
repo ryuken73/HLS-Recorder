@@ -19,8 +19,8 @@ function Selection(props) {
     })
     const onChangeSelect = React.useCallback((event) => {
         const url = event.target.value;
-        const sourceNumber = sources.findIndex(source => source.url === url);
-        setHttpSource({channelNumber, sourceNumber});
+        // const sourceNumber = sources.findIndex(source => source.url === url);
+        setHttpSource({channelNumber, url});
     }, [setHttpSource])
 
     return (
