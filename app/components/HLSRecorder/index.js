@@ -1,7 +1,8 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
 import SectionWithFullHeight from '../template/SectionWithFullHeight';
-import Duration from './Duration';
+// import Duration from './Duration';
+import DurationContainer from '../../containers/DurationContainer';
 import SourceSelectorContainer from '../../containers/SourceSelectorContainer';
 import HLSPlayerContainer from '../../containers/HLSPlayerContainer';
 import ControlsContainer from '../../containers/ControlsContainer';
@@ -16,9 +17,9 @@ const HLSRecorder = (props) => {
     
     return (
         <SectionWithFullHeight m={"5px"} flexGrow={0} width="320px" bgcolor={"#2d2f3b"} border={1} borderColor={"black"} p="1px">
-            <Duration 
+            <DurationContainer 
                 channelNumber={channelNumber}
-            ></Duration>
+            ></DurationContainer>
             <SourceSelectorContainer 
                 channelNumber={channelNumber}
             ></SourceSelectorContainer>

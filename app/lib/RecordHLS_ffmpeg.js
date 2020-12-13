@@ -242,7 +242,7 @@ const createHLSRecoder = options => {
         enablePlayack= true, 
         localm3u8= 'd:/temp/cctv/stream.m3u8',
         ffmpegBinary= 'd:/temp/cctv/ffmpeg.exe',
-        renameDoneFile= true
+        renameDoneFile= false
     } = options;
     log.info(`create HLS Recorder!`);
     return new RecoderHLS(options);

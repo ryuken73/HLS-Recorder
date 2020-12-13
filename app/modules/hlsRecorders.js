@@ -74,7 +74,7 @@ const createLogger = channelName => {
     }
 }
 
-export const startRecording = (channelNumber) => async (dispatch, getState) => {
+export const startRecording = (channelNumber) => (dispatch, getState) => {
     console.log(`#### in startRecording:`, channelNumber)
     const state = getState();
     const {recorders} = state.hlsRecorders;
@@ -91,15 +91,13 @@ export const startRecording = (channelNumber) => async (dispatch, getState) => {
     } = hlsPlayer;
     const channelLog = createLogger(channelName);
     channelLog.info(`start startRecroding() recorder.createTime:${recorder.createTime}`)
-    // const randomString = uuidv4();
     const now = utils.date.getString(new Date());
     const jobDescString = `${channelName}_${now}_${Date.now()}_${source.title}`;
-    const saveDirectory = path.join(channelDirectory, 'working', jobDescString);
+    const saveDirectory = path.join(channelDirectory, jobDescString);
     mkdir(saveDirectory);
-    const target = path.join(saveDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`);
     const localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
     recorder.src = source.url;
-    recorder.target = target;
+    recorder.target = localm3u8;
     recorder.localm3u8 = localm3u8;
     dispatch(setRecorderInTransition({channelNumber, inTransition:true}))
     dispatch(setRecorderStatus({channelNumber, recorderStatus: 'starting'}))
@@ -118,71 +116,118 @@ export const startRecording = (channelNumber) => async (dispatch, getState) => {
             dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
         },1000);
     })
-    // recorder.once('end', async (clipName, startTimestamp, duration) => {
-    //     try {
-    //         channelLog.info(`recorder emitted end (listener1): ${clipName}`)
-    //         const endTimestamp = Date.now();
-    //         const startTime = utils.date.getString(new Date(startTimestamp),{})
-    //         const endTime = utils.date.getString(new Date(endTimestamp),{})
-    //         const url = currentUrl;
-    //         const title = getTitleFromUrl(url);
-    //         const hlsDirectory = workingDirectory;
-    //         const durationSafeString = duration.replace(/:/g,';'); 
-    //         const mp4Name = path.join(saveDirectory, `${channelName}_${startTime}_[${durationSafeString}].mp4`);
-    //         const clipId = `${channelName}_${startTime}_${endTime}`
-    //         const hlsm3u8 = localm3u8;
-    //         channelLog.info(channelNumber)
-    //         channelLog.info(channelName)
-    //         channelLog.info(startTime)
-    //         channelLog.info(endTime)
-    //         channelLog.info(startTimestamp)
-    //         channelLog.info(endTimestamp)
-    //         channelLog.info(url)
-    //         channelLog.info(title)
-    //         channelLog.info(hlsDirectory)
-    //         channelLog.info(mp4Name)
-    //         channelLog.info(duration)
-    //         channelLog.info(clipId)
-    //         channelLog.info(hlsm3u8)
+    recorder.once('end', async (clipName, startTimestamp, duration) => {
+        try {
+            channelLog.info(`recorder emitted end (listener1): ${clipName}`)
+            const endTimestamp = Date.now();
+            const startTime = utils.date.getString(new Date(startTimestamp),{})
+            const endTime = utils.date.getString(new Date(endTimestamp),{})
+            const url = hlsRecorder.playerUrl;
+            const title = source.title;
+            const hlsDirectory = saveDirectory;
+            // const durationSafeString = duration.replace(/:/g,';'); 
+            // const mp4Name = path.join(saveDirectory, `${channelName}_${startTime}_[${durationSafeString}].mp4`);
+            const clipId = `${channelName}_${startTime}_${endTime}`
+            const hlsm3u8 = localm3u8;
+            // channelLog.info(channelNumber)
+            // channelLog.info(channelName)
+            // channelLog.info(startTime)
+            // channelLog.info(endTime)
+            // channelLog.info(startTimestamp)
+            // channelLog.info(endTimestamp)
+            // channelLog.info(url)
+            // channelLog.info(title)
+            // channelLog.info(hlsDirectory)
+            // // channelLog.info(mp4Name)
+            // channelLog.info(duration)
+            // channelLog.info(clipId)
+            // channelLog.info(hlsm3u8)
+            const clipData = {
+                clipId,
+                channelNumber,
+                channelName,
+                startTime,
+                endTime,
+                startTimestamp,
+                endTimestamp,
+                url,
+                title,
+                hlsDirectory,
+                duration,
+                hlsm3u8,
+                saveDirectory,
+                mp4Converted:false
+            }
 
-    //         const clipData = {
-    //             clipId,
-    //             channelNumber,
-    //             channelName,
-    //             startTime,
-    //             endTime,
-    //             startTimestamp,
-    //             endTimestamp,
-    //             url,
-    //             title,
-    //             hlsDirectory,
-    //             mp4Name,
-    //             duration,
-    //             hlsm3u8,
-    //             saveDirectory,
-    //             mp4Converted:false
-    //         }
-    //         insertClip({clip: clipData});
-    //         initialRecorder(); 
-    //         const converted = await HLStoMP4(clipData);
-    //         updateClip({clip: converted});                   
-    //         if(converted === false) return;
-    //         rimraf(hlsDirectory, err => {
-    //             if(err) {
-    //                 channelLog.error(err);
-    //                 channelLog.error(`delete working directory failed: ${hlsDirectory}`);
-    //                 return
-    //             } 
-    //             channelLog.info(`delete working directory success: ${hlsDirectory}`);
-    //         });
-    //     } catch (error) {
-    //         if(error){
-    //             channelLog.error(error)
-    //         }
-    //     }
-    // })
+            console.log('#######', clipData)
+            //todo : save clipData in electron store
+
+            // insertClip({clip: clipData});
+            // initialRecorder(); 
+            dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopped'}))
+            dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
+            dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
+            dispatch(setHttpSource({channelNumber, url:hlsRecorder.playerUrl}))
+            // const converted = await HLStoMP4(clipData);
+            // updateClip({clip: converted});                   
+            // if(converted === false) return;
+            // rimraf(hlsDirectory, err => {
+            //     if(err) {
+            //         channelLog.error(err);
+            //         channelLog.error(`delete working directory failed: ${hlsDirectory}`);
+            //         return
+            //     } 
+            //     channelLog.info(`delete working directory success: ${hlsDirectory}`);
+            // });
+        } catch (error) {
+            if(error){
+                channelLog.error(error)
+            }
+        }
+    })
+
     recorder.start();
+}
 
+export const stopRecording = (channelNumber) => (dispatch, getState) => {
+    
+    return new Promise((resolve, reject) => {
+        try {
+            const state = getState();
+            const {recorders} = state.hlsRecorders;
+            const {players} = state.hlsPlayers;
+            const hlsRecorder = recorders.get(channelNumber);
+            const hlsPlayer = players.get(channelNumber);
+            const {
+                channelName,
+                recorder,
+                channelDirectory,
+                inTransition
+            } = hlsRecorder;
+            const {
+                source
+            } = hlsPlayer;
+            const channelLog = createLogger(channelName);
+            channelLog.info(`start stopRecording(): inTransition: ${inTransition}, recorder.createTime:${recorder.createTime}`)
+            
+            dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopping'}))
+            dispatch(setRecorderInTransition({channelNumber, inTransition:true}));
+            recorder.once('end', async clipName => {
+                channelLog.info(`recorder emitted end (listener2)`)
+                resolve(true);
+            })
+            recorder.stop();
+        } catch (err) {
+            // channelLog.error(`error in stopRecording`)
+            console.log(err)
+            log.error(err);
+            dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopped'}))
+            dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
+            dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
+            dispatch(setHttpSource({channelNumber, url:hlsRecorder.playerUrl}))
+            resolve(true)
+        }
+    })
 }
 
 const initialState = {

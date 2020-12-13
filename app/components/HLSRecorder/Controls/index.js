@@ -32,7 +32,8 @@ const Controls = props => {
         inTransition=false,
         scheduleFunction=null,
         autoStartSchedule=true,
-        localm3u8=null
+        localm3u8=null,
+        recorderStatus='stopped'
     } = props
 
     const {
@@ -47,7 +48,8 @@ const Controls = props => {
         setScheduleFunction=()=>{},
         setScheduleStatus=()=>{},
         setAutoStartSchedule=()=>{},
-        startRecording=()=>{}
+        startRecording=()=>{},
+        stopRecording=()=>{},
     } = props.HLSRecorderActions;
 
     const createLogger = channelName => {
@@ -108,16 +110,24 @@ const Controls = props => {
     const startRecordChannel = event => {
         startRecording(channelNumber);
     }
+
+    const stopRecordChannel = event => {
+        stopRecording(channelNumber);
+    }
     
     return (
         <Box display="flex" flexDirection="column" mr="3px">
             <SmallPaddingIconButton padding="1px" size="small">
                 <RefreshIcon color="primary" fontSize={"small"} onClick={refreshChannelPlayer}></RefreshIcon>
             </SmallPaddingIconButton>
-            <SmallPaddingIconButton padding="1px" size="small">
-                <FiberManualRecordIcon color="primary" fontSize={"small"} onClick={startRecordChannel}></FiberManualRecordIcon>
+            <SmallPaddingIconButton disabled={inTransition} padding="1px" size="small">
+                <FiberManualRecordIcon 
+                    color={recorderStatus==="started" ? "secondary" : "primary"}
+                    fontSize={"small"} 
+                    onClick={recorderStatus==="started" ? stopRecordChannel : startRecordChannel}
+                ></FiberManualRecordIcon>
             </SmallPaddingIconButton>
-            <SmallPaddingIconButton padding="1px" size="small">
+            <SmallPaddingIconButton disabled={inTransition} padding="1px" size="small">
                 <AccessAlarmIcon color="primary" fontSize={"small"} onClick={refreshPlayer}></AccessAlarmIcon>
             </SmallPaddingIconButton>
         </Box>
