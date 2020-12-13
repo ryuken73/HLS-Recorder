@@ -36,10 +36,12 @@ for(let i=1;i<=NUMBER_OF_RECORDERS;i++){
 // action types
 const SET_PLAYER = 'hlsPlayers/SET_PLAYER';
 const SET_HTTPSOURCE = 'hlsPlayers/SET_HTTPSOURCE';
+const REFRESH_PLAYER = 'hlsPlayers/REFRESH_PLAYER';
 
 // action creator
 export const setPlayer = createAction(SET_PLAYER);
 export const setHttpSource = createAction(SET_HTTPSOURCE);
+export const refreshPlayer = createAction(REFRESH_PLAYER);
 
 
 const initialState = {
@@ -75,4 +77,23 @@ export default handleActions({
             players
         }
     },
+    [REFRESH_PLAYER]: (state, action) => {
+        console.log('%%%%%%%%%%%%%%%%', action.payload);
+        const {channelNumber, url} = action.payload;
+        const hlsPlayer = {...state.players.get(channelNumber)};
+        const {player} = hlsPlayer;
+        if(player === null) {
+            console.log('player is null. not refresh!')
+            return {state}
+        }
+        const srcObject = {
+            src: url,
+            type: hlsPlayer.type,
+            handleManifestRedirects: true,
+        }
+        player.src(srcObject);
+        return { ...state }
+    },
 }, initialState);
+
+

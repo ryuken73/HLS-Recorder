@@ -6,13 +6,17 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {SmallPaddingIconButton}  from '../../template/smallComponents';
 
 const Controls = props => {
+    const {channelNumber,source} = props;
     const {
         refreshPlayer=()=>{},
-    } = props;
+    } = props.HLSPlayerActions;
+    const refreshChannelPlayer = (event) => {
+        refreshPlayer({channelNumber, url:source.url});
+    }
     return (
         <Box display="flex" flexDirection="column" mr="3px">
             <SmallPaddingIconButton padding="1px" size="small">
-                <RefreshIcon color="primary" fontSize={"small"} onClick={refreshPlayer}></RefreshIcon>
+                <RefreshIcon color="primary" fontSize={"small"} onClick={refreshChannelPlayer}></RefreshIcon>
             </SmallPaddingIconButton>
             <SmallPaddingIconButton padding="1px" size="small">
                 <FiberManualRecordIcon color="primary" fontSize={"small"} onClick={refreshPlayer}></FiberManualRecordIcon>
