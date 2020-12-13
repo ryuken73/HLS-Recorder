@@ -10,9 +10,12 @@ const Controls = props => {
     const {
         refreshPlayer=()=>{},
     } = props.HLSPlayerActions;
+
     const refreshChannelPlayer = (event) => {
+        // todo: url can be file url when recording
         refreshPlayer({channelNumber, url:source.url});
     }
+    
     return (
         <Box display="flex" flexDirection="column" mr="3px">
             <SmallPaddingIconButton padding="1px" size="small">

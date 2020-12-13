@@ -29,7 +29,10 @@ const HLSPlayer = (props) => {
         restorePlaybackRate=true
     } = props;
 
-    const {setPlayer=()=>{}} = props.HLSPlayersActions;
+    const {
+        setPlayer=()=>{},
+        refreshPlayer=()=>{}
+    } = props.HLSPlayersActions;
 
 
     const srcObject = {
@@ -109,14 +112,18 @@ const HLSPlayer = (props) => {
         }
     }
 
-    const refreshHLSPlayer = () => {
-        const srcObject = {
-            src: source.url,
-            type,
-            handleManifestRedirects: true,
-        }
-        player.src(srcObject)
+    const refreshChannelPlayer = (event) => {
+        refreshPlayer({channelNumber, url:source.url});
     }
+
+    // const refreshHLSPlayer = () => {
+    //     const srcObject = {
+    //         src: source.url,
+    //         type,
+    //         handleManifestRedirects: true,
+    //     }
+    //     player.src(srcObject)
+    // }
 
     let refreshTimer = null;
 
@@ -125,7 +132,8 @@ const HLSPlayer = (props) => {
         if(eventName === 'abort' && enableAutoRefresh !== null){
             refreshTimer = setInterval(() => {
                 channelLog.info('refresh player because of long buffering')
-                refreshHLSPlayer();
+                // todo: url can be file url when recording
+                refreshChannelPlayer({channelNumber, url:source.url});
             },2000)
             return
         } else if(eventName === 'abort' && enableAutoRefresh === null) {
