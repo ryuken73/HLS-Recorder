@@ -111,10 +111,6 @@ const HLSPlayer = (props) => {
         }
     }
 
-    const refreshChannelPlayer = (event) => {
-        refreshPlayer({channelNumber, url:source.url});
-    }
-
     let refreshTimer = null;
 
     const onVideoOtherEvent = eventName => {
@@ -123,7 +119,8 @@ const HLSPlayer = (props) => {
             refreshTimer = setInterval(() => {
                 channelLog.info('refresh player because of long buffering')
                 // todo: url can be file url when recording
-                refreshChannelPlayer({channelNumber, url:source.url});
+                // refreshChannelPlayer({channelNumber, url:source.url});
+                refreshPlayer({channelNumber});
             },2000)
             return
         } else if(eventName === 'abort' && enableAutoRefresh === null) {

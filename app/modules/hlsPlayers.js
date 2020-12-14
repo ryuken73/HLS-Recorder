@@ -86,8 +86,9 @@ export default handleActions({
     },
     [REFRESH_PLAYER]: (state, action) => {
         console.log('%%%%%%%%%%%%%%%%', action.payload);
-        const {channelNumber, url} = action.payload;
+        const {channelNumber} = action.payload;
         const hlsPlayer = {...state.players.get(channelNumber)};
+        const url = hlsPlayer.source.url;
         const {player} = hlsPlayer;
         if(player === null) {
             console.log('player is null. not refresh!')

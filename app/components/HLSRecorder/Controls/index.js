@@ -106,7 +106,8 @@ const Controls = props => {
 
     const refreshChannelPlayer = (event) => {
         // todo: url can be file url when recording
-        refreshPlayer({channelNumber, url:source.url});
+        // refreshPlayer({channelNumber, url:source.url});
+        refreshPlayer({channelNumber});
     }
 
     const startRecordChannel = event => {
