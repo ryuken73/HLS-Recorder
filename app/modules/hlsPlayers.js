@@ -38,12 +38,12 @@ for(let i=1;i<=NUMBER_OF_RECORDERS;i++){
 
 // action types
 const SET_PLAYER = 'hlsPlayers/SET_PLAYER';
-const SET_HTTPSOURCE = 'hlsPlayers/SET_HTTPSOURCE';
+const SET_PLAYER_SOURCE = 'hlsPlayers/SET_PLAYER_SOURCE';
 const REFRESH_PLAYER = 'hlsPlayers/REFRESH_PLAYER';
 
 // action creator
 export const setPlayer = createAction(SET_PLAYER);
-export const setHttpSource = createAction(SET_HTTPSOURCE);
+export const setPlayerSource = createAction(SET_PLAYER_SOURCE);
 export const refreshPlayer = createAction(REFRESH_PLAYER);
 
 
@@ -64,15 +64,18 @@ export default handleActions({
             players
         }
     },
-    [SET_HTTPSOURCE]: (state, action) => {
+    [SET_PLAYER_SOURCE]: (state, action) => {
         console.log('%%%%%%%%%%%%%%%%', action.payload);
         const {channelNumber, url} = action.payload;
         const overlayContent = mkOverlayContent(url);
 
         const sourceNumber = sources.findIndex(source => source.url === url);
         const hlsPlayer = {...state.players.get(channelNumber)};
-        hlsPlayer.source.url = url;
-        hlsPlayer.source.title = sourceNumber !== -1 && sources[sourceNumber].title;
+        // to make state change, use spread operator on source;
+        const source = {...hlsPlayer.source};
+        source.url = url;
+        source.title = sourceNumber !== -1 ? sources[sourceNumber].title : hlsPlayer.source.title;
+        hlsPlayer.source = source;
         if(overlayContent) hlsPlayer.overlayContent = overlayContent;
 
         const players = new Map(state.players);

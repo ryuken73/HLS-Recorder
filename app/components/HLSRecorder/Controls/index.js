@@ -35,7 +35,9 @@ const Controls = props => {
         localm3u8=null,
         recorderStatus='stopped'
     } = props
+
     const iconColor = bgColors[recorderStatus];
+    
     const {
         refreshPlayer=()=>{},
     } = props.HLSPlayerActions;
@@ -49,7 +51,7 @@ const Controls = props => {
         setScheduleStatus=()=>{},
         setAutoStartSchedule=()=>{},
         startRecording=()=>{},
-        stopRecording=()=>{},
+        stopRecording=()=>{}
     } = props.HLSRecorderActions;
 
     const createLogger = channelName => {

@@ -29,7 +29,9 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {HLSPlayersActions: bindActionCreators(hlsPlayersActions, dispatch)};
+  return {
+    HLSPlayersActions: bindActionCreators(hlsPlayersActions, dispatch)  
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HLSPlayer);

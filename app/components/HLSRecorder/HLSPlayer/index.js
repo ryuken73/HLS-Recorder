@@ -34,7 +34,6 @@ const HLSPlayer = (props) => {
         refreshPlayer=()=>{}
     } = props.HLSPlayersActions;
 
-
     const srcObject = {
         src: source.url,
         type,
@@ -116,15 +115,6 @@ const HLSPlayer = (props) => {
         refreshPlayer({channelNumber, url:source.url});
     }
 
-    // const refreshHLSPlayer = () => {
-    //     const srcObject = {
-    //         src: source.url,
-    //         type,
-    //         handleManifestRedirects: true,
-    //     }
-    //     player.src(srcObject)
-    // }
-
     let refreshTimer = null;
 
     const onVideoOtherEvent = eventName => {
@@ -189,4 +179,5 @@ const HLSPlayer = (props) => {
     );
 };
 
-export default React.memo(HLSPlayer);
+// export default React.memo(HLSPlayer);
+export default HLSPlayer

@@ -1,5 +1,5 @@
 import {createAction, handleActions} from 'redux-actions';
-import {setHttpSource} from './hlsPlayers';
+import {setPlayerSource} from './hlsPlayers';
 // import {logInfo, logError, logFail} from './messagePanel';
 const cctvFromConfig = require('../lib/getCCTVList');
 const getConfig = require('../lib/getConfig');
@@ -35,7 +35,7 @@ for(let i=1 ; i<=NUMBER_OF_RECORDERS ; i++){
     const hlsRecorder = {
         channelName,
         channelDirectory,
-        playerUrl: url,
+        playerHttpURL: url,
         duration: INITIAL_DURATION,
         recorder: null,
         inTransition: false,
@@ -54,7 +54,7 @@ const SET_RECORDER_INTRANSITION = 'hlsRecorders/SET_RECORDER_INTRANSITION';
 const SET_SCHEDULE_FUNCTION = 'hlsRecorders/SET_SCHEDULE_FUNCTION';
 const SET_SCHEDULE_STATUS = 'hlsRecorders/SET_SCHEDULE_STATUS';
 const SET_AUTO_START_SCHEDULE = 'hlsRecorders/SET_AUTO_START_SCHEDULE';
-const SET_PLAYER_URL = 'hlsRecorders/SET_PLAYER_URL';
+const SAVE_PLAYER_HTTP_URL = 'hlsRecorders/SAVE_PLAYER_HTTP_URL';
 
 // action creator
 export const setDuration = createAction(SET_DURATION);
@@ -64,7 +64,7 @@ export const setRecorderInTransition = createAction(SET_RECORDER_INTRANSITION);
 export const setScheduleFunction = createAction(SET_SCHEDULE_FUNCTION);
 export const setScheduleStatus = createAction(SET_SCHEDULE_STATUS);
 export const setAutoStartSchedule = createAction(SET_AUTO_START_SCHEDULE);
-export const setPlayerUrl = createAction(SET_PLAYER_URL);
+export const savePlayerHttpURL = createAction(SAVE_PLAYER_HTTP_URL);
 
 
 const createLogger = channelName => {
@@ -105,9 +105,9 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
         channelLog.info(`recorder emitted start : ${cmd}`)
         setTimeout(() => {
             dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
-            dispatch(setPlayerUrl({channelNumber, playerUrl: source.url}));
+            dispatch(savePlayerHttpURL({channelNumber, playerHttpURL: source.url}));
             // setPreviousUrl(currentUrl);
-            dispatch(setHttpSource({channelNumber, url:localm3u8}))
+            dispatch(setPlayerSource({channelNumber, url:localm3u8}))
             // setCurrentUrl(localm3u8);
             // setCurrentTitle(previousTitle => {
             //     return previousTitle;
@@ -122,7 +122,7 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
             const endTimestamp = Date.now();
             const startTime = utils.date.getString(new Date(startTimestamp),{})
             const endTime = utils.date.getString(new Date(endTimestamp),{})
-            const url = hlsRecorder.playerUrl;
+            const url = hlsRecorder.playerHttpURL;
             const title = source.title;
             const hlsDirectory = saveDirectory;
             // const durationSafeString = duration.replace(/:/g,';'); 
@@ -167,7 +167,7 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
             dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopped'}))
             dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
             dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
-            dispatch(setHttpSource({channelNumber, url:hlsRecorder.playerUrl}))
+            dispatch(setPlayerSource({channelNumber, url:hlsRecorder.playerHttpURL}))
             // const converted = await HLStoMP4(clipData);
             // updateClip({clip: converted});                   
             // if(converted === false) return;
@@ -224,7 +224,7 @@ export const stopRecording = (channelNumber) => (dispatch, getState) => {
             dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopped'}))
             dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
             dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
-            dispatch(setHttpSource({channelNumber, url:hlsRecorder.playerUrl}))
+            dispatch(setPlayerSource({channelNumber, url:hlsRecorder.playerHttpURL}))
             resolve(true)
         }
     })
@@ -313,11 +313,11 @@ export default handleActions({
             recorders
         }
     },
-    [SET_PLAYER_URL]: (state, action) => {
+    [SAVE_PLAYER_HTTP_URL]: (state, action) => {
         // console.log('%%%%%%%%%%%%%%%%', action.payload);
-        const {channelNumber, playerUrl} = action.payload;
+        const {channelNumber, playerHttpURL} = action.payload;
         const channelRecorder = {...state.recorders.get(channelNumber)};
-        channelRecorder.playerUrl = playerUrl;
+        channelRecorder.playerHttpURL = playerHttpURL;
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, channelRecorder);
         return {
