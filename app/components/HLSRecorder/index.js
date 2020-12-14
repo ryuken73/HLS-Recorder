@@ -15,10 +15,21 @@ const HLSRecorder = (props) => {
         recorderStatus="stopped"
     } = props;
     
+    const bgColors = {
+        // 'starting': 'maroon',
+        'starting': '#590000',
+        'started': 'crimson',
+        'stopping': '#590000',
+        'stopped': 'black'
+    }
+
+    const bgColor = bgColors[recorderStatus];
+
     return (
         <SectionWithFullHeight m={"5px"} flexGrow={0} width="320px" bgcolor={"#2d2f3b"} border={1} borderColor={"black"} p="1px">
             <DurationContainer 
                 channelNumber={channelNumber}
+                bgColors={bgColors}
             ></DurationContainer>
             <SourceSelectorContainer 
                 channelNumber={channelNumber}
@@ -26,8 +37,9 @@ const HLSRecorder = (props) => {
             <Box display="flex" alignItems="flex-start">
                 <ControlsContainer
                     channelNumber={channelNumber}
+                    bgColors={bgColors}
                 ></ControlsContainer>
-                <Box border={2} borderColor={recorderStatus==="started" ? 'red':'black'}>
+                <Box border={2} borderColor={bgColor}>
                     <HLSPlayerContainer 
                         channelNumber={channelNumber}
                     ></HLSPlayerContainer>

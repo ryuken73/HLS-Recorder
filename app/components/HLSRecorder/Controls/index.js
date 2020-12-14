@@ -22,7 +22,7 @@ async function mkdir(directory){
 }
 
 const Controls = props => {
-    const {channelNumber,source} = props;
+    const {channelNumber, source, bgColors} = props;
     const {
         channelName="channelX",
         duration="00:00:00.00",
@@ -35,7 +35,7 @@ const Controls = props => {
         localm3u8=null,
         recorderStatus='stopped'
     } = props
-
+    const iconColor = bgColors[recorderStatus];
     const {
         refreshPlayer=()=>{},
     } = props.HLSPlayerActions;
@@ -117,17 +117,17 @@ const Controls = props => {
     
     return (
         <Box display="flex" flexDirection="column" mr="3px">
-            <SmallPaddingIconButton padding="1px" size="small">
+            <SmallPaddingIconButton padding="1px" size="small" iconcolor="black">
                 <RefreshIcon color="primary" fontSize={"small"} onClick={refreshChannelPlayer}></RefreshIcon>
             </SmallPaddingIconButton>
-            <SmallPaddingIconButton disabled={inTransition} padding="1px" size="small">
+            <SmallPaddingIconButton disabled={inTransition} padding="1px" size="small" iconcolor={iconColor}>
                 <FiberManualRecordIcon 
                     color={recorderStatus==="started" ? "secondary" : "primary"}
                     fontSize={"small"} 
                     onClick={recorderStatus==="started" ? stopRecordChannel : startRecordChannel}
                 ></FiberManualRecordIcon>
             </SmallPaddingIconButton>
-            <SmallPaddingIconButton disabled={inTransition} padding="1px" size="small">
+            <SmallPaddingIconButton disabled={inTransition} padding="1px" size="small" iconcolor="black">
                 <AccessAlarmIcon color="primary" fontSize={"small"} onClick={refreshPlayer}></AccessAlarmIcon>
             </SmallPaddingIconButton>
         </Box>

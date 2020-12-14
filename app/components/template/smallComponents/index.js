@@ -11,6 +11,12 @@ const defaultFontColor = 'white';
 
 const SmallPaddingIconButton = styled(IconButton)`
     padding: ${props => props.padding || "5px"};
+    .MuiIconButton-label {
+        .MuiSvgIcon-root {
+            color: ${props => props.iconcolor || 'white'};
+        }
+    }
+
 `
 const SmallButton  = styled(Button)`
     margin-top: ${props => props.mt || "2px"};

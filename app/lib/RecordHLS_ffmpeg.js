@@ -227,6 +227,7 @@ class RecoderHLS extends EventEmitter {
             // initialization already processed, don't need do something. just return;
             return;
         }
+        this.log.info(`stopping ffmpeg...`);
         this.command.ffmpegProc.stdin.write('q');
     }
     destroy = () => {

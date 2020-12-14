@@ -9,16 +9,11 @@ function Duration(props) {
     const {
         channelName="channelX", 
         recorderStatus="stopped", 
-        duration="00:00:00.00"
+        duration="00:00:00.00",
+        bgColors={}
     } = props;
     const inRecording = recorderStatus === 'started';
     const inTransition = recorderStatus === 'starting' || recorderStatus === 'stopping';
-    const bgColors = {
-        'starting': 'crimson',
-        'started': 'maroon',
-        'stopping': '#590000',
-        'stopped': 'black'
-    }
     const bgColor = bgColors[recorderStatus];
     const channel = {
         subject: <Typography variant="body1">{channelName}</Typography>,
