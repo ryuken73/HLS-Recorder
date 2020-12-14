@@ -13,10 +13,7 @@ const {
 } = config;
 const INITIAL_DURATION = '00:00:00.00';
 
-const path = require('path')
-import log from 'electron-log';
 import utils from '../utils';
-
 async function mkdir(directory){
     try {
         await utils.file.makeDirectory(directory);
@@ -28,6 +25,7 @@ async function mkdir(directory){
 const recorders = new Map();
 
 // initialize recorder
+const path = require('path');
 for(let i=1 ; i<=NUMBER_OF_RECORDERS ; i++){
     const {title, url} = sources[i];
     const channelName = `${CHANNEL_PREFIX}${i}`;
@@ -66,12 +64,23 @@ export const setScheduleStatus = createAction(SET_SCHEDULE_STATUS);
 export const setAutoStartSchedule = createAction(SET_AUTO_START_SCHEDULE);
 export const savePlayerHttpURL = createAction(SAVE_PLAYER_HTTP_URL);
 
-
+import log from 'electron-log';
 const createLogger = channelName => {
     return {
         info: msg => {log.info(`[${channelName}][ChannelControl]${msg}`)},
         error: msg => {log.error(`[${channelName}][ChannelControl]${msg}`)}
     }
+}
+
+const getOutputName = (hlsRecorder, hlsPlayer) => {
+    const {channelName, channelDirectory} = hlsRecorder;
+    const {source} = hlsPlayer;
+    const now = utils.date.getString(new Date());
+    const jobDescString = `${channelName}_${now}_${Date.now()}_${source.title}`;
+    const safeForWinFile = utils.file.toSafeFileNameWin(jobDescString);
+    const saveDirectory = path.join(channelDirectory, safeForWinFile);
+    const localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
+    return [saveDirectory, localm3u8];
 }
 
 export const startRecording = (channelNumber) => (dispatch, getState) => {
@@ -84,35 +93,30 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
     const {
         channelName,
         recorder,
-        channelDirectory
     } = hlsRecorder;
     const {
         source
     } = hlsPlayer;
+
     const channelLog = createLogger(channelName);
     channelLog.info(`start startRecroding() recorder.createTime:${recorder.createTime}`)
-    const now = utils.date.getString(new Date());
-    const jobDescString = `${channelName}_${now}_${Date.now()}_${source.title}`;
-    const saveDirectory = path.join(channelDirectory, jobDescString);
+
+    const [saveDirectory, localm3u8] = getOutputName(hlsRecorder, hlsPlayer);
     mkdir(saveDirectory);
-    const localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
+    
     recorder.src = source.url;
     recorder.target = localm3u8;
     recorder.localm3u8 = localm3u8;
+    
     dispatch(setRecorderInTransition({channelNumber, inTransition:true}))
     dispatch(setRecorderStatus({channelNumber, recorderStatus: 'starting'}))
+
     recorder.once('start', (cmd) => {
         channelLog.info(`recorder emitted start : ${cmd}`)
         setTimeout(() => {
             dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
             dispatch(savePlayerHttpURL({channelNumber, playerHttpURL: source.url}));
-            // setPreviousUrl(currentUrl);
             dispatch(setPlayerSource({channelNumber, url:localm3u8}))
-            // setCurrentUrl(localm3u8);
-            // setCurrentTitle(previousTitle => {
-            //     return previousTitle;
-            // });
-            // setPlaybackMode(true);
             dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
         },1000);
     })
@@ -125,23 +129,8 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
             const url = hlsRecorder.playerHttpURL;
             const title = source.title;
             const hlsDirectory = saveDirectory;
-            // const durationSafeString = duration.replace(/:/g,';'); 
-            // const mp4Name = path.join(saveDirectory, `${channelName}_${startTime}_[${durationSafeString}].mp4`);
             const clipId = `${channelName}_${startTime}_${endTime}`
             const hlsm3u8 = localm3u8;
-            // channelLog.info(channelNumber)
-            // channelLog.info(channelName)
-            // channelLog.info(startTime)
-            // channelLog.info(endTime)
-            // channelLog.info(startTimestamp)
-            // channelLog.info(endTimestamp)
-            // channelLog.info(url)
-            // channelLog.info(title)
-            // channelLog.info(hlsDirectory)
-            // // channelLog.info(mp4Name)
-            // channelLog.info(duration)
-            // channelLog.info(clipId)
-            // channelLog.info(hlsm3u8)
             const clipData = {
                 clipId,
                 channelNumber,
@@ -161,16 +150,11 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
 
             console.log('#######', clipData)
             //todo : save clipData in electron store
-
-            // insertClip({clip: clipData});
-            // initialRecorder(); 
             dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopped'}))
             dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
             dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
             dispatch(setPlayerSource({channelNumber, url:hlsRecorder.playerHttpURL}))
-            // const converted = await HLStoMP4(clipData);
-            // updateClip({clip: converted});                   
-            // if(converted === false) return;
+            //todo : remove old clips based on keey hours configuration parameter
             // rimraf(hlsDirectory, err => {
             //     if(err) {
             //         channelLog.error(err);

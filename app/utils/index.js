@@ -71,6 +71,10 @@ const file = {
             return false;
         }
     },
+    toSafeFileNameWin(filename, replacer='-'){
+        const regExp = new RegExp(/[?*><"|:\\/]/g);
+        return filename.replace(regExp, replacer)
+    },
     async delete(fname){
         return fs.promises.unlink(fname);
     },
