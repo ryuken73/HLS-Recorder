@@ -56,7 +56,8 @@ const Controls = props => {
         stopRecording=()=>{},
         refreshRecorder=()=>{},
         startSchedule=()=>{},
-        stopSchedule=()=>{}
+        stopSchedule=()=>{},
+        restartRecording=()=>{}
     } = props.HLSRecorderActions;
 
     const createLogger = channelName => {
@@ -75,7 +76,7 @@ const Controls = props => {
     },[])
 
     React.useEffect(() => {
-        channelLog.info(`Channel Control mounted!`)
+        channelLog.info(`recreate HLS Recorder`)
         const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
         const recorderOptions = {
             name: channelName,
@@ -99,13 +100,9 @@ const Controls = props => {
             refreshPlayer({channelNumber})
             // 2. resetRecorder => initialize recorder status(duration, status..)
             //    because recorder's error emits end event, resetRecorder is
-            //    done in recorder's end handler.
+            //    done in recorder's end handler in RecordHLS_ffmpeg.js.
             // 3. restartSchedule => if schedule was on
-
-            // const restartSchedule = scheduleFunction !== null;
-            // resetControl({restartSchedule}) 
-            // resetPlayer()
-            // setMountChannelControl(false)
+            restartRecording(channelNumber)
         })
         setRecorder({channelNumber, recorder});
         return () => {

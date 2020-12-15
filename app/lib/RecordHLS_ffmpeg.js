@@ -136,8 +136,11 @@ class RecoderHLS extends EventEmitter {
             // do not manually initialize
             // send error message to ChannelControl
             this.log.error(`ended abnormally: startime =${this.startTime}:duration=${this.duration}`);
+            this.initialize();            
+            this.emit('error', error);
+            this.emit('end', this.target, this.startTime, this.duration)
+            return
             // this.emit('end', this.target, this.startTime, this.duration)
-            // this.emit('error', error);
             // return;
         }
         this.log.info(`ended ${this.startTime}:${this.duration}`)

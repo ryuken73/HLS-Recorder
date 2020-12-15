@@ -99,6 +99,14 @@ export const refreshRecorder = ({channelNumber}) => (dispatch, getState) => {
     dispatch(setPlayerSource({channelNumber, url:hlsRecorder.playerHttpURL}))
 }
 
+export const restartRecording = channelNumber => (dispatch, getState) => {
+    const state = getState();
+    const {recorders} = state.hlsRecorders;
+    const hlsRecorder = recorders.get(channelNumber);
+    const {scheduleStatus} = hlsRecorder;
+    scheduleStatus === 'started' && dispatch(startRecording(channelNumber));
+}
+
 export const startRecording = (channelNumber) => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
         console.log(`#### in startRecording:`, channelNumber)
@@ -121,7 +129,8 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
         const [saveDirectory, localm3u8] = getOutputName(hlsRecorder, hlsPlayer);
         mkdir(saveDirectory);
         
-        recorder.src = source.url;
+        // recorder.src = source.url;
+        recorder.src = hlsRecorder.playerHttpURL;
         recorder.target = localm3u8;
         recorder.localm3u8 = localm3u8;
         
@@ -132,7 +141,7 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
             channelLog.info(`recorder emitted start : ${cmd}`)
             setTimeout(() => {
                 dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
-                dispatch(savePlayerHttpURL({channelNumber, playerHttpURL: source.url}));
+                // dispatch(savePlayerHttpURL({channelNumber, playerHttpURL: source.url}));
                 dispatch(setPlayerSource({channelNumber, url:localm3u8}))
                 dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
                 resolve(true);
@@ -213,7 +222,7 @@ export const stopRecording = (channelNumber) => (dispatch, getState) => {
             dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopping'}))
             dispatch(setRecorderInTransition({channelNumber, inTransition:true}));
             recorder.once('end', async clipName => {
-                channelLog.info(`recorder emitted end (listener2)`)
+                channelLog.info(`recorder normal stopRecording. emitted end (listener2)`)
                 resolve(true);
             })
             recorder.stop();
