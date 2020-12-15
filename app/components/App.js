@@ -2,6 +2,7 @@ import React from 'react';
 import Box from '@material-ui/core/Box';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import Header from './Header';
+import BottomMenu from './BottomMenu';
 // import Body from './Body';
 import BodyContainer from '../containers/BodyContainer';
 import MessageContainer from './MessagePanel';
@@ -28,6 +29,7 @@ function App(props) {
       <Box display="flex" flexDirection="column" height="1">
         <Header></Header>
         <BodyContainer></BodyContainer>
+        {/* <BottomMenu></BottomMenu> */}
         <MessageContainer></MessageContainer>
       </Box>
     </ThemeProvider>
