@@ -1,5 +1,5 @@
 import {createAction, handleActions} from 'redux-actions';
-import {setPlayerSource} from './hlsPlayers';
+import {setPlayerSource, refreshPlayer} from './hlsPlayers';
 // import {logInfo, logError, logFail} from './messagePanel';
 const cctvFromConfig = require('../lib/getCCTVList');
 const getConfig = require('../lib/getConfig');
@@ -78,6 +78,61 @@ const createLogger = channelName => {
     }
 }
 
+import HLSRecorder from '../lib/RecordHLS_ffmpeg';
+import {getAbsolutePath} from '../lib/electronUtil';
+
+const getChanneler = (state, channelNumber) => {
+    const {recorders} = state.hlsRecorders;
+    const {players} = state.hlsPlayers;
+    const hlsRecorder = recorders.get(channelNumber);
+    const hlsPlayer = players.get(channelNumber);
+    const channelLog = createLogger(hlsRecorder.channelName)
+    return [hlsRecorder, hlsPlayer, channelLog]
+}
+
+export const createRecorder = channelNumber => (dispatch, getState) => {
+    const state = getState();
+    const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
+    const {
+        channelName,
+        channelDirectory,
+    } = hlsRecorder;
+    const {
+        source
+    } = hlsPlayer;
+
+    channelLog.info(`create HLS Recorder`)
+
+    const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
+    const recorderOptions = {
+        name: channelName,
+        src: '', 
+        channelDirectory,
+        enablePlayback: true, 
+        localm3u8:'',
+        ffmpegBinary: ffmpegPath,
+        renameDoneFile: false,
+    }
+    const recorder = HLSRecorder.createHLSRecoder(recorderOptions);
+    recorder.on('progress', progress => {
+        dispatch(setDuration({channelNumber, duration:progress.duration}));
+    })
+    recorder.on('error', (error) => {
+        channelLog.error(`error occurred`);
+        log.error(error);
+        // after recorder emits error
+        // 1. resetPlayer => change mode from playback to source streaming
+        dispatch(refreshPlayer({channelNumber}));
+        // 2. resetRecorder => initialize recorder status(duration, status..)
+        //    because recorder's error emits end event, resetRecorder is
+        //    done in recorder's end handler in RecordHLS_ffmpeg.js.
+        // 3. restartSchedule => if schedule was on
+        dispatch(restartRecording(channelNumber));
+    })
+    dispatch(setRecorder({channelNumber, recorder}))
+}
+
+
 const getOutputName = (hlsRecorder, hlsPlayer) => {
     const {channelName, channelDirectory} = hlsRecorder;
     const {source} = hlsPlayer;
@@ -101,8 +156,7 @@ export const refreshRecorder = ({channelNumber}) => (dispatch, getState) => {
 
 export const restartRecording = channelNumber => (dispatch, getState) => {
     const state = getState();
-    const {recorders} = state.hlsRecorders;
-    const hlsRecorder = recorders.get(channelNumber);
+    const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
     const {scheduleStatus} = hlsRecorder;
     scheduleStatus === 'started' && dispatch(startRecording(channelNumber));
 }
@@ -111,10 +165,7 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
         console.log(`#### in startRecording:`, channelNumber)
         const state = getState();
-        const {recorders} = state.hlsRecorders;
-        const {players} = state.hlsPlayers;
-        const hlsRecorder = recorders.get(channelNumber);
-        const hlsPlayer = players.get(channelNumber);
+        const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
         const {
             channelName,
             recorder,
@@ -123,7 +174,6 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
             source
         } = hlsPlayer;
     
-        const channelLog = createLogger(channelName);
         channelLog.info(`start startRecroding() recorder.createTime:${recorder.createTime}`)
     
         const [saveDirectory, localm3u8] = getOutputName(hlsRecorder, hlsPlayer);
@@ -203,10 +253,8 @@ export const stopRecording = (channelNumber) => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
         try {
             const state = getState();
-            const {recorders} = state.hlsRecorders;
-            const {players} = state.hlsPlayers;
-            const hlsRecorder = recorders.get(channelNumber);
-            const hlsPlayer = players.get(channelNumber);
+            const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
+
             const {
                 channelName,
                 recorder,
@@ -216,7 +264,7 @@ export const stopRecording = (channelNumber) => (dispatch, getState) => {
             const {
                 source
             } = hlsPlayer;
-            const channelLog = createLogger(channelName);
+
             channelLog.info(`start stopRecording(): inTransition: ${inTransition}, recorder.createTime:${recorder.createTime}`)
             
             dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopping'}))
@@ -240,10 +288,9 @@ export const startSchedule = channelNumber => async (dispatch, getState) => {
     // setAutoStartSchedule(false);
     dispatch(setScheduleStatus({channelNumber, scheduleStatus:'starting'}));
     const state = getState();
-    const {recorders} = state.hlsRecorders;
-    const hlsRecorder = recorders.get(channelNumber);
+    const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
+
     const {channelName, recorder, scheduleInterval} = hlsRecorder;
-    const channelLog = createLogger(channelName);
     channelLog.info(`### start schedule : recorder.createTime=${recorder.createTime}`)
 
     if(recorder.isBusy) await stopRecording(channelNumber);
@@ -262,10 +309,9 @@ export const startSchedule = channelNumber => async (dispatch, getState) => {
 
 export const stopSchedule = channelNumber => async (dispatch, getState) => {
     const state = getState();
-    const {recorders} = state.hlsRecorders;
-    const hlsRecorder = recorders.get(channelNumber);
+    const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
+
     const {channelName, recorder, scheduleFunction} = hlsRecorder;
-    const channelLog = createLogger(channelName);
     channelLog.info(`### stop schedule : recorder.createTime=${recorder.createTime}`)
 
     dispatch(setScheduleStatus({channelNumber, scheduleStatus:'stopping'}))

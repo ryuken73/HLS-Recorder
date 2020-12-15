@@ -57,7 +57,8 @@ const Controls = props => {
         refreshRecorder=()=>{},
         startSchedule=()=>{},
         stopSchedule=()=>{},
-        restartRecording=()=>{}
+        restartRecording=()=>{},
+        createRecorder=()=>{}
     } = props.HLSRecorderActions;
 
     const createLogger = channelName => {
@@ -76,42 +77,7 @@ const Controls = props => {
     },[])
 
     React.useEffect(() => {
-        channelLog.info(`recreate HLS Recorder`)
-        const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
-        const recorderOptions = {
-            name: channelName,
-            src: url, 
-            // target: path.join(saveDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`), 
-            channelDirectory,
-            enablePlayback: true, 
-            localm3u8,
-            ffmpegBinary: ffmpegPath,
-            renameDoneFile: false,
-        }
-        const recorder = HLSRecorder.createHLSRecoder(recorderOptions);
-        recorder.on('progress', progress => {
-            setDuration({channelNumber, duration:progress.duration});
-        })
-        recorder.on('error', (error) => {
-            channelLog.error(`error occurred`);
-            log.error(error);
-            // after recorder emits error
-            // 1. resetPlayer => change mode from playback to source streaming
-            refreshPlayer({channelNumber})
-            // 2. resetRecorder => initialize recorder status(duration, status..)
-            //    because recorder's error emits end event, resetRecorder is
-            //    done in recorder's end handler in RecordHLS_ffmpeg.js.
-            // 3. restartSchedule => if schedule was on
-            restartRecording(channelNumber)
-        })
-        setRecorder({channelNumber, recorder});
-        return () => {
-            channelLog.info(`Channel Control dismounted!`);
-            recorder.destroy();
-            // setMountChannelControl(prevValue => {
-            //     return true;
-            // })
-        }
+        createRecorder(channelNumber);
     },[])
 
     const refreshChannelPlayer = (event) => {
