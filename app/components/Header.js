@@ -28,13 +28,15 @@ const Header = () => {
                 // width="95%"
             >CCTV Recorder
             </Box>
-            <Box width="100px">
-                <IconButton aria-label="configuration">
-                    <SettingsIcon 
-                        fontSize="large"
-                        style={{color:"grey"}}
-                    ></SettingsIcon>
-                </IconButton>
+            <Box display="flex" width="100px">
+                <Box ml="auto">
+                    <IconButton aria-label="configuration">
+                        <SettingsIcon 
+                            fontSize="large"
+                            style={{color:"grey"}}
+                        ></SettingsIcon>
+                    </IconButton>
+                </Box>
             </Box>
         </Box>  
 
