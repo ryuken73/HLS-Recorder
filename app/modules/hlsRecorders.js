@@ -98,9 +98,6 @@ export const createRecorder = (channelNumber, createdByError=false) => (dispatch
         channelDirectory,
         scheduleStatus
     } = hlsRecorder;
-    const {
-        source
-    } = hlsPlayer;
 
     channelLog.info(`create HLS Recorder`)
 
@@ -170,7 +167,7 @@ export const refreshRecorder = ({channelNumber}) => (dispatch, getState) => {
 
 export const restartRecording = channelNumber => (dispatch, getState) => {
     const state = getState();
-    const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
+    const [hlsRecorder] = getChanneler(state, channelNumber);
     const {scheduleStatus} = hlsRecorder;
     scheduleStatus === 'started' && dispatch(startRecording(channelNumber));
 }
@@ -193,7 +190,6 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
         const [saveDirectory, localm3u8] = getOutputName(hlsRecorder, hlsPlayer);
         mkdir(saveDirectory);
         
-        // recorder.src = source.url;
         recorder.src = hlsRecorder.playerHttpURL;
         recorder.target = localm3u8;
         recorder.localm3u8 = localm3u8;
@@ -267,14 +263,9 @@ export const stopRecording = (channelNumber) => (dispatch, getState) => {
             const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
 
             const {
-                channelName,
                 recorder,
-                channelDirectory,
                 inTransition
             } = hlsRecorder;
-            const {
-                source
-            } = hlsPlayer;
 
             channelLog.info(`start stopRecording(): inTransition: ${inTransition}, recorder.createTime:${recorder.createTime}`)
             
@@ -286,8 +277,7 @@ export const stopRecording = (channelNumber) => (dispatch, getState) => {
             })
             recorder.stop();
         } catch (err) {
-            // channelLog.error(`error in stopRecording`)
-            console.log(err)
+            channelLog.error(`error in stopRecording`);
             log.error(err);
             dispatch(refreshRecorder({channelNumber}));
             resolve(true)
@@ -296,12 +286,11 @@ export const stopRecording = (channelNumber) => (dispatch, getState) => {
 }
 
 export const startSchedule = channelNumber => async (dispatch, getState) => {
-    // setAutoStartSchedule(false);
     dispatch(setScheduleStatus({channelNumber, scheduleStatus:'starting'}));
     const state = getState();
     const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
 
-    const {channelName, recorder, scheduleInterval} = hlsRecorder;
+    const {recorder, scheduleInterval} = hlsRecorder;
     channelLog.info(`### start schedule : recorder.createTime=${recorder.createTime}`)
 
     if(recorder.isBusy) await stopRecording(channelNumber);
@@ -322,7 +311,7 @@ export const stopSchedule = channelNumber => async (dispatch, getState) => {
     const state = getState();
     const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
 
-    const {channelName, recorder, scheduleFunction} = hlsRecorder;
+    const {recorder, scheduleFunction} = hlsRecorder;
     channelLog.info(`### stop schedule : recorder.createTime=${recorder.createTime}`)
 
     dispatch(setScheduleStatus({channelNumber, scheduleStatus:'stopping'}))
