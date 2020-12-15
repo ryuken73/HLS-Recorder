@@ -33,10 +33,12 @@ const Controls = props => {
         scheduleFunction=null,
         autoStartSchedule=true,
         localm3u8=null,
-        recorderStatus='stopped'
+        recorderStatus='stopped',
+        scheduleStatus='stopped'
     } = props
 
-    const iconColor = bgColors[recorderStatus];
+    const recorderIconColor = bgColors[recorderStatus];
+    const scheduleIconColor = bgColors[scheduleStatus];
     
     const {
         refreshPlayer=()=>{},
@@ -51,7 +53,10 @@ const Controls = props => {
         setScheduleStatus=()=>{},
         setAutoStartSchedule=()=>{},
         startRecording=()=>{},
-        stopRecording=()=>{}
+        stopRecording=()=>{},
+        refreshRecorder=()=>{},
+        startSchedule=()=>{},
+        stopSchedule=()=>{}
     } = props.HLSRecorderActions;
 
     const createLogger = channelName => {
@@ -91,9 +96,12 @@ const Controls = props => {
             log.error(error);
             // after recorder emits error
             // 1. resetPlayer => change mode from playback to source streaming
+            refreshPlayer({channelNumber})
             // 2. resetRecorder => initialize recorder status(duration, status..)
+            //    because recorder's error emits end event, resetRecorder is
+            //    done in recorder's end handler.
             // 3. restartSchedule => if schedule was on
-            
+
             // const restartSchedule = scheduleFunction !== null;
             // resetControl({restartSchedule}) 
             // resetPlayer()
@@ -122,21 +130,33 @@ const Controls = props => {
     const stopRecordChannel = event => {
         stopRecording(channelNumber);
     }
+
+    const startScheduleChannel = event => {
+        startSchedule(channelNumber);
+    }
+
+    const stopScheduleChannel = event => {
+        stopSchedule(channelNumber);
+    }
     
     return (
         <Box display="flex" flexDirection="column" mr="3px">
             <SmallPaddingIconButton padding="1px" size="small" iconcolor="black">
                 <RefreshIcon color="primary" fontSize={"small"} onClick={refreshChannelPlayer}></RefreshIcon>
             </SmallPaddingIconButton>
-            <SmallPaddingIconButton disabled={inTransition} padding="1px" size="small" iconcolor={iconColor}>
+            <SmallPaddingIconButton disabled={inTransition} padding="1px" size="small" iconcolor={recorderIconColor}>
                 <FiberManualRecordIcon 
-                    color={recorderStatus==="started" ? "secondary" : "primary"}
+                    // color={recorderStatus==="started" ? "secondary" : "primary"}
                     fontSize={"small"} 
                     onClick={recorderStatus==="started" ? stopRecordChannel : startRecordChannel}
                 ></FiberManualRecordIcon>
             </SmallPaddingIconButton>
-            <SmallPaddingIconButton disabled={inTransition} padding="1px" size="small" iconcolor="black">
-                <AccessAlarmIcon color="primary" fontSize={"small"} onClick={refreshPlayer}></AccessAlarmIcon>
+            <SmallPaddingIconButton disabled={inTransition} padding="1px" size="small" iconcolor={scheduleIconColor}>
+                <AccessAlarmIcon 
+                    // color="primary" 
+                    fontSize={"small"} 
+                    onClick={scheduleStatus==="started" ? stopScheduleChannel : startScheduleChannel}
+                ></AccessAlarmIcon>
             </SmallPaddingIconButton>
         </Box>
     );

@@ -22,6 +22,7 @@ function mapStateToProps(state, ownProps) {
     recorderStatus: hlsRecorder.recorderStatus,
     inTransition: hlsRecorder.inTransition,
     scheduleFunction: hlsRecorder.scheduleFunction,
+    scheduleStatus: hlsRecorder.scheduleStatus,
     autoStartSchedule: hlsRecorder.autoStartSchedule,
     localm3u8: hlsRecorder.localm3u8,
     source: hlsPlayer.source

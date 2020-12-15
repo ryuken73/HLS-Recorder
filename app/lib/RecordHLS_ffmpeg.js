@@ -129,40 +129,20 @@ class RecoderHLS extends EventEmitter {
         })
     };
 
-    onWriteStreamClosed = (error) => {
-        this.log.info(`write stream closed : ${this.target}`);
+    onFFMPEGEnd = (error) => {
+        this.log.info(`ffmpeg ends! : ${this.target}`);
         if(error){
             // this.initialize();
             // do not manually initialize
             // send error message to ChannelControl
             this.log.error(`ended abnormally: startime =${this.startTime}:duration=${this.duration}`);
-            this.emit('end', this.target, this.startTime, this.duration)
-            this.emit('error', error);
-            return;
+            // this.emit('end', this.target, this.startTime, this.duration)
+            // this.emit('error', error);
+            // return;
         }
-        if(this._renameDoneFile) {
-            const baseDir = path.dirname(this.target);
-            const startTime = utils.date.getString(new Date(this.startTime),{});
-            const duration = this.duration.replace(/:/g,';');     
-            const newFname = `${this.name}_${startTime}_[${duration}].mp4`;
-            const newFullPath = path.join(baseDir, newFname);
-            fs.rename(this.target, newFullPath, err => {
-                if(err) {
-                    this.emit('error', err);
-                    this.initialize();
-                    return;
-                    // throw new Error(err)
-                }
-                this.log.info(`change filename : ${this.target} to ${newFullPath}`)
-                this.emit('end', this.target, this.startTime, this.duration)
-                this.initialize();
-            });
-        } else {
-            this.log.info(`ended ${this.startTime}:${this.duration}`)
-            this.emit('end', this.target, this.startTime, this.duration)
-            this.initialize();
-        }
-
+        this.log.info(`ended ${this.startTime}:${this.duration}`)
+        this.emit('end', this.target, this.startTime, this.duration)
+        this.initialize();
     }
     onReadStreamClosed = () => {
         this.log.info(`read stream closed : ${this.src}`);
@@ -206,12 +186,11 @@ class RecoderHLS extends EventEmitter {
         })
         .on('error', error => {
             this.log.error(`ffmpeg error: ${error.message}`) ;
-            this.onWriteStreamClosed(error);
+            this.onFFMPEGEnd(error);
         })
         .on('end', (stdout, stderr) => {
-            this.log.info(`ffmpeg end!`)
             // this.log.info(`[ffmpeg stdout][${this.name}]`,stdout)
-            this.onWriteStreamClosed()
+            this.onFFMPEGEnd()
         })
         .run();
     }

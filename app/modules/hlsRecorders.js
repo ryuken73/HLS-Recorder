@@ -11,7 +11,9 @@ const {
     CHANNEL_PREFIX,
     BASE_DIRECTORY
 } = config;
+
 const INITIAL_DURATION = '00:00:00.00';
+const INITIAL_INTERVAL = 60000;
 
 import utils from '../utils';
 async function mkdir(directory){
@@ -39,7 +41,9 @@ for(let i=1 ; i<=NUMBER_OF_RECORDERS ; i++){
         inTransition: false,
         scheduleFunction: null,
         localm3u8: null,
-        recorderStatus: 'stopped'
+        recorderStatus: 'stopped',
+        scheduleStatus: 'stopped',
+        scheduleInterval: INITIAL_INTERVAL
     }
     recorders.set(i, hlsRecorder);
 }
@@ -50,6 +54,7 @@ const SET_RECORDER = 'hlsRecorders/SET_RECORDER';
 const SET_RECORDER_STATUS = 'hlsRecorders/SET_RECORDER_STATUS';
 const SET_RECORDER_INTRANSITION = 'hlsRecorders/SET_RECORDER_INTRANSITION';
 const SET_SCHEDULE_FUNCTION = 'hlsRecorders/SET_SCHEDULE_FUNCTION';
+const SET_SCHEDULE_INTERVAL = 'hlsRecorders/SET_SCHEDULE_INTERVAL';
 const SET_SCHEDULE_STATUS = 'hlsRecorders/SET_SCHEDULE_STATUS';
 const SET_AUTO_START_SCHEDULE = 'hlsRecorders/SET_AUTO_START_SCHEDULE';
 const SAVE_PLAYER_HTTP_URL = 'hlsRecorders/SAVE_PLAYER_HTTP_URL';
@@ -60,6 +65,7 @@ export const setRecorder = createAction(SET_RECORDER);
 export const setRecorderStatus = createAction(SET_RECORDER_STATUS);
 export const setRecorderInTransition = createAction(SET_RECORDER_INTRANSITION);
 export const setScheduleFunction = createAction(SET_SCHEDULE_FUNCTION);
+export const setScheduleInterval = createAction(SET_SCHEDULE_INTERVAL);
 export const setScheduleStatus = createAction(SET_SCHEDULE_STATUS);
 export const setAutoStartSchedule = createAction(SET_AUTO_START_SCHEDULE);
 export const savePlayerHttpURL = createAction(SAVE_PLAYER_HTTP_URL);
@@ -94,94 +100,93 @@ export const refreshRecorder = ({channelNumber}) => (dispatch, getState) => {
 }
 
 export const startRecording = (channelNumber) => (dispatch, getState) => {
-    console.log(`#### in startRecording:`, channelNumber)
-    const state = getState();
-    const {recorders} = state.hlsRecorders;
-    const {players} = state.hlsPlayers;
-    const hlsRecorder = recorders.get(channelNumber);
-    const hlsPlayer = players.get(channelNumber);
-    const {
-        channelName,
-        recorder,
-    } = hlsRecorder;
-    const {
-        source
-    } = hlsPlayer;
-
-    const channelLog = createLogger(channelName);
-    channelLog.info(`start startRecroding() recorder.createTime:${recorder.createTime}`)
-
-    const [saveDirectory, localm3u8] = getOutputName(hlsRecorder, hlsPlayer);
-    mkdir(saveDirectory);
+    return new Promise((resolve, reject) => {
+        console.log(`#### in startRecording:`, channelNumber)
+        const state = getState();
+        const {recorders} = state.hlsRecorders;
+        const {players} = state.hlsPlayers;
+        const hlsRecorder = recorders.get(channelNumber);
+        const hlsPlayer = players.get(channelNumber);
+        const {
+            channelName,
+            recorder,
+        } = hlsRecorder;
+        const {
+            source
+        } = hlsPlayer;
     
-    recorder.src = source.url;
-    recorder.target = localm3u8;
-    recorder.localm3u8 = localm3u8;
+        const channelLog = createLogger(channelName);
+        channelLog.info(`start startRecroding() recorder.createTime:${recorder.createTime}`)
     
-    dispatch(setRecorderInTransition({channelNumber, inTransition:true}))
-    dispatch(setRecorderStatus({channelNumber, recorderStatus: 'starting'}))
-
-    recorder.once('start', (cmd) => {
-        channelLog.info(`recorder emitted start : ${cmd}`)
-        setTimeout(() => {
-            dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
-            dispatch(savePlayerHttpURL({channelNumber, playerHttpURL: source.url}));
-            dispatch(setPlayerSource({channelNumber, url:localm3u8}))
-            dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
-        },1000);
-    })
-    recorder.once('end', async (clipName, startTimestamp, duration) => {
-        try {
-            channelLog.info(`recorder emitted end (listener1): ${clipName}`)
-            const endTimestamp = Date.now();
-            const startTime = utils.date.getString(new Date(startTimestamp),{})
-            const endTime = utils.date.getString(new Date(endTimestamp),{})
-            const url = hlsRecorder.playerHttpURL;
-            const title = source.title;
-            const hlsDirectory = saveDirectory;
-            const clipId = `${channelName}_${startTime}_${endTime}`
-            const hlsm3u8 = localm3u8;
-            const clipData = {
-                clipId,
-                channelNumber,
-                channelName,
-                startTime,
-                endTime,
-                startTimestamp,
-                endTimestamp,
-                url,
-                title,
-                hlsDirectory,
-                duration,
-                hlsm3u8,
-                saveDirectory,
-                mp4Converted:false
+        const [saveDirectory, localm3u8] = getOutputName(hlsRecorder, hlsPlayer);
+        mkdir(saveDirectory);
+        
+        recorder.src = source.url;
+        recorder.target = localm3u8;
+        recorder.localm3u8 = localm3u8;
+        
+        dispatch(setRecorderInTransition({channelNumber, inTransition:true}))
+        dispatch(setRecorderStatus({channelNumber, recorderStatus: 'starting'}))
+    
+        recorder.once('start', (cmd) => {
+            channelLog.info(`recorder emitted start : ${cmd}`)
+            setTimeout(() => {
+                dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
+                dispatch(savePlayerHttpURL({channelNumber, playerHttpURL: source.url}));
+                dispatch(setPlayerSource({channelNumber, url:localm3u8}))
+                dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
+                resolve(true);
+            },1000);
+        })
+        recorder.once('end', async (clipName, startTimestamp, duration) => {
+            try {
+                channelLog.info(`recorder emitted end (listener1): ${clipName}`)
+                const endTimestamp = Date.now();
+                const startTime = utils.date.getString(new Date(startTimestamp),{})
+                const endTime = utils.date.getString(new Date(endTimestamp),{})
+                const url = hlsRecorder.playerHttpURL;
+                const title = source.title;
+                const hlsDirectory = saveDirectory;
+                const clipId = `${channelName}_${startTime}_${endTime}`
+                const hlsm3u8 = localm3u8;
+                const clipData = {
+                    clipId,
+                    channelNumber,
+                    channelName,
+                    startTime,
+                    endTime,
+                    startTimestamp,
+                    endTimestamp,
+                    url,
+                    title,
+                    hlsDirectory,
+                    duration,
+                    hlsm3u8,
+                    saveDirectory,
+                    mp4Converted:false
+                }
+    
+                console.log('#######', clipData)
+                //todo : save clipData in electron store
+                dispatch(refreshRecorder({channelNumber}));
+                //todo : remove old clips based on keey hours configuration parameter
+                // rimraf(hlsDirectory, err => {
+                //     if(err) {
+                //         channelLog.error(err);
+                //         channelLog.error(`delete working directory failed: ${hlsDirectory}`);
+                //         return
+                //     } 
+                //     channelLog.info(`delete working directory success: ${hlsDirectory}`);
+                // });
+            } catch (error) {
+                if(error){
+                    channelLog.error(error)
+                }
             }
-
-            console.log('#######', clipData)
-            //todo : save clipData in electron store
-            dispatch(refreshRecorder({channelNumber}));
-            // dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopped'}))
-            // dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
-            // dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
-            // dispatch(setPlayerSource({channelNumber, url:hlsRecorder.playerHttpURL}))
-            //todo : remove old clips based on keey hours configuration parameter
-            // rimraf(hlsDirectory, err => {
-            //     if(err) {
-            //         channelLog.error(err);
-            //         channelLog.error(`delete working directory failed: ${hlsDirectory}`);
-            //         return
-            //     } 
-            //     channelLog.info(`delete working directory success: ${hlsDirectory}`);
-            // });
-        } catch (error) {
-            if(error){
-                channelLog.error(error)
-            }
-        }
+        })
+    
+        recorder.start();
     })
-
-    recorder.start();
 }
 
 export const stopRecording = (channelNumber) => (dispatch, getState) => {
@@ -217,13 +222,52 @@ export const stopRecording = (channelNumber) => (dispatch, getState) => {
             console.log(err)
             log.error(err);
             dispatch(refreshRecorder({channelNumber}));
-            // dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopped'}))
-            // dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
-            // dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
-            // dispatch(setPlayerSource({channelNumber, url:hlsRecorder.playerHttpURL}))
             resolve(true)
         }
     })
+}
+
+export const startSchedule = channelNumber => async (dispatch, getState) => {
+    // setAutoStartSchedule(false);
+    dispatch(setScheduleStatus({channelNumber, scheduleStatus:'starting'}));
+    const state = getState();
+    const {recorders} = state.hlsRecorders;
+    const hlsRecorder = recorders.get(channelNumber);
+    const {channelName, recorder, scheduleInterval} = hlsRecorder;
+    const channelLog = createLogger(channelName);
+    channelLog.info(`### start schedule : recorder.createTime=${recorder.createTime}`)
+
+    if(recorder.isBusy) await stopRecording(channelNumber);
+    dispatch(startRecording(channelNumber))
+    .then((result) => {
+        dispatch(setScheduleStatus({channelNumber, scheduleStatus:'started'}));
+    })
+    const scheduleFunction = setInterval( async () => {
+        dispatch(stopRecording(channelNumber))
+        .then(result => {
+            return dispatch(startRecording(channelNumber))
+        })
+    }, scheduleInterval);
+    dispatch(setScheduleFunction({channelNumber, scheduleFunction}))
+}
+
+export const stopSchedule = channelNumber => async (dispatch, getState) => {
+    const state = getState();
+    const {recorders} = state.hlsRecorders;
+    const hlsRecorder = recorders.get(channelNumber);
+    const {channelName, recorder, scheduleFunction} = hlsRecorder;
+    const channelLog = createLogger(channelName);
+    channelLog.info(`### stop schedule : recorder.createTime=${recorder.createTime}`)
+
+    dispatch(setScheduleStatus({channelNumber, scheduleStatus:'stopping'}))
+    clearInterval(scheduleFunction);
+    dispatch(setScheduleFunction({channelNumber, scheduleFunction:null}));
+    if(recorder.isBusy) {
+        dispatch(await stopRecording(channelNumber))
+        .then(result => {
+            dispatch(setScheduleStatus({channelNumber, scheduleStatus:'stopped'}));
+        })
+    }
 }
 
 const initialState = {
@@ -281,6 +325,17 @@ export default handleActions({
         const {channelNumber, scheduleFunction} = action.payload;
         const channelRecorder = {...state.recorders.get(channelNumber)};
         channelRecorder.scheduleFunction = scheduleFunction;
+        const recorders = new Map(state.recorders);
+        recorders.set(channelNumber, channelRecorder);
+        return {
+            recorders
+        }
+    },
+    [SET_SCHEDULE_INTERVAL]: (state, action) => {
+        // console.log('%%%%%%%%%%%%%%%%', action.payload);
+        const {channelNumber, scheduleInterval} = action.payload;
+        const channelRecorder = {...state.recorders.get(channelNumber)};
+        channelRecorder.scheduleInterval = scheduleInterval;
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, channelRecorder);
         return {
