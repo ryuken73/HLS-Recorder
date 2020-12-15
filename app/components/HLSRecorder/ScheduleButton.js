@@ -10,14 +10,22 @@ const scheduleButtonString = {
 
 function ScheduleButton(props) {
     const {
+        channelNumber=1,
         inTransition=false, 
         scheduleStatus="stopped", 
-        scheduledFunction=null
     } = props;
     const {
         startSchedule=()=>{}, 
         stopSchedule=()=>{}
     } = props;
+
+    const startScheduleChannel = () => {
+        startSchedule(channelNumber);
+    }
+    const stopScheduleChannel = () => {
+        stopSchedule(channelNumber);
+    }
+
     return (
         <SmallButton 
             size="small" 
@@ -30,7 +38,7 @@ function ScheduleButton(props) {
             bgcolor={scheduleStatus === 'started' ? 'maroon' : '#191d2e'}
             minwidth={"130px"}
             disabled={ inTransition || (scheduleStatus==='starting'||scheduleStatus==='stopping')}
-            onClick={ scheduledFunction ===  null ? startSchedule : stopSchedule }
+            onClick={ scheduleStatus ===  'stopped' ? startScheduleChannel : stopScheduleChannel }
         >{scheduleButtonString[scheduleStatus]}</SmallButton>
     )
 }

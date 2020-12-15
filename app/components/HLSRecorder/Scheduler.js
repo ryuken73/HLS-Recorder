@@ -14,8 +14,8 @@ const intervals = [
 
 function IntervalSelection(props) {
     const {
-        channelName="channelX", 
-        currentInterval=3600000, 
+        channelNumber=1,
+        scheduleInterval=3600000, 
         recorderStatus="stopped"
     } = props;
     const {
@@ -25,10 +25,10 @@ function IntervalSelection(props) {
     } = props;
     const {
         startSchedule=()=>{}, 
-        stopSchedule=()=>{}
-    } = props;
-    const {onChange = () => {}} = props;
-    const {autoStartSchedule=false} = props;
+        stopSchedule=()=>{},
+        setScheduleInterval=()=>{}
+    } = props.HLSRecorderActions;
+
     const inRecording = recorderStatus !== 'stopped';
     const selectItems = intervals.map(interval => {
         return {
@@ -37,20 +37,20 @@ function IntervalSelection(props) {
         }
     })
 
-    React.useEffect(() => {
-        autoStartSchedule && log.info(`[${channelName}]auto start schedule!!!`);
-        autoStartSchedule && startSchedule();
-    },[autoStartSchedule])
+    const onChangeSelect = (event) => {
+        setScheduleInterval({channelNumber, scheduleInterval:event.target.value})
+    }
 
     const ButtonElement = () => {
         return <ScheduleButton
-                inTransition={inTransition}
-                scheduleStatus={scheduleStatus} 
-                scheduledFunction={scheduledFunction}
-                startSchedule={startSchedule}
-                stopSchedule={stopSchedule}
-            >
-            </ScheduleButton>
+                    channelNumber={channelNumber}
+                    inTransition={inTransition}
+                    scheduleStatus={scheduleStatus} 
+                    scheduledFunction={scheduledFunction}
+                    startSchedule={startSchedule}
+                    stopSchedule={stopSchedule}
+                >
+                </ScheduleButton>
     } 
 
     return (
@@ -59,10 +59,10 @@ function IntervalSelection(props) {
             // titlewidth={"115px"}
             FrontButton={ButtonElement}
             // width="100%"
-            currentItem={currentInterval}
+            currentItem={scheduleInterval}
             multiple={false}
             menuItems={selectItems}
-            onChangeSelect={onChange('interval')} 
+            onChangeSelect={onChangeSelect} 
             smallComponent={true}
             bgcolor={'#232738'}
             selectColor={"#2d2f3b"}

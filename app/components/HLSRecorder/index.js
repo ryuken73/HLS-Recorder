@@ -6,8 +6,9 @@ import DurationContainer from '../../containers/DurationContainer';
 import SourceSelectorContainer from '../../containers/SourceSelectorContainer';
 import HLSPlayerContainer from '../../containers/HLSPlayerContainer';
 import ControlsContainer from '../../containers/ControlsContainer';
+import SchedulerContainer from '../../containers/SchedulerContainer';
 // import Controls from './Controls';
-import Scheduler from './Scheduler';
+// import Scheduler from './Scheduler';
 
 const HLSRecorder = (props) => {
     const {
@@ -45,9 +46,9 @@ const HLSRecorder = (props) => {
                     ></HLSPlayerContainer>
                 </Box>
             </Box>
-            <Scheduler
+            <SchedulerContainer
                 channelNumber={channelNumber}
-            ></Scheduler>
+            ></SchedulerContainer>
         </SectionWithFullHeight>
     );
 };
