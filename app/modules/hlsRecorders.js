@@ -83,6 +83,16 @@ const getOutputName = (hlsRecorder, hlsPlayer) => {
     return [saveDirectory, localm3u8];
 }
 
+export const refreshRecorder = ({channelNumber}) => (dispatch, getState) => {
+    const state = getState();
+    const {recorders} = state.hlsRecorders;
+    const hlsRecorder = recorders.get(channelNumber);
+    dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopped'}))
+    dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
+    dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
+    dispatch(setPlayerSource({channelNumber, url:hlsRecorder.playerHttpURL}))
+}
+
 export const startRecording = (channelNumber) => (dispatch, getState) => {
     console.log(`#### in startRecording:`, channelNumber)
     const state = getState();
@@ -150,10 +160,11 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
 
             console.log('#######', clipData)
             //todo : save clipData in electron store
-            dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopped'}))
-            dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
-            dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
-            dispatch(setPlayerSource({channelNumber, url:hlsRecorder.playerHttpURL}))
+            dispatch(refreshRecorder({channelNumber}));
+            // dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopped'}))
+            // dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
+            // dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
+            // dispatch(setPlayerSource({channelNumber, url:hlsRecorder.playerHttpURL}))
             //todo : remove old clips based on keey hours configuration parameter
             // rimraf(hlsDirectory, err => {
             //     if(err) {
@@ -205,10 +216,11 @@ export const stopRecording = (channelNumber) => (dispatch, getState) => {
             // channelLog.error(`error in stopRecording`)
             console.log(err)
             log.error(err);
-            dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopped'}))
-            dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
-            dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
-            dispatch(setPlayerSource({channelNumber, url:hlsRecorder.playerHttpURL}))
+            dispatch(refreshRecorder({channelNumber}));
+            // dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopped'}))
+            // dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
+            // dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
+            // dispatch(setPlayerSource({channelNumber, url:hlsRecorder.playerHttpURL}))
             resolve(true)
         }
     })

@@ -89,6 +89,11 @@ const Controls = props => {
         recorder.on('error', (error) => {
             channelLog.error(`error occurred`);
             log.error(error);
+            // after recorder emits error
+            // 1. resetPlayer => change mode from playback to source streaming
+            // 2. resetRecorder => initialize recorder status(duration, status..)
+            // 3. restartSchedule => if schedule was on
+            
             // const restartSchedule = scheduleFunction !== null;
             // resetControl({restartSchedule}) 
             // resetPlayer()
