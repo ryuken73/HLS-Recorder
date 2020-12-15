@@ -90,12 +90,13 @@ const getChanneler = (state, channelNumber) => {
     return [hlsRecorder, hlsPlayer, channelLog]
 }
 
-export const createRecorder = channelNumber => (dispatch, getState) => {
+export const createRecorder = (channelNumber, createdByError=false) => (dispatch, getState) => {
     const state = getState();
     const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
     const {
         channelName,
         channelDirectory,
+        scheduleStatus
     } = hlsRecorder;
     const {
         source
@@ -114,22 +115,35 @@ export const createRecorder = channelNumber => (dispatch, getState) => {
         renameDoneFile: false,
     }
     const recorder = HLSRecorder.createHLSRecoder(recorderOptions);
-    recorder.on('progress', progress => {
+
+    const startHandler = cmd => {
+        channelLog.info(`recorder emitted start : ${cmd}`)
+        setTimeout(() => {
+            dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
+            dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
+        },1000);
+    }
+    const progressHandler = progress => {
         dispatch(setDuration({channelNumber, duration:progress.duration}));
-    })
-    recorder.on('error', (error) => {
+    }
+    const errorHandler = error => {
         channelLog.error(`error occurred`);
-        log.error(error);
+        channelLog.error(error);
         // after recorder emits error
         // 1. resetPlayer => change mode from playback to source streaming
         dispatch(refreshPlayer({channelNumber}));
         // 2. resetRecorder => initialize recorder status(duration, status..)
         //    because recorder's error emits end event, resetRecorder is
         //    done in recorder's end handler in RecordHLS_ffmpeg.js.
-        // 3. restartSchedule => if schedule was on
-        dispatch(restartRecording(channelNumber));
-    })
+        // 3. recreateRecorder with createdByError=true
+        dispatch(createRecorder(channelNumber, /*createdByError */ true));
+    }
+    
+    recorder.on('start', startHandler)
+    recorder.on('progress', progressHandler)
+    recorder.on('error', errorHandler)
     dispatch(setRecorder({channelNumber, recorder}))
+    createdByError && scheduleStatus === 'started' && dispatch(startRecording(channelNumber));
 }
 
 
@@ -190,10 +204,7 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
         recorder.once('start', (cmd) => {
             channelLog.info(`recorder emitted start : ${cmd}`)
             setTimeout(() => {
-                dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
-                // dispatch(savePlayerHttpURL({channelNumber, playerHttpURL: source.url}));
                 dispatch(setPlayerSource({channelNumber, url:localm3u8}))
-                dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
                 resolve(true);
             },1000);
         })

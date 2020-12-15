@@ -1,5 +1,5 @@
 {
-  "NUMBER_OF_RECORDERS": 1,
+  "NUMBER_OF_RECORDERS": 2,
   "CHANNEL_PREFIX": "channel",
   "DEFAULT_PLAYER_PROPS": {
     "player": null,
