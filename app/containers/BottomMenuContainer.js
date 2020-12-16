@@ -6,7 +6,7 @@ import * as hlsRecorderActions from '../modules/hlsRecorders';
 
 
 function mapStateToProps(state, ownProps) {
-  console.log('mapStateToProps:',state, ownProps) 
+  // console.log('mapStateToProps:',state, ownProps) 
   const {recorders} = state.hlsRecorders;
   const scheduleStatusAllStop = [...recorders.values()].every(recorder => recorder.scheduleStatus==="stopped");
   const recorderStatusAllStop = [...recorders.values()].every(recorder => recorder.recorderStatus==="stopped");

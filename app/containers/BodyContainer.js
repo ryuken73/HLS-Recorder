@@ -5,7 +5,7 @@ import * as bodyActions from '../modules/body';
 
 
 function mapStateToProps(state, ownProps) {
-  console.log('mapStateToProps:',state) 
+  // console.log('mapStateToProps:',state) 
   return {
     ...ownProps,
     channels: state.body.channels,

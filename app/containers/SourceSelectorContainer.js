@@ -7,7 +7,7 @@ import * as hlsRecordersActions from '../modules/hlsRecorders';
 
 
 function mapStateToProps(state, ownProps) {
-  console.log('mapStateToProps:',state);
+  // console.log('mapStateToProps:',state);
   const {channelNumber} = ownProps;
   const hlsPlayer = state.hlsPlayers.players.get(channelNumber);
   const hlsRecorder = state.hlsRecorders.recorders.get(channelNumber);

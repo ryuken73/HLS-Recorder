@@ -8,7 +8,7 @@ import * as appActions from '../modules/app';
 
 
 function mapStateToProps(state, ownProps) {
-  console.log('mapStateToProps:',state) 
+  // console.log('mapStateToProps:',state) 
   return {
     ...ownProps,
     sources: state.app.sources
