@@ -13,18 +13,21 @@ const buttonColor = 'darkslategrey';
 const ButtomMenu = (props) => {
     const {mt="auto"} = props;
     const {
-        scheduleStatusAllStop,
-        recorderStatusAllStop,
-        recorderStatusAnyInTransition
+        scheduleStatusAllStop:scheduleStatusAllStopped,
+        recorderStatusAllStop:recorderStatusAllStopped,
+        recorderStatusAnyInTransition,
+        intervalsForSelection,
     } = props;
     const {
         startScheduleAll=()=>{},
         stopScheduleAll=()=>{},
         startRecordAll=()=>{},
         stopRecordAll=()=>{},
+        changeAllIntervals=()=>{}
     } = props.HLSRecorderActions;
-    const scheduleButtonColor =  scheduleStatusAllStop ? 'darkslategrey' : 'maroon';
-    const recordButtonColor =  recorderStatusAllStop ? 'darkslategrey' : 'maroon';
+    console.log('$$$$$$$$', changeAllIntervals)
+    const scheduleButtonColor =  scheduleStatusAllStopped ? 'darkslategrey' : 'maroon';
+    const recordButtonColor =  recorderStatusAllStopped ? 'darkslategrey' : 'maroon';
 
     return (      
         <Box 
@@ -51,8 +54,8 @@ const ButtomMenu = (props) => {
                 bgcolor={scheduleButtonColor}
                 minwidth={"130px"}
                 disabled={recorderStatusAnyInTransition}
-                onClick={scheduleStatusAllStop ? startScheduleAll : stopScheduleAll}
-            >{scheduleStatusAllStop ? "start schedule" : "stop schedule"}</SmallButton>
+                onClick={scheduleStatusAllStopped ? startScheduleAll : stopScheduleAll}
+            >{scheduleStatusAllStopped ? "start schedule" : "stop schedule"}</SmallButton>
             <SmallButton 
                 size="small" 
                 color="secondary" 
@@ -64,8 +67,8 @@ const ButtomMenu = (props) => {
                 bgcolor={recordButtonColor}
                 minwidth={"130px"}
                 disabled={recorderStatusAnyInTransition}
-                onClick={recorderStatusAllStop ? startRecordAll : stopRecordAll}
-            >{recorderStatusAllStop ? "start record" : "stop record"}
+                onClick={recorderStatusAllStopped ? startRecordAll : stopRecordAll}
+            >{recorderStatusAllStopped ? "start record" : "stop record"}
             </SmallButton>
             <Box
                 mt={"0px"}
@@ -75,7 +78,10 @@ const ButtomMenu = (props) => {
             >
                 <OptionSelect
                     selectColor={"darkslategrey"}
-                    disabled={!scheduleStatusAllStop && !recorderStatusAnyInTransition}
+                    disabled={!scheduleStatusAllStopped || recorderStatusAnyInTransition}
+                    intervalsForSelection={intervalsForSelection}
+                    minWidth="150px"
+                    onChangeSelect={changeAllIntervals}
                 ></OptionSelect>
             </Box>
         </Box>  

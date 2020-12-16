@@ -49,10 +49,13 @@ for(let i=1 ; i<=NUMBER_OF_RECORDERS ; i++){
         localm3u8: null,
         recorderStatus: 'stopped',
         scheduleStatus: 'stopped',
-        scheduleInterval: INITIAL_INTERVAL,
-        intervalsForSelection
+        scheduleInterval: INITIAL_INTERVAL,        
     }
     recorders.set(i, hlsRecorder);
+}
+// initialize config statue
+const initialConfig = {
+    intervalsForSelection
 }
 
 // action types
@@ -396,8 +399,19 @@ export const stopScheduleAll = () => async (dispatch, getState) => {
     }
 }
 
+export const changeAllIntervals = interval =>  (dispatch, getState) => {
+    console.log('$$$$$$$$$$$$', interval)
+    const state = getState();
+    const {recorders} = state.hlsRecorders;
+    const channelNumbers = [...recorders.keys()];
+    channelNumbers.forEach(channelNumber => {
+        dispatch(setScheduleInterval({channelNumber, scheduleInterval:interval}))
+    })
+}
+
 const initialState = {
-    recorders
+    recorders,
+    config: initialConfig
 }
 
 // reducer
@@ -410,6 +424,7 @@ export default handleActions({
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, recorder);
         return {
+            ...state,
             recorders
         }
     },
@@ -421,6 +436,7 @@ export default handleActions({
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, channelRecorder);
         return {
+            ...state,
             recorders
         }
     },
@@ -432,6 +448,7 @@ export default handleActions({
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, channelRecorder);
         return {
+            ...state,
             recorders
         }
     },
@@ -443,6 +460,7 @@ export default handleActions({
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, channelRecorder);
         return {
+            ...state,
             recorders
         }
     },
@@ -454,6 +472,7 @@ export default handleActions({
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, channelRecorder);
         return {
+            ...state,
             recorders
         }
     },
@@ -465,6 +484,7 @@ export default handleActions({
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, channelRecorder);
         return {
+            ...state,
             recorders
         }
     },
@@ -476,6 +496,7 @@ export default handleActions({
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, channelRecorder);
         return {
+            ...state,
             recorders
         }
     },
@@ -487,6 +508,7 @@ export default handleActions({
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, channelRecorder);
         return {
+            ...state,
             recorders
         }
     },
@@ -498,6 +520,7 @@ export default handleActions({
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, channelRecorder);
         return {
+            ...state,
             recorders
         }
     },

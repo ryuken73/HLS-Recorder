@@ -10,6 +10,7 @@ function mapStateToProps(state, ownProps) {
   const {channelNumber} = ownProps;
   const hlsPlayer = state.hlsPlayers.players.get(channelNumber);
   const hlsRecorder = state.hlsRecorders.recorders.get(channelNumber);
+  const {config} = state.hlsRecorders;
 
   return {
     ...ownProps,
@@ -18,7 +19,7 @@ function mapStateToProps(state, ownProps) {
     inTransition: hlsRecorder.inTransition,
     scheduleStatus: hlsRecorder.scheduleStatus,
     scheduleInterval: hlsRecorder.scheduleInterval,
-    intervalsForSelection: hlsRecorder.intervalsForSelection
+    intervalsForSelection: config.intervalsForSelection
   }
 }
 

@@ -11,11 +11,13 @@ function mapStateToProps(state, ownProps) {
   const scheduleStatusAllStop = [...recorders.values()].every(recorder => recorder.scheduleStatus==="stopped");
   const recorderStatusAllStop = [...recorders.values()].every(recorder => recorder.recorderStatus==="stopped");
   const recorderStatusAnyInTransition = [...recorders.values()].some(recorder => recorder.inTransition===true);
+  const {config} = state.hlsRecorders;
   return {
     ...ownProps,
     scheduleStatusAllStop,
     recorderStatusAllStop,
-    recorderStatusAnyInTransition
+    recorderStatusAnyInTransition,
+    intervalsForSelection: config.intervalsForSelection
   }
 }
 

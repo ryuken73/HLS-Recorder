@@ -11,18 +11,35 @@ export default function OptionSelectList(props) {
     const {
         maxWidth="100%", 
         minWidth="30%", 
-        currentItem="currentItem", 
-        menuItems=[{label:'title', value:'good'}]
+        currentItem=3600000, 
+        intervalsForSelection=[{label:'title', value:'good'}]
     }=props;
+
+    const [currentValue, setCurrentValue] = React.useState(currentItem);
+
     const {
         onChangeSelect=()=>{}, 
         multiple=false, 
         selectColor="white", 
         disabled=false
     } = props;
+
     const {smallComponent=true} = props;
     const SelectComponent = smallComponent ? SmallPaddingSelect : Select;
 
+    const selectItems = intervalsForSelection.map(interval => {
+        return {
+            value: interval.milliseconds,
+            label: interval.title
+        }
+    })
+
+    const changeCurrentItem = event => {
+        const {value} = event.target;
+        setCurrentValue(value)
+        onChangeSelect(value);
+    }
+    
     return (
         <React.Fragment>
         <FormControl style={{minWidth:minWidth, width:"100%", maxWidth:maxWidth}}>
@@ -30,13 +47,13 @@ export default function OptionSelectList(props) {
                 labelId="select-label" 
                 variant="outlined"
                 margin="dense"
-                value={currentItem}
+                value={currentValue}
                 multiple={multiple}
-                onChange={onChangeSelect}
+                onChange={changeCurrentItem}
                 bgcolor={selectColor}
                 disabled={disabled}
             >
-                {menuItems.map((menuItem, index) => {
+                {selectItems.map((menuItem, index) => {
                     const {value, label} = menuItem;
                     return <MenuItem key={index} value={value}>{label}</MenuItem>
                 })}
