@@ -29,8 +29,8 @@ function App(props) {
       <Box display="flex" flexDirection="column" height="1">
         <Header></Header>
         <BodyContainer></BodyContainer>
-        {/* <BottomMenu></BottomMenu> */}
-        <MessageContainer></MessageContainer>
+        <BottomMenu mt="auto"></BottomMenu> 
+        <MessageContainer></MessageContainer> 
       </Box>
     </ThemeProvider>
   );

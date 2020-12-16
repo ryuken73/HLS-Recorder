@@ -9,13 +9,14 @@ import { Typography } from '@material-ui/core';
 
 const buttonColor = 'darkslategrey';
 
-const ButtomMenu = () => {
+const ButtomMenu = (props) => {
+    const {mt} = props
     return (      
         <Box 
             display="flex" 
             alignItems="center"
             mx="5px"
-            mt="auto"
+            mt={mt}
             mb="5px"
             alignContent="center"
         >
@@ -30,7 +31,7 @@ const ButtomMenu = () => {
                 variant={"contained"} 
                 mt={"0px"}
                 mb={"0px"}
-                ml={"0px"}
+                ml={"10px"}
                 mr={"5px"}
                 bgcolor={buttonColor}
                 minwidth={"130px"}
