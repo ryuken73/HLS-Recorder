@@ -26,7 +26,8 @@ const HLSPlayer = (props) => {
         source={},
         type='application/x-mpegURL',
         reMountPlayer=false,
-        restorePlaybackRate=true
+        restorePlaybackRate=true,
+        LONG_BUFFERING_MS_SECONDS=3000
     } = props;
 
     const {
@@ -121,7 +122,7 @@ const HLSPlayer = (props) => {
                 // todo: url can be file url when recording
                 // refreshChannelPlayer({channelNumber, url:source.url});
                 refreshPlayer({channelNumber});
-            },2000)
+            },LONG_BUFFERING_MS_SECONDS)
             return
         } else if(eventName === 'abort' && enableAutoRefresh === null) {
             channelLog.debug('abort but not start refresh timer because enableAutoRefresh parameter is null');

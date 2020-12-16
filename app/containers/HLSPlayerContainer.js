@@ -7,6 +7,7 @@ import * as hlsPlayersActions from '../modules/hlsPlayers';
 function mapStateToProps(state, ownProps) {
   console.log('mapStateToProps:',state)
   const {channelNumber} = ownProps;
+  const {config} = state.hlsPlayers;
   const hlsPlayer = state.hlsPlayers.players.get(channelNumber);
   console.log('####', hlsPlayer)
 
@@ -24,7 +25,8 @@ function mapStateToProps(state, ownProps) {
     bigPlayButtonCentered: hlsPlayer.bigPlayButtonCentered,
     enableOverlay: hlsPlayer.enableOverlay,
     overlayContent: hlsPlayer.overlayContent,
-    enableAutoRefresh: hlsPlayer.enableAutoRefresh
+    enableAutoRefresh: hlsPlayer.enableAutoRefresh,
+    LONG_BUFFERING_MS_SECONDS: config.LONG_BUFFERING_MS_SECONDS
   }
 }
 

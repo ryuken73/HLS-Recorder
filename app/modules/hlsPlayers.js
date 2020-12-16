@@ -8,7 +8,8 @@ const config = getConfig();
 const {
     NUMBER_OF_RECORDERS,
     CHANNEL_PREFIX,
-    DEFAULT_PLAYER_PROPS
+    DEFAULT_PLAYER_PROPS,
+    LONG_BUFFERING_MS_SECONDS=3000
 } = config;
 
 const mkOverlayContent = url => {
@@ -48,7 +49,10 @@ export const refreshPlayer = createAction(REFRESH_PLAYER);
 
 
 const initialState = {
-    players
+    players,
+    config:{
+        LONG_BUFFERING_MS_SECONDS
+    }
 }
 
 // reducer
@@ -61,6 +65,7 @@ export default handleActions({
         const players = new Map(state.players);
         players.set(channelNumber, hlsPlayer);
         return {
+            ...state,
             players
         }
     },
@@ -81,6 +86,7 @@ export default handleActions({
         const players = new Map(state.players);
         players.set(channelNumber, hlsPlayer);
         return {
+            ...state,
             players
         }
     },

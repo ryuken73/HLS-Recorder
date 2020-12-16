@@ -10,7 +10,8 @@ const {
     NUMBER_OF_RECORDERS,
     CHANNEL_PREFIX,
     BASE_DIRECTORY,
-    DEFAULT_SCHEDULE_PROS
+    DEFAULT_SCHEDULE_PROS,
+    WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE
 } = config;
 
 const {
@@ -214,7 +215,7 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
             setTimeout(() => {
                 dispatch(setPlayerSource({channelNumber, url:localm3u8}))
                 resolve(true);
-            },1000);
+            },WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE);
         })
         recorder.once('end', async (clipName, startTimestamp, duration) => {
             try {
@@ -363,6 +364,8 @@ export const stopSchedule = channelNumber => async (dispatch, getState) => {
         .then(result => {
             dispatch(setScheduleStatus({channelNumber, scheduleStatus:'stopped'}));
         })
+    } else {
+        dispatch(setScheduleStatus({channelNumber, scheduleStatus:'stopped'}));
     }
 }
 
