@@ -115,7 +115,7 @@ const HLSPlayer = (props) => {
     let refreshTimer = null;
 
     const onVideoOtherEvent = eventName => {
-        channelLog.debug(`event occurred: ${eventName}`)
+        // channelLog.debug(`event occurred: ${eventName}`)
         if(eventName === 'abort' && enableAutoRefresh !== null){
             refreshTimer = setInterval(() => {
                 channelLog.info('refresh player because of long buffering')
@@ -125,15 +125,15 @@ const HLSPlayer = (props) => {
             },LONG_BUFFERING_MS_SECONDS)
             return
         } else if(eventName === 'abort' && enableAutoRefresh === null) {
-            channelLog.debug('abort but not start refresh timer because enableAutoRefresh parameter is null');
+            // channelLog.debug('abort but not start refresh timer because enableAutoRefresh parameter is null');
             return
         }
         if(eventName === 'playing' || eventName === 'loadstart' || eventName === 'waiting'){
             if(refreshTimer === null) {
-                channelLog.debug('playing, loadstart or waiting event emitted. but do not clearTimeout(refreshTimer) because refreshTimer is null. exit')
+                // channelLog.debug('playing, loadstart or waiting event emitted. but do not clearTimeout(refreshTimer) because refreshTimer is null. exit')
                 return;
             }
-            channelLog.debug('clear refresh timer.')
+            // channelLog.debug('clear refresh timer.')
             clearTimeout(refreshTimer);
             refreshTimer = null;
             return

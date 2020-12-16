@@ -189,7 +189,7 @@ export const restartRecording = channelNumber => (dispatch, getState) => {
 
 export const startRecording = (channelNumber) => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
-        console.log(`#### in startRecording:`, channelNumber)
+        console.log(`#### in startRecording:`, channelNumber);
         const state = getState();
         const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
         const {
@@ -405,7 +405,6 @@ export const stopScheduleAll = () => async (dispatch, getState) => {
 }
 
 export const changeAllIntervals = interval =>  (dispatch, getState) => {
-    console.log('$$$$$$$$$$$$', interval)
     const state = getState();
     const {recorders} = state.hlsRecorders;
     const channelNumbers = [...recorders.keys()];

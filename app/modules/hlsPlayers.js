@@ -58,7 +58,7 @@ const initialState = {
 // reducer
 export default handleActions({
     [SET_PLAYER]: (state, action) => {
-        console.log('%%%%%%%%%%%%%%%%', action.payload);
+        // console.log('%%%%%%%%%%%%%%%%', action.payload);
         const {channelNumber, player} = action.payload;
         const hlsPlayer = {...state.players.get(channelNumber)};
         hlsPlayer.player = player;
@@ -70,7 +70,7 @@ export default handleActions({
         }
     },
     [SET_PLAYER_SOURCE]: (state, action) => {
-        console.log('%%%%%%%%%%%%%%%%', action.payload);
+        // console.log('%%%%%%%%%%%%%%%%', action.payload);
         const {channelNumber, url} = action.payload;
         const overlayContent = mkOverlayContent(url);
 
@@ -91,7 +91,7 @@ export default handleActions({
         }
     },
     [REFRESH_PLAYER]: (state, action) => {
-        console.log('%%%%%%%%%%%%%%%%', action.payload);
+        // console.log('%%%%%%%%%%%%%%%%', action.payload);
         const {channelNumber} = action.payload;
         const hlsPlayer = {...state.players.get(channelNumber)};
         const url = hlsPlayer.source.url;
