@@ -17,5 +17,17 @@
     "overlayContent": "Default Overlay",
     "enableAutoRefresh": true
   },
+  "DEFAULT_SCHEDULE_PROS": {
+    "defaultInterval": 3600000,
+    "intervalsForSelection": [
+      {"title": "2 Hour", "milliseconds": 7200000},
+      {"title": "1 Hour", "milliseconds": 3600000},
+      {"title": "30 Minutes", "milliseconds": 1800000},
+      {"title": "20 Minutes", "milliseconds": 1200000},
+      {"title": "10 Minutes", "milliseconds": 600000},
+      {"title": "5 Minutes", "milliseconds": 300000},
+      {"title": "1 Minute", "milliseconds": 60000}
+   ]
+  },
   "BASE_DIRECTORY": "c:/cctv"
 }

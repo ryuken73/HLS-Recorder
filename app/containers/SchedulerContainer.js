@@ -18,6 +18,7 @@ function mapStateToProps(state, ownProps) {
     inTransition: hlsRecorder.inTransition,
     scheduleStatus: hlsRecorder.scheduleStatus,
     scheduleInterval: hlsRecorder.scheduleInterval,
+    intervalsForSelection: hlsRecorder.intervalsForSelection
   }
 }
 

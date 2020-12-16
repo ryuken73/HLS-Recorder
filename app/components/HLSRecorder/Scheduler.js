@@ -3,25 +3,21 @@ import OptionSelectButton from '../template/OptionSelectButton';
 import ScheduleButton from './ScheduleButton';
 import log from 'electron-log';
 
-const intervals = [
-    {title: '1 Hour', milliseconds: 3600000},
-    {title: '30 Minutes', milliseconds: 1800000},
-    {title: '20 Minutes', milliseconds: 1200000},
-    {title: '10 Minutes', milliseconds: 600000},
-    {title: '5 Minutes', milliseconds: 300000},
+const DEFAULT_INTERVALS = [
     {title: '1 Minute', milliseconds: 60000}
 ]
 
 function IntervalSelection(props) {
     const {
         channelNumber=1,
-        scheduleInterval=3600000, 
+        scheduleInterval=60000, 
         recorderStatus="stopped"
     } = props;
     const {
         inTransition=false, 
         scheduleStatus="stopped", 
-        scheduledFunction=()=>{}
+        scheduledFunction=()=>{},
+        intervalsForSelection=DEFAULT_INTERVALS
     } = props;
     const {
         startSchedule=()=>{}, 
@@ -30,7 +26,7 @@ function IntervalSelection(props) {
     } = props.HLSRecorderActions;
 
     const inRecording = recorderStatus !== 'stopped';
-    const selectItems = intervals.map(interval => {
+    const selectItems = intervalsForSelection.map(interval => {
         return {
             value: interval.milliseconds,
             label: interval.title

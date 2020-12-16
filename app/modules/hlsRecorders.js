@@ -9,11 +9,17 @@ const config = getConfig();
 const {
     NUMBER_OF_RECORDERS,
     CHANNEL_PREFIX,
-    BASE_DIRECTORY
+    BASE_DIRECTORY,
+    DEFAULT_SCHEDULE_PROS
 } = config;
 
+const {
+    defaultInterval,
+    intervalsForSelection
+} = DEFAULT_SCHEDULE_PROS
+
 const INITIAL_DURATION = '00:00:00.00';
-const INITIAL_INTERVAL = 60000;
+const INITIAL_INTERVAL = defaultInterval;
 
 import utils from '../utils';
 async function mkdir(directory){
@@ -43,7 +49,8 @@ for(let i=1 ; i<=NUMBER_OF_RECORDERS ; i++){
         localm3u8: null,
         recorderStatus: 'stopped',
         scheduleStatus: 'stopped',
-        scheduleInterval: INITIAL_INTERVAL
+        scheduleInterval: INITIAL_INTERVAL,
+        intervalsForSelection
     }
     recorders.set(i, hlsRecorder);
 }

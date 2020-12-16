@@ -6,6 +6,7 @@ import BorderedBox from './template/BorderedBox';
 import IconButton from '@material-ui/core/IconButton';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { Typography } from '@material-ui/core';
+import OptionSelect from './template/OptionSelect';
 
 const buttonColor = 'darkslategrey';
 
@@ -46,7 +47,7 @@ const ButtomMenu = (props) => {
                 mt={"0px"}
                 mb={"0px"}
                 ml={"10px"}
-                mr={"5px"}
+                mr={"0px"}
                 bgcolor={scheduleButtonColor}
                 minwidth={"130px"}
                 disabled={recorderStatusAnyInTransition}
@@ -58,13 +59,25 @@ const ButtomMenu = (props) => {
                 variant={"contained"} 
                 mt={"0px"}
                 mb={"0px"}
-                ml={"0px"}
+                ml={"5px"}
                 mr={"0px"}
                 bgcolor={recordButtonColor}
                 minwidth={"130px"}
                 disabled={recorderStatusAnyInTransition}
                 onClick={recorderStatusAllStop ? startRecordAll : stopRecordAll}
-            >{recorderStatusAllStop ? "start record" : "stop record"}</SmallButton>
+            >{recorderStatusAllStop ? "start record" : "stop record"}
+            </SmallButton>
+            <Box
+                mt={"0px"}
+                mb={"0px"}
+                ml={"5px"}
+                mr={"0px"}
+            >
+                <OptionSelect
+                    selectColor={"darkslategrey"}
+                    disabled={!scheduleStatusAllStop && !recorderStatusAnyInTransition}
+                ></OptionSelect>
+            </Box>
         </Box>  
 
     );

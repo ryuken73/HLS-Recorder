@@ -6,7 +6,7 @@ function Selection(props) {
         channelNumber=1,
         source={}, 
         sources=[], 
-        recorderStatus='stopped'
+        recorderStatus='stopped',
     } = props;
     const {setPlayerSource=()=>{}} = props.HLSPlayersActions;
     const {savePlayerHttpURL=()=>{}} = props.HLSRecordersActions;
