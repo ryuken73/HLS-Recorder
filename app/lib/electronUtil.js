@@ -76,6 +76,8 @@ const initElectronLog = (options) => {
     log.transports.console.format = consoleFormat;
     log.transports.file.maxSize = fileMaxSize;
     log.transports.file.level = fileLogLevel;
+    log.transports.file.fileName = 'HLSRecorder.log';
+    log.transports.console.level = consoleLogLevel;
     log.transports.console.level = consoleLogLevel;
     log.transports.file.archiveLog = file => {
         file = file.toString();

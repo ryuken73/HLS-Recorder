@@ -1,6 +1,6 @@
 {
-  "name": "electron-template",
-  "productName": "electron-template",
+  "name": "HLSRecorder",
+  "productName": "HLSRecorder",
   "version": "0.0.1",
   "description": "electron template for fast develop",
   "main": "./main.prod.js",

@@ -11,6 +11,9 @@ const { BrowserView, getCurrentWindow } = require('electron').remote;
 const { ipcRenderer } = require('electron');
 const utils = require('../utils');
 
+const electronUtil = require('../lib/electronUtil');
+electronUtil.initElectronLog({});
+
 const theme = createMuiTheme({
   typography: {
     subtitle1: {
