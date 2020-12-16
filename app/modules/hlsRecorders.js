@@ -196,9 +196,8 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
             channelName,
             recorder,
         } = hlsRecorder;
-        const {
-            source
-        } = hlsPlayer;
+        const {source} = hlsPlayer;
+        const {clipStore} = state.app;
     
         channelLog.info(`start startRecroding() recorder.createTime:${recorder.createTime}`)
     
@@ -223,8 +222,8 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
             try {
                 channelLog.info(`recorder emitted end (listener1): ${clipName}`)
                 const endTimestamp = Date.now();
-                const startTime = utils.date.getString(new Date(startTimestamp),{})
-                const endTime = utils.date.getString(new Date(endTimestamp),{})
+                const startTime = utils.date.getString(new Date(startTimestamp),{sep:'-'})
+                const endTime = utils.date.getString(new Date(endTimestamp),{sep:'-'})
                 const url = hlsRecorder.playerHttpURL;
                 const title = source.title;
                 const hlsDirectory = saveDirectory;
@@ -249,6 +248,7 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
     
                 console.log('#######', clipData)
                 //todo : save clipData in electron store
+                clipStore.set(clipId, clipData);
                 dispatch(refreshRecorder({channelNumber}));
                 //todo : remove old clips based on keey hours configuration parameter
                 // rimraf(hlsDirectory, err => {

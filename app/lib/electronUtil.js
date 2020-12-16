@@ -66,7 +66,7 @@ const getFromJsonFile = (options) => {
     return json;
 }
 
-const initElectronLog = (options) => {
+const initElectronLog = options => {
     const {
         consoleFormat='[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}',
         fileMaxSize=10485760,
@@ -89,12 +89,57 @@ const initElectronLog = (options) => {
             console.warn('Could not rotate log', e);
         }
     }
+}
 
+const Store = require('electron-store');
+const remote = require('electron')
+const createElectronStore = options => {
+    const {
+        name='Electron_Store',
+        cwd=remote.app.getPath('home'),
+        watch=false,
+    } = options
+    const store = new Store(options);
+    return {
+        set: (key, value) => {
+            if(typeof(key) === 'number'){
+                store.set(key.toString(), value);
+                return;
+            }
+            store.set(key, value)
+        },
+        get: (key, value) => {
+            if(typeof(key) === 'number'){
+                store.get(key.toString(), value);
+                return;
+            }
+            store.get(key, value)
+        },
+        delete: (key) => {
+            if(typeof(key) === 'number'){
+                store.delete(key.toString());
+                return;
+            }
+            store.delete(key)
+        },    
+        has: (key) => {
+            if(typeof(key) === 'number'){
+                store.has(key.toString());
+                return;
+            }
+            store.has(key)
+        },
+        clear:store.clear,
+        onDidAnyChange: store.onDidAnyChange,
+        store: store.store,
+        size: store.size
+    };
 }
 
 module.exports = {
     getAbsolutePath,
     readJSONFile,
     getFromJsonFile,
-    initElectronLog
+    initElectronLog,
+    createElectronStore
 }

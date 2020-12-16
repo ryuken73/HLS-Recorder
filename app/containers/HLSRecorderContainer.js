@@ -8,9 +8,11 @@ function mapStateToProps(state, ownProps) {
   // console.log('mapStateToProps:',state)
   const {channelNumber} = ownProps;
   const hlsRecorder = state.hlsRecorders.recorders.get(channelNumber);
+  const {clipStore} = state.app
 
   return {
     ...ownProps,
+    clipStore,
     channelName: hlsRecorder.channelName,
     duration: hlsRecorder.duration,
     channelDirectory: hlsRecorder.channelDirectory,

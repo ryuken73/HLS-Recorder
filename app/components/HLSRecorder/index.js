@@ -13,9 +13,10 @@ import SchedulerContainer from '../../containers/SchedulerContainer';
 const HLSRecorder = (props) => {
     const {
         channelNumber=1, 
-        recorderStatus="stopped"
+        recorderStatus="stopped",
+        store
     } = props;
-    
+
     const bgColors = {
         // 'starting': 'maroon',
         'starting': '#540101',

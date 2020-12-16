@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import SourceSelector from '../components/HLSRecorder/SourceSelector';
-import * as sourceSelectorActions from '../modules/sourceSelector';
+// import * as sourceSelectorActions from '../modules/sourceSelector';
 import * as hlsPlayersActions from '../modules/hlsPlayers';
 import * as hlsRecordersActions from '../modules/hlsRecorders';
 
@@ -21,7 +21,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    SourceSelectorActions: bindActionCreators(sourceSelectorActions, dispatch),
+    // SourceSelectorActions: bindActionCreators(sourceSelectorActions, dispatch),
     HLSPlayersActions: bindActionCreators(hlsPlayersActions, dispatch),
     HLSRecordersActions: bindActionCreators(hlsRecordersActions, dispatch),
   };
