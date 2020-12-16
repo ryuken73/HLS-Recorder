@@ -32,57 +32,62 @@ const ButtomMenu = (props) => {
     return (      
         <Box 
             display="flex" 
-            alignItems="center"
+            // alignItems="center"
             mx="5px"
             mt={mt}
-            mb="5px"
-            alignContent="center"
+            // alignContent="center"
         >
-            <Box mx="10px">
-                <Typography>
-                    Apply All
-                </Typography>
-            </Box>
-            <SmallButton 
-                size="small" 
-                color="secondary" 
-                variant={"contained"} 
-                mt={"0px"}
-                mb={"0px"}
-                ml={"10px"}
-                mr={"0px"}
-                bgcolor={scheduleButtonColor}
-                minwidth={"130px"}
-                disabled={recorderStatusAnyInTransition}
-                onClick={scheduleStatusAllStopped ? startScheduleAll : stopScheduleAll}
-            >{scheduleStatusAllStopped ? "start schedule" : "stop schedule"}</SmallButton>
-            <SmallButton 
-                size="small" 
-                color="secondary" 
-                variant={"contained"} 
-                mt={"0px"}
-                mb={"0px"}
-                ml={"5px"}
-                mr={"0px"}
-                bgcolor={recordButtonColor}
-                minwidth={"130px"}
-                disabled={recorderStatusAnyInTransition}
-                onClick={recorderStatusAllStopped ? startRecordAll : stopRecordAll}
-            >{recorderStatusAllStopped ? "start record" : "stop record"}
-            </SmallButton>
-            <Box
-                mt={"0px"}
-                mb={"0px"}
-                ml={"5px"}
-                mr={"0px"}
+            <Box 
+                display="flex" 
+                my="5px"
+                alignContent="center"
             >
-                <OptionSelect
-                    selectColor={"darkslategrey"}
-                    disabled={!scheduleStatusAllStopped || recorderStatusAnyInTransition}
-                    intervalsForSelection={intervalsForSelection}
-                    minWidth="150px"
-                    onChangeSelect={changeAllIntervals}
-                ></OptionSelect>
+                <Box mx="10px">
+                    <Typography>
+                        Apply All
+                    </Typography>
+                </Box>
+                <SmallButton 
+                    size="small" 
+                    color="secondary" 
+                    variant={"contained"} 
+                    mt={"0px"}
+                    mb={"0px"}
+                    ml={"10px"}
+                    mr={"0px"}
+                    bgcolor={scheduleButtonColor}
+                    minwidth={"130px"}
+                    disabled={recorderStatusAnyInTransition}
+                    onClick={scheduleStatusAllStopped ? startScheduleAll : stopScheduleAll}
+                >{scheduleStatusAllStopped ? "start schedule" : "stop schedule"}</SmallButton>
+                <SmallButton 
+                    size="small" 
+                    color="secondary" 
+                    variant={"contained"} 
+                    mt={"0px"}
+                    mb={"0px"}
+                    ml={"5px"}
+                    mr={"0px"}
+                    bgcolor={recordButtonColor}
+                    minwidth={"130px"}
+                    disabled={recorderStatusAnyInTransition}
+                    onClick={recorderStatusAllStopped ? startRecordAll : stopRecordAll}
+                >{recorderStatusAllStopped ? "start record" : "stop record"}
+                </SmallButton>
+                <Box
+                    mt={"0px"}
+                    mb={"0px"}
+                    ml={"5px"}
+                    mr={"0px"}
+                >
+                    <OptionSelect
+                        selectColor={"darkslategrey"}
+                        disabled={!scheduleStatusAllStopped || recorderStatusAnyInTransition}
+                        intervalsForSelection={intervalsForSelection}
+                        minWidth="150px"
+                        onChangeSelect={changeAllIntervals}
+                    ></OptionSelect>
+                </Box>
             </Box>
         </Box>  
 

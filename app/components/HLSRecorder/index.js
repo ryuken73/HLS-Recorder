@@ -18,9 +18,9 @@ const HLSRecorder = (props) => {
     
     const bgColors = {
         // 'starting': 'maroon',
-        'starting': '#590000',
-        'started': 'crimson',
-        'stopping': '#590000',
+        'starting': '#540101',
+        'started': 'maroon',
+        'stopping': '#540101',
         'stopped': 'black'
     }
 

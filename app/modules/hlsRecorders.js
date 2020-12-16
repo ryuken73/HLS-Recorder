@@ -11,7 +11,9 @@ const {
     CHANNEL_PREFIX,
     BASE_DIRECTORY,
     DEFAULT_SCHEDULE_PROS,
-    WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE
+    WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE,
+    SLEEP_MS_BETWEEN_ALL_START=2000,
+    SLEEP_MS_BETWEEN_ALL_STOP=300,
 } = config;
 
 const {
@@ -308,7 +310,7 @@ export const startRecordAll = () => async (dispatch, getState) => {
     // channelNumbers.forEach(async channelNumber => { // forEach loop execute concurrently
     for(let index=0; index < channelNumbers.length; index++){
         dispatch(startRecording(channelNumbers[index]))
-        await sleepms(500);
+        await sleepms(SLEEP_MS_BETWEEN_ALL_START);
     }
 }
 
@@ -321,7 +323,7 @@ export const stopRecordAll = () => async (dispatch, getState) => {
     })
     for(let index=0; index < channelNumbers.length; index++){
         dispatch(stopRecording(channelNumbers[index]))
-        await sleepms(500);
+        await sleepms(SLEEP_MS_BETWEEN_ALL_STOP);
     }
 }
 
@@ -384,7 +386,7 @@ export const startScheduleAll = () => async (dispatch, getState) => {
     // channelNumbers.forEach(async channelNumber => { // forEach loop execute concurrently
     for(let index=0; index < channelNumbers.length; index++){
         dispatch(startSchedule(channelNumbers[index]))
-        await sleepms(500);
+        await sleepms(SLEEP_MS_BETWEEN_ALL_START);
     }
     // })
 }
@@ -398,7 +400,7 @@ export const stopScheduleAll = () => async (dispatch, getState) => {
     })
     for(let index=0; index < channelNumbers.length; index++){
         dispatch(stopSchedule(channelNumbers[index]))
-        await sleepms(500);
+        await sleepms(SLEEP_MS_BETWEEN_ALL_STOP);
     }
 }
 
