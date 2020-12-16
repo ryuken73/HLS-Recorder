@@ -10,7 +10,21 @@ import { Typography } from '@material-ui/core';
 const buttonColor = 'darkslategrey';
 
 const ButtomMenu = (props) => {
-    const {mt} = props
+    const {mt="auto"} = props;
+    const {
+        scheduleStatusAllStop,
+        recorderStatusAllStop,
+        recorderStatusAnyInTransition
+    } = props;
+    const {
+        startScheduleAll=()=>{},
+        stopScheduleAll=()=>{},
+        startRecordAll=()=>{},
+        stopRecordAll=()=>{},
+    } = props.HLSRecorderActions;
+    const scheduleButtonColor =  scheduleStatusAllStop ? 'darkslategrey' : 'maroon';
+    const recordButtonColor =  recorderStatusAllStop ? 'darkslategrey' : 'maroon';
+
     return (      
         <Box 
             display="flex" 
@@ -33,11 +47,11 @@ const ButtomMenu = (props) => {
                 mb={"0px"}
                 ml={"10px"}
                 mr={"5px"}
-                bgcolor={buttonColor}
+                bgcolor={scheduleButtonColor}
                 minwidth={"130px"}
-                disabled={false}
-                onClick={()=>{}}
-            >start schedule</SmallButton>
+                disabled={recorderStatusAnyInTransition}
+                onClick={scheduleStatusAllStop ? startScheduleAll : stopScheduleAll}
+            >{scheduleStatusAllStop ? "start schedule" : "stop schedule"}</SmallButton>
             <SmallButton 
                 size="small" 
                 color="secondary" 
@@ -46,11 +60,11 @@ const ButtomMenu = (props) => {
                 mb={"0px"}
                 ml={"0px"}
                 mr={"0px"}
-                bgcolor={buttonColor}
+                bgcolor={recordButtonColor}
                 minwidth={"130px"}
-                disabled={false}
-                onClick={()=>{}}
-            >start recording</SmallButton>
+                disabled={recorderStatusAnyInTransition}
+                onClick={recorderStatusAllStop ? startRecordAll : stopRecordAll}
+            >{recorderStatusAllStop ? "start record" : "stop record"}</SmallButton>
         </Box>  
 
     );

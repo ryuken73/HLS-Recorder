@@ -80,6 +80,8 @@ const createLogger = channelName => {
 
 import HLSRecorder from '../lib/RecordHLS_ffmpeg';
 import {getAbsolutePath} from '../lib/electronUtil';
+import SelectInput from '@material-ui/core/Select/SelectInput';
+import { SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS } from 'constants';
 
 const getChanneler = (state, channelNumber) => {
     const {recorders} = state.hlsRecorders;
@@ -255,8 +257,7 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
     })
 }
 
-export const stopRecording = (channelNumber) => (dispatch, getState) => {
-    
+export const stopRecording = (channelNumber) => (dispatch, getState) => {    
     return new Promise((resolve, reject) => {
         try {
             const state = getState();
@@ -264,11 +265,15 @@ export const stopRecording = (channelNumber) => (dispatch, getState) => {
 
             const {
                 recorder,
-                inTransition
+                inTransition,
+                recorderStatus
             } = hlsRecorder;
 
-            channelLog.info(`start stopRecording(): inTransition: ${inTransition}, recorder.createTime:${recorder.createTime}`)
-            
+            channelLog.info(`start stopRecording(): recorderStatus: ${recorderStatus}, recorder.createTime:${recorder.createTime}`)
+            if(recorderStatus !== 'started'){
+                resolve(true);
+                return;
+            }
             dispatch(setRecorderStatus({channelNumber, recorderStatus: 'stopping'}))
             dispatch(setRecorderInTransition({channelNumber, inTransition:true}));
             recorder.once('end', async clipName => {
@@ -285,6 +290,30 @@ export const stopRecording = (channelNumber) => (dispatch, getState) => {
     })
 }
 
+export const startRecordAll = () => async (dispatch, getState) => {
+    const state = getState();
+    const {recorders} = state.hlsRecorders;
+    const channelNumbers = [...recorders.keys()]
+    // channelNumbers.forEach(async channelNumber => { // forEach loop execute concurrently
+    for(let index=0; index < channelNumbers.length; index++){
+        dispatch(startRecording(channelNumbers[index]))
+        await sleepms(500);
+    }
+}
+
+export const stopRecordAll = () => async (dispatch, getState) => {
+    const state = getState();
+    const {recorders} = state.hlsRecorders;
+    const channelNumbers = [...recorders.keys()].filter(channelNumber => {
+        const recorder = recorders.get(channelNumber);
+        return recorder.recorderStatus === 'started';
+    })
+    for(let index=0; index < channelNumbers.length; index++){
+        dispatch(stopRecording(channelNumbers[index]))
+        await sleepms(500);
+    }
+}
+
 export const startSchedule = channelNumber => async (dispatch, getState) => {
     dispatch(setScheduleStatus({channelNumber, scheduleStatus:'starting'}));
     const state = getState();
@@ -293,8 +322,10 @@ export const startSchedule = channelNumber => async (dispatch, getState) => {
     const {recorder, scheduleInterval} = hlsRecorder;
     channelLog.info(`### start schedule : recorder.createTime=${recorder.createTime}`)
 
-    if(recorder.isBusy) await stopRecording(channelNumber);
-    dispatch(startRecording(channelNumber))
+    dispatch(stopRecording(channelNumber))
+    .then((result) => {
+        dispatch(startRecording(channelNumber))
+    })
     .then((result) => {
         dispatch(setScheduleStatus({channelNumber, scheduleStatus:'started'}));
     })
@@ -322,6 +353,39 @@ export const stopSchedule = channelNumber => async (dispatch, getState) => {
         .then(result => {
             dispatch(setScheduleStatus({channelNumber, scheduleStatus:'stopped'}));
         })
+    }
+}
+
+const sleepms = timems => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(true);   
+        }, timems);
+    })
+}
+
+export const startScheduleAll = () => async (dispatch, getState) => {
+    const state = getState();
+    const {recorders} = state.hlsRecorders;
+    const channelNumbers = [...recorders.keys()]
+    // channelNumbers.forEach(async channelNumber => { // forEach loop execute concurrently
+    for(let index=0; index < channelNumbers.length; index++){
+        dispatch(startSchedule(channelNumbers[index]))
+        await sleepms(500);
+    }
+    // })
+}
+
+export const stopScheduleAll = () => async (dispatch, getState) => {
+    const state = getState();
+    const {recorders} = state.hlsRecorders;
+    const channelNumbers = [...recorders.keys()].filter(channelNumber => {
+        const recorder = recorders.get(channelNumber);
+        return recorder.scheduleStatus === 'started';
+    })
+    for(let index=0; index < channelNumbers.length; index++){
+        dispatch(stopSchedule(channelNumbers[index]))
+        await sleepms(500);
     }
 }
 
