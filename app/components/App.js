@@ -1,11 +1,10 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import Header from './Header';
-// import BottomMenu from './BottomMenu';
+import HeaderContainer from '../containers/HeaderContainer';
 import BottomMenuContainer from '../containers/BottomMenuContainer';;
-// import Body from './Body';
 import BodyContainer from '../containers/BodyContainer';
+import OptionDialogContainer from '../containers/OptionDialogContainer';
 import MessageContainer from './MessagePanel';
 const { BrowserView, getCurrentWindow } = require('electron').remote;
 const { remote, ipcRenderer } = require('electron');
@@ -28,9 +27,10 @@ function App(props) {
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex" flexDirection="column" height="1">
-        <Header></Header>
+        <HeaderContainer></HeaderContainer>
         <BodyContainer></BodyContainer>
         <BottomMenuContainer mt="auto"></BottomMenuContainer> 
+        <OptionDialogContainer></OptionDialogContainer>
         <MessageContainer></MessageContainer> 
       </Box>
     </ThemeProvider>

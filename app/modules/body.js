@@ -1,7 +1,7 @@
 import {createAction, handleActions} from 'redux-actions';
  
 const getConfig = require('../lib/getConfig');
-const config = getConfig();
+const config = getConfig({storeName:'optionStore', electronPath:'home'});
 
 const {
     NUMBER_OF_RECORDERS

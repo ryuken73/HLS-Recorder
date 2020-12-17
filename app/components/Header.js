@@ -4,7 +4,12 @@ import BorderedBox from './template/BorderedBox';
 import IconButton from '@material-ui/core/IconButton';
 import SettingsIcon from '@material-ui/icons/Settings';
 
-const Header = () => {
+const Header = (props) => {
+    const {openOptionsDialog} = props.OptionDialogActions;
+    const openDialog = React.useCallback(() => {
+        openOptionsDialog();
+        // setOptionsDialogOpen({dialogOpen:true})
+    },[])
     return (      
         <Box 
             display="flex" 
@@ -30,7 +35,7 @@ const Header = () => {
             </Box>
             <Box display="flex" width="100px">
                 <Box ml="auto">
-                    <IconButton aria-label="configuration">
+                    <IconButton aria-label="configuration" onClick={openDialog}>
                         <SettingsIcon 
                             fontSize="large"
                             style={{color:"grey"}}

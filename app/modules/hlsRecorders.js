@@ -4,7 +4,8 @@ import {setPlayerSource, refreshPlayer} from './hlsPlayers';
 const cctvFromConfig = require('../lib/getCCTVList');
 const getConfig = require('../lib/getConfig');
 const sources = cctvFromConfig();
-const config = getConfig(); 
+const config = getConfig({storeName:'optionStore', electronPath:'home'});
+
 
 const {
     NUMBER_OF_RECORDERS,
