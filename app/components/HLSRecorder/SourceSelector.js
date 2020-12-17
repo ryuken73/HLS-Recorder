@@ -8,7 +8,7 @@ function Selection(props) {
         sources=[], 
         recorderStatus='stopped',
     } = props;
-    const {setPlayerSource=()=>{}} = props.HLSPlayersActions;
+    const {setSourceNSave=()=>{}} = props.HLSPlayersActions;
     const {savePlayerHttpURL=()=>{}} = props.HLSRecordersActions;
     
     const currentUrl = source.url;
@@ -21,10 +21,9 @@ function Selection(props) {
     })
     const onChangeSelect = React.useCallback((event) => {
         const url = event.target.value;
-        // const sourceNumber = sources.findIndex(source => source.url === url);
-        setPlayerSource({channelNumber, url});
+        setSourceNSave({channelNumber, url});
         savePlayerHttpURL({channelNumber, playerHttpURL:url});
-    }, [setPlayerSource])
+    }, [setSourceNSave])
 
     return (
         <OptionSelectList 

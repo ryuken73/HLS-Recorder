@@ -25,15 +25,28 @@ const mkOverlayContent = url => {
 }
 
 const players = new Map();
-for(let i=1;i<=NUMBER_OF_RECORDERS;i++){
-    const {title, url} = sources[i];
+const {remote} = require('electron');
+// below is not singleton
+// const electronUtil = require('../lib/electronUtil');
+// const sourceStore = electronUtil.createElectronStore({
+//     name:'sourceStore',
+//     cwd:remote.app.getPath('home')
+// });
+const Store = require('electron-store');
+const sourceStore = new Store({
+    name:'sourceStore',
+    cwd:remote.app.getPath('home')
+})
+
+for(let channelNumber=1;channelNumber<=NUMBER_OF_RECORDERS;channelNumber++){
+    const {title, url} = sources[channelNumber];
     const hlsPlayer = {
         ...DEFAULT_PLAYER_PROPS,
-        source: sources[i],
-        channelName: `${CHANNEL_PREFIX}${i}`,
+        source: sourceStore.get(channelNumber.toString()) || sources[channelNumber],
+        channelName: `${CHANNEL_PREFIX}${channelNumber}`,
         overlayContent: mkOverlayContent(url)
     }
-    players.set(i, hlsPlayer);
+    players.set(channelNumber, hlsPlayer);
 }
 
 
@@ -47,6 +60,21 @@ export const setPlayer = createAction(SET_PLAYER);
 export const setPlayerSource = createAction(SET_PLAYER_SOURCE);
 export const refreshPlayer = createAction(REFRESH_PLAYER);
 
+// redux thunk
+export const setSourceNSave = ({channelNumber, url}) => (dispatch, getState) => {
+    const state = getState();
+    const {sourceStore} = state.app;
+    const hlsPlayer = {...state.hlsPlayers.players.get(channelNumber)};
+
+    const sourceNumber = sources.findIndex(source => source.url === url);
+    const title = sourceNumber !== -1 ? sources[sourceNumber].title : hlsPlayer.source.title;
+    
+    sourceStore.set(channelNumber, {
+        title, 
+        url
+    })
+    dispatch(setPlayerSource({channelNumber, url}))
+}
 
 const initialState = {
     players,
@@ -84,6 +112,7 @@ export default handleActions({
         if(overlayContent) hlsPlayer.overlayContent = overlayContent;
 
         const players = new Map(state.players);
+
         players.set(channelNumber, hlsPlayer);
         return {
             ...state,

@@ -35,11 +35,18 @@ async function mkdir(directory){
 
 const recorders = new Map();
 
+const {remote} = require('electron');
+const Store = require('electron-store');
+const intervalStore = new Store({
+    name:'intervalStore',
+    cwd:remote.app.getPath('home')
+})
+
 // initialize recorder
 const path = require('path');
-for(let i=1 ; i<=NUMBER_OF_RECORDERS ; i++){
-    const {title, url} = sources[i];
-    const channelName = `${CHANNEL_PREFIX}${i}`;
+for(let channelNumber=1 ; channelNumber<=NUMBER_OF_RECORDERS ; channelNumber++){
+    const {title, url} = sources[channelNumber];
+    const channelName = `${CHANNEL_PREFIX}${channelNumber}`;
     const channelDirectory = path.join(BASE_DIRECTORY, channelName);
     const hlsRecorder = {
         channelName,
@@ -52,9 +59,9 @@ for(let i=1 ; i<=NUMBER_OF_RECORDERS ; i++){
         localm3u8: null,
         recorderStatus: 'stopped',
         scheduleStatus: 'stopped',
-        scheduleInterval: INITIAL_INTERVAL,        
+        scheduleInterval: intervalStore.get(channelNumber.toString()) || INITIAL_INTERVAL,        
     }
-    recorders.set(i, hlsRecorder);
+    recorders.set(channelNumber, hlsRecorder);
 }
 // initialize config statue
 const initialConfig = {
@@ -168,6 +175,13 @@ const getOutputName = (hlsRecorder, hlsPlayer) => {
     const saveDirectory = path.join(channelDirectory, safeForWinFile);
     const localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
     return [saveDirectory, localm3u8];
+}
+
+export const setScheduleIntervalNSave = ({channelNumber, scheduleInterval}) => (dispatch, getState) => {
+    const state = getState();
+    const {intervalStore} = state.app;
+    intervalStore.set(channelNumber, scheduleInterval);
+    dispatch(setScheduleInterval({channelNumber, scheduleInterval}))
 }
 
 export const refreshRecorder = ({channelNumber}) => (dispatch, getState) => {
@@ -409,7 +423,7 @@ export const changeAllIntervals = interval =>  (dispatch, getState) => {
     const {recorders} = state.hlsRecorders;
     const channelNumbers = [...recorders.keys()];
     channelNumbers.forEach(channelNumber => {
-        dispatch(setScheduleInterval({channelNumber, scheduleInterval:interval}))
+        dispatch(setScheduleIntervalNSave({channelNumber, scheduleInterval:interval}))
     })
 }
 

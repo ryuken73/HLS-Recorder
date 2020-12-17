@@ -17,11 +17,6 @@ const intervalStore = electronUtil.createElectronStore({
     cwd:remote.app.getPath('home')
 });
 
-console.log(clipStore)
-clipStore.clear()
-sourceStore.clear()
-intervalStore.clear()
- 
 const cctvFromConfig = require('../lib/getCCTVList');
 const sources = cctvFromConfig();
 

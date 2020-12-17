@@ -22,7 +22,7 @@ function IntervalSelection(props) {
     const {
         startSchedule=()=>{}, 
         stopSchedule=()=>{},
-        setScheduleInterval=()=>{}
+        setScheduleIntervalNSave=()=>{}
     } = props.HLSRecorderActions;
 
     const inRecording = recorderStatus !== 'stopped';
@@ -34,7 +34,7 @@ function IntervalSelection(props) {
     })
 
     const onChangeSelect = (event) => {
-        setScheduleInterval({channelNumber, scheduleInterval:event.target.value})
+        setScheduleIntervalNSave({channelNumber, scheduleInterval:event.target.value})
     }
 
     const ButtonElement = () => {
