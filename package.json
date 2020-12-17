@@ -61,9 +61,7 @@
     "asarUnpack": [
       "bin/ffmpeg.exe",
       "config/default/config.json",
-      "config/default/sources.json",
-      "config/config.json",
-      "config/sources.json"
+      "config/default/sources.json"
     ],
     "files": [
       "dist/",
