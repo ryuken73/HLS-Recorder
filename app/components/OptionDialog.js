@@ -1,13 +1,6 @@
 import React from 'react';
-import Box from '@material-ui/core/Box';
-import {SmallMarginTextField} from './template/smallComponents';
-import {SmallPaddingFormControlLabel} from './template/smallComponents';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import Typography from '@material-ui/core/Typography';
-import FormControl from '@material-ui/core/FormControl';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -17,8 +10,6 @@ import OptionRadioButton from './template/OptionRadioButton';
 import FolderIcon  from '@material-ui/icons/Folder';
 import {SmallPaddingIconButton} from './template/smallComponents';
 import utils from '../utils';
-// import DEFAULT_OPTIONS from '../config/options'; 
-// import {optionProvider} from '../modules/navigator';
 
 const { dialog } = require('electron').remote;
 
@@ -60,19 +51,6 @@ const OptionRadioButtonWithDefault = props => {
         </OptionRadioButton>
 }
 
-const setOptionsOnLocalStorage = (options) => {
-  const {homeUrl, saveDir, tempDir} = options;
-  const {deleteOnClose, deleteOnStart, deleteAfterSave, closeTabAfterSave} = options;
-  optionProvider.set('homeUrl', homeUrl);
-  optionProvider.set('saveDir', saveDir);
-  optionProvider.set('tempDir', tempDir);
-  optionProvider.set('deleteOnClose', deleteOnClose);
-  optionProvider.set('deleteOnStart', deleteOnStart);
-  optionProvider.set('deleteAfterSave', deleteAfterSave);
-  optionProvider.set('closeTabAfterSave', closeTabAfterSave);
-  return true;
-} 
-
 export default function OptionDialog(props) {
   console.log('######################## re-render OptionDialog', props)
   const {title="Dialog Box"} = props;
@@ -102,12 +80,8 @@ export default function OptionDialog(props) {
     setKeepClipsAfterHours=()=>{},
     setWaitSecondsBeforePlayback=()=>{},
   } = props.OptionDialogActions;
-  // const {setDialogOpen=()=>{},setSaveDir=()=>{}} = props.OptionDialogActions;
-  // const {setDeleteOnClose=()=>{}} = props.OptionDialogActions;
-  // const {setAllOptions=()=>{}} = props.OptionDialogActions;
+
   const [scroll, setScroll] = React.useState('paper');
-  // const [saveDir, setSaveDir] = React.useState(BASE_DIRECTORY);
-  // const [channelPrefixDisplay, setChannelPrefix] = React.useState(CHANNEL_PREFIX);
 
   const actionFunctions = {
     'saveDir': setBaseDirectory,
@@ -126,10 +100,6 @@ export default function OptionDialog(props) {
         actionFunctions[type](event.target.value);
     }
   }   
-  // const handleClickOpen = (scrollType) => () => {
-  //   setOpen(true);
-  //   setScroll(scrollType);
-  // };
 
   const handleClose = () => {
     setOptionsDialogOpen({dialogOpen:false});

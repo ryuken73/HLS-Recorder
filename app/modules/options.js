@@ -49,31 +49,6 @@ const initialState = {
     optionsDialogOpen:false
 }
 
-// const {
-//     BASE_DIRECTORY: saveDirectory,
-//     CHANNEL_PREFIX: channelPrefix,
-//     WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE: waitBeforePlayback,
-//     LONG_BUFFERING_MS_SECONDS: longBufferSeconds,
-//     SLEEP_MS_BETWEEN_ALL_START: delayForAllStart,
-//     SLEEP_MS_BETWEEN_ALL_STOP: delayforAllStop,
-//     NUMBER_OF_CHANNELS: numberOfRecorders,
-//     DEFAULT_PLAYER_PROPS: playerOptions
-// } = defaultConfig;
-
-// const initialState = {
-//     config: {
-//         saveDirectory,
-//         channelPrefix,
-//         waitBeforePlayback,
-//         longBufferSeconds,
-//         delayForAllStart,
-//         delayforAllStop,
-//         numberOfRecorders,
-//         playerOptions
-//     },
-//     optionsDialogOpen:false
-// }
-
 // reducer
 export default handleActions({
     [SAVE_CONFIG]: (state, action) => {
