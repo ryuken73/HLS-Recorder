@@ -67,8 +67,8 @@ export default function OptionDialog(props) {
     KEEP_SAVED_CLIP_AFTER_HOURS
   } = config;
   const {deleteOnClose=()=>{}} = props;
-  const {setOptionsDialogOpen=()=>{}, saveConfigNSave=()=>{}} = props.OptionDialogActions;
-  const {setDeleteOnClose=()=>{}} = props;
+  const {setOptionsDialogOpen=()=>{}, saveConfig=()=>{}} = props.OptionDialogActions;
+  const {setDefaultConfig=()=>{}} = props.OptionDialogActions;
   const {setAllOptions=()=>{}} = props;
   const {
     setBaseDirectory=()=>{},
@@ -113,12 +113,8 @@ export default function OptionDialog(props) {
   };
  
   const onClickSaveBtn = () => {
-    saveConfigNSave({config});
+    saveConfig({config});
     handleClose();
-  }
-
-  const resetOptions = () => {
-    setAllOptions(DEFAULT_OPTIONS)
   }
 
   const SaveDirectoryButton = (
@@ -162,7 +158,7 @@ export default function OptionDialog(props) {
       </DialogContentText>
     </DialogContent>
     <DialogActions>
-      <Button style={{marginRight:'auto'}} onClick={resetOptions} color="primary">
+      <Button style={{marginRight:'auto'}} onClick={setDefaultConfig} color="primary">
         Default
       </Button>
       <Button onClick={handleClose} color="primary">

@@ -8,7 +8,7 @@ const optionStore = new Store({
 })
 
 // action types
-const SAVE_CONFIG = 'options/SAVE_CONFIG';
+const SET_CONFIG = 'options/SET_CONFIG';
 const SET_BASE_DIRECTORY = 'options/SET_BASE_DIRECTORY';
 const SET_CHANNEL_PREFIX = 'options/SET_CHANNEL_PREFIX';
 const LONG_BUFFERING_MS_SECONDS = 'options/LONG_BUFFERING_MS_SECONDS';
@@ -20,7 +20,7 @@ const WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE = 'options/WAIT_SECONDS_MS_FOR_PLAYBAC
 const SET_OPTIONS_DIALOG_OPEN = 'options/SET_OPTIONS_DIALOG_OPEN';
 
 // action creator
-export const saveConfig = createAction(SAVE_CONFIG);
+export const setConfig = createAction(SET_CONFIG);
 export const setBaseDirectory = createAction(SET_BASE_DIRECTORY);
 export const setChannelPrefix = createAction(SET_CHANNEL_PREFIX);
 export const setLongBufferSceonds = createAction(LONG_BUFFERING_MS_SECONDS);
@@ -33,15 +33,23 @@ export const setWaitSecondsBeforePlayback = createAction(WAIT_SECONDS_MS_FOR_PLA
 export const setOptionsDialogOpen = createAction(SET_OPTIONS_DIALOG_OPEN);
 
 // redux thunk
-const getConfig = require('../lib/getConfig');
+const {getCombinedConfig,getDefaultConfig} = require('../lib/getConfig');
 export const openOptionsDialog = () => (dispatch, getState) => {
-    const config = getConfig({storeName:'optionStore', electronPath:'home'});
-    dispatch(saveConfig({config}));
+    const config = getCombinedConfig({storeName:'optionStore', electronPath:'home'});
+    dispatch(setConfig({config}));
     dispatch(setOptionsDialogOpen({dialogOpen:true}))
 }
-export const saveConfigNSave = ({config}) => (dispatch, getState) => {
+
+export const setDefaultConfig = () => (dispatch, getState) => {
+    const defaultConfig = getDefaultConfig();
+    dispatch(setConfig({config:defaultConfig}));
+}
+
+export const saveConfig = ({config}) => (dispatch, getState) => {
     optionStore.store = config;
 }
+
+
 
 const defaultConfig = require('../config/default/config.json');
 const initialState = {
@@ -51,7 +59,7 @@ const initialState = {
 
 // reducer
 export default handleActions({
-    [SAVE_CONFIG]: (state, action) => {
+    [SET_CONFIG]: (state, action) => {
         const {config} = action.payload;
         return {
             ...state,

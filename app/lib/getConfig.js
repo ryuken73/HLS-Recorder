@@ -13,4 +13,13 @@ const getCombinedConfig = (params) => {
     const customConfig = sourceStore.store;
     return {...defaultJson, ...customConfig};
 }
-module.exports = getCombinedConfig
+
+const getDefaultConfig = () => {
+    const defaultJsonFile = electronUtil.getAbsolutePath('config/default/config.json', true);
+    const defaultJson = electronUtil.readJSONFile(defaultJsonFile);
+    return {...defaultJson};
+}
+module.exports = {
+    getCombinedConfig,
+    getDefaultConfig
+}

@@ -1,9 +1,9 @@
 import {createAction, handleActions} from 'redux-actions';
 // import {logInfo, logError, logFail} from './messagePanel';
 const cctvFromConfig = require('../lib/getCCTVList');
-const getConfig = require('../lib/getConfig');
+const {getCombinedConfig} = require('../lib/getConfig');
 const sources = cctvFromConfig();
-const config = getConfig({storeName:'optionStore', electronPath:'home'});
+const config = getCombinedConfig({storeName:'optionStore', electronPath:'home'});
 
 const {
     NUMBER_OF_CHANNELS,
