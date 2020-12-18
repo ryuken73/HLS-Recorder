@@ -78,22 +78,29 @@ export default function OptionDialog(props) {
   const {title="Dialog Box"} = props;
   const {dialogOpen=true, config} = props;
   const {
-    BASE_DIRECTORY:saveDir="c:/temp",
-    CHANNEL_PREFIX:channelPrefix="channel",
+    BASE_DIRECTORY="c:/temp",
+    CHANNEL_PREFIX="channel",
     WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE,
     LONG_BUFFERING_MS_SECONDS,
     SLEEP_MS_BETWEEN_ALL_START,
     SLEEP_MS_BETWEEN_ALL_STOP,
-    NUMBER_OF_RECORDERS,
-    DEFAULT_PLAYER_PROPS
+    NUMBER_OF_CHANNELS,
+    DEFAULT_PLAYER_PROPS,
+    KEEP_SAVED_CLIP_AFTER_HOURS
   } = config;
   const {deleteOnClose=()=>{}} = props;
-  const {setOptionsDialogOpen=()=>{}} = props.OptionDialogActions;
+  const {setOptionsDialogOpen=()=>{}, saveConfigNSave=()=>{}} = props.OptionDialogActions;
   const {setDeleteOnClose=()=>{}} = props;
   const {setAllOptions=()=>{}} = props;
   const {
     setBaseDirectory=()=>{},
     setChannelPrefix=()=>{},
+    setLongBufferSceonds=()=>{},
+    setSleepBetweenStart=()=>{},
+    setSleepBetweenStop=()=>{},
+    setNumberOfChannels=()=>{},
+    setKeepClipsAfterHours=()=>{},
+    setWaitSecondsBeforePlayback=()=>{},
   } = props.OptionDialogActions;
   // const {setDialogOpen=()=>{},setSaveDir=()=>{}} = props.OptionDialogActions;
   // const {setDeleteOnClose=()=>{}} = props.OptionDialogActions;
@@ -105,7 +112,12 @@ export default function OptionDialog(props) {
   const actionFunctions = {
     'saveDir': setBaseDirectory,
     'channelPrefix': setChannelPrefix,
-    'deleteOnClose': setDeleteOnClose
+    'longBufferSeconds': setLongBufferSceonds,
+    'sleepBetweenStart': setSleepBetweenStart,
+    'sleepBetweenStop': setSleepBetweenStop,
+    'numberOfChannels': setNumberOfChannels,
+    'saveClipAfterHours': setKeepClipsAfterHours,
+    'waitSecondsForPlayback': setWaitSecondsBeforePlayback,
   }
 
   const onChange = type => {
@@ -114,7 +126,6 @@ export default function OptionDialog(props) {
         actionFunctions[type](event.target.value);
     }
   }   
-
   // const handleClickOpen = (scrollType) => () => {
   //   setOpen(true);
   //   setScroll(scrollType);
@@ -127,12 +138,12 @@ export default function OptionDialog(props) {
   const onClickSelectSaveDirectory = () => {
     dialog.showOpenDialog(({properties:['openDirectory']}), filePaths=> {
       if(filePaths === undefined) return;
-      setSaveDir(filePaths[0]);      
+      setBaseDirectory(filePaths[0]);      
     })
   };
  
   const onClickSaveBtn = () => {
-    setOptionsOnLocalStorage(props);
+    saveConfigNSave({config});
     handleClose();
   }
 
@@ -168,8 +179,14 @@ export default function OptionDialog(props) {
         id="scroll-dialog-description"
         tabIndex={-1}
       >
-        <OptionTextInputWithDefault subtitle='Channel Prefix' value={channelPrefix} onChange={onChange('channelPrefix')}></OptionTextInputWithDefault>
-        <OptionTextInputWithDefault subtitle='Save Directory' value={saveDir} onChange={onChange('saveDir')} iconButton={SaveDirectoryButton}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Number of Recorders' value={NUMBER_OF_CHANNELS} onChange={onChange('numberOfChannels')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Channel Prefix' value={CHANNEL_PREFIX} onChange={onChange('channelPrefix')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Clip Keeping Hours(hh)' value={KEEP_SAVED_CLIP_AFTER_HOURS} onChange={onChange('saveClipAfterHours')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Long Buffering(ms)' value={LONG_BUFFERING_MS_SECONDS} onChange={onChange('longBufferSeconds')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Wait for Playback(ms)' value={WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE} onChange={onChange('waitSecondsForPlayback')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Delay All Starting(ms)' value={SLEEP_MS_BETWEEN_ALL_START} onChange={onChange('sleepBetweenStart')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Delay All Stopping(ms)' value={SLEEP_MS_BETWEEN_ALL_STOP} onChange={onChange('sleepBetweenStop')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Save Directory' value={BASE_DIRECTORY} onChange={onChange('saveDir')} iconButton={SaveDirectoryButton}></OptionTextInputWithDefault>
         <OptionRadioButtonWithDefault subtitle="Delete on tab close" currentvalue={deleteOnClose} onChange={onChange('deleteOnClose')}></OptionRadioButtonWithDefault>
         
       </DialogContentText>

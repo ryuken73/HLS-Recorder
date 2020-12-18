@@ -1,5 +1,5 @@
 {
-  "NUMBER_OF_RECORDERS": 4,
+  "NUMBER_OF_CHANNELS": 4,
   "CHANNEL_PREFIX": "channel",
   "WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE": 2000,
   "LONG_BUFFERING_MS_SECONDS": 3000,
@@ -32,5 +32,6 @@
       {"title": "1 Minute", "milliseconds": 60000}
    ]
   },
-  "BASE_DIRECTORY": "c:/cctv"
+  "BASE_DIRECTORY": "c:/cctv",
+  "KEEP_SAVED_CLIP_AFTER_HOURS": "24"
 }

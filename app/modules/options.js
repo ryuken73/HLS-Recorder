@@ -1,23 +1,34 @@
 import {createAction, handleActions} from 'redux-actions';
+const Store = require('electron-store');
 
-const electronUtil = require('../lib/electronUtil');
 const {remote} = require('electron');
-const optionStore = electronUtil.createElectronStore({
+const optionStore = new Store({
     name:'optionStore',
     cwd:remote.app.getPath('home')
-});
+})
 
 // action types
-const SET_CONFIG = 'options/SET_CONFIG';
+const SAVE_CONFIG = 'options/SAVE_CONFIG';
 const SET_BASE_DIRECTORY = 'options/SET_BASE_DIRECTORY';
 const SET_CHANNEL_PREFIX = 'options/SET_CHANNEL_PREFIX';
+const LONG_BUFFERING_MS_SECONDS = 'options/LONG_BUFFERING_MS_SECONDS';
+const SLEEP_MS_BETWEEN_ALL_START = 'options/SLEEP_MS_BETWEEN_ALL_START';
+const SLEEP_MS_BETWEEN_ALL_STOP = 'options/SLEEP_MS_BETWEEN_ALL_STOP';
+const NUMBER_OF_CHANNELS = 'options/NUMBER_OF_CHANNELS';
+const KEEP_SAVED_CLIP_AFTER_HOURS = 'options/KEEP_SAVED_CLIP_AFTER_HOURS';
+const WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE = 'options/WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE';
 const SET_OPTIONS_DIALOG_OPEN = 'options/SET_OPTIONS_DIALOG_OPEN';
 
 // action creator
-export const setConfig = createAction(SET_CONFIG);
+export const saveConfig = createAction(SAVE_CONFIG);
 export const setBaseDirectory = createAction(SET_BASE_DIRECTORY);
 export const setChannelPrefix = createAction(SET_CHANNEL_PREFIX);
-
+export const setLongBufferSceonds = createAction(LONG_BUFFERING_MS_SECONDS);
+export const setSleepBetweenStart = createAction(SLEEP_MS_BETWEEN_ALL_START);
+export const setSleepBetweenStop = createAction(SLEEP_MS_BETWEEN_ALL_STOP);
+export const setNumberOfChannels = createAction(NUMBER_OF_CHANNELS);
+export const setKeepClipsAfterHours = createAction(KEEP_SAVED_CLIP_AFTER_HOURS);
+export const setWaitSecondsBeforePlayback = createAction(WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE);
 
 export const setOptionsDialogOpen = createAction(SET_OPTIONS_DIALOG_OPEN);
 
@@ -25,12 +36,11 @@ export const setOptionsDialogOpen = createAction(SET_OPTIONS_DIALOG_OPEN);
 const getConfig = require('../lib/getConfig');
 export const openOptionsDialog = () => (dispatch, getState) => {
     const config = getConfig({storeName:'optionStore', electronPath:'home'});
-    dispatch(setConfig({config}));
+    dispatch(saveConfig({config}));
     dispatch(setOptionsDialogOpen({dialogOpen:true}))
 }
-export const setConfigNSave = ({options}) => (dispatch, getState) => {
-    optionStore.store(options);
-    dispatch(setConfig({options}));
+export const saveConfigNSave = ({config}) => (dispatch, getState) => {
+    optionStore.store = config;
 }
 
 const defaultConfig = require('../config/default/config.json');
@@ -46,7 +56,7 @@ const initialState = {
 //     LONG_BUFFERING_MS_SECONDS: longBufferSeconds,
 //     SLEEP_MS_BETWEEN_ALL_START: delayForAllStart,
 //     SLEEP_MS_BETWEEN_ALL_STOP: delayforAllStop,
-//     NUMBER_OF_RECORDERS: numberOfRecorders,
+//     NUMBER_OF_CHANNELS: numberOfRecorders,
 //     DEFAULT_PLAYER_PROPS: playerOptions
 // } = defaultConfig;
 
@@ -66,7 +76,7 @@ const initialState = {
 
 // reducer
 export default handleActions({
-    [SET_CONFIG]: (state, action) => {
+    [SAVE_CONFIG]: (state, action) => {
         const {config} = action.payload;
         return {
             ...state,
@@ -86,6 +96,66 @@ export default handleActions({
         const chennelPrefix = action.payload;
         const config = {...state.config};
         config.CHANNEL_PREFIX = chennelPrefix;
+        console.log('#######', config)
+        return {
+            ...state,
+            config,
+        }
+    },
+    [LONG_BUFFERING_MS_SECONDS]: (state, action) => {
+        const seconds = action.payload;
+        const config = {...state.config};
+        config.LONG_BUFFERING_MS_SECONDS = seconds;
+        console.log('#######', config)
+        return {
+            ...state,
+            config,
+        }
+    },
+    [SLEEP_MS_BETWEEN_ALL_START]: (state, action) => {
+        const seconds = action.payload;
+        const config = {...state.config};
+        config.SLEEP_MS_BETWEEN_ALL_START = seconds;
+        console.log('#######', config)
+        return {
+            ...state,
+            config,
+        }
+    },
+    [SLEEP_MS_BETWEEN_ALL_STOP]: (state, action) => {
+        const seconds = action.payload;
+        const config = {...state.config};
+        config.SLEEP_MS_BETWEEN_ALL_STOP = seconds;
+        console.log('#######', config)
+        return {
+            ...state,
+            config,
+        }
+    },
+    [NUMBER_OF_CHANNELS]: (state, action) => {
+        const numberOfChannels = action.payload;
+        const config = {...state.config};
+        config.NUMBER_OF_CHANNELS = numberOfChannels;
+        console.log('#######', config)
+        return {
+            ...state,
+            config,
+        }
+    },
+    [KEEP_SAVED_CLIP_AFTER_HOURS]: (state, action) => {
+        const hours = action.payload;
+        const config = {...state.config};
+        config.KEEP_SAVED_CLIP_AFTER_HOURS = hours;
+        console.log('#######', config)
+        return {
+            ...state,
+            config,
+        }
+    },
+    [WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE]: (state, action) => {
+        const seconds = action.payload;
+        const config = {...state.config};
+        config.WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE = seconds;
         console.log('#######', config)
         return {
             ...state,

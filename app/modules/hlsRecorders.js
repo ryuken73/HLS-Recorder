@@ -8,7 +8,7 @@ const config = getConfig({storeName:'optionStore', electronPath:'home'});
 
 
 const {
-    NUMBER_OF_RECORDERS,
+    NUMBER_OF_CHANNELS,
     CHANNEL_PREFIX,
     BASE_DIRECTORY,
     DEFAULT_SCHEDULE_PROS,
@@ -45,7 +45,7 @@ const intervalStore = new Store({
 
 // initialize recorder
 const path = require('path');
-for(let channelNumber=1 ; channelNumber<=NUMBER_OF_RECORDERS ; channelNumber++){
+for(let channelNumber=1 ; channelNumber<=NUMBER_OF_CHANNELS ; channelNumber++){
     const {title, url} = sources[channelNumber];
     const channelName = `${CHANNEL_PREFIX}${channelNumber}`;
     const channelDirectory = path.join(BASE_DIRECTORY, channelName);

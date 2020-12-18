@@ -6,7 +6,7 @@ const sources = cctvFromConfig();
 const config = getConfig({storeName:'optionStore', electronPath:'home'});
 
 const {
-    NUMBER_OF_RECORDERS,
+    NUMBER_OF_CHANNELS,
     CHANNEL_PREFIX,
     DEFAULT_PLAYER_PROPS,
     LONG_BUFFERING_MS_SECONDS=3000
@@ -38,7 +38,7 @@ const sourceStore = new Store({
     cwd:remote.app.getPath('home')
 })
 
-for(let channelNumber=1;channelNumber<=NUMBER_OF_RECORDERS;channelNumber++){
+for(let channelNumber=1;channelNumber<=NUMBER_OF_CHANNELS;channelNumber++){
     const {title, url} = sources[channelNumber];
     const hlsPlayer = {
         ...DEFAULT_PLAYER_PROPS,

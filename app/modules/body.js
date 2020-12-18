@@ -4,7 +4,7 @@ const getConfig = require('../lib/getConfig');
 const config = getConfig({storeName:'optionStore', electronPath:'home'});
 
 const {
-    NUMBER_OF_RECORDERS
+    NUMBER_OF_CHANNELS
 } = config;
 
 const arrayBetween = (from, to) => {
@@ -15,7 +15,7 @@ const arrayBetween = (from, to) => {
     return resultArray;
 }
 
-const channels = arrayBetween(1, NUMBER_OF_RECORDERS)
+const channels = arrayBetween(1, NUMBER_OF_CHANNELS)
 
 // action types
 const SET_CHANNELS = 'body/SET_CHANNELS';
