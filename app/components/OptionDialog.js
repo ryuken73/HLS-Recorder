@@ -120,7 +120,7 @@ export default function OptionDialog(props) {
     handleClose();
     if(valueChanged){
       setConfirmOpen(true);
-      setDialogTitle('Reolad required!')
+      setDialogTitle('Reload Required!')
       setDialogText(`
         Reload is required for changes to take effect.
         scheduled recording will be stopped!
