@@ -52,7 +52,9 @@ const OptionRadioButtonWithDefault = props => {
 }
 
 export default function OptionDialog(props) {
-  console.log('######################## re-render OptionDialog', props)
+  console.log('######################## re-render OptionDialog', props);
+  const [valueChanged, setValueChanged] = React.useState(false);
+  const {setConfirmOpen, setDialogTitle, setDialogText} = props;
   const {title="Dialog Box"} = props;
   const {dialogOpen=true, config} = props;
   const {
@@ -96,8 +98,9 @@ export default function OptionDialog(props) {
 
   const onChange = type => {
     return event => {
-        console.log(type, event.target.value);
-        actionFunctions[type](event.target.value);
+      setValueChanged(true);
+      console.log(type, event.target.value);
+      actionFunctions[type](event.target.value);
     }
   }   
 
@@ -115,6 +118,14 @@ export default function OptionDialog(props) {
   const onClickSaveBtn = () => {
     saveConfig({config});
     handleClose();
+    if(valueChanged){
+      setConfirmOpen(true);
+      setDialogTitle('Reolad required!')
+      setDialogText(`
+        Reload is required for changes to take effect.
+        scheduled recording will be stopped!
+      `)
+    }
   }
 
   const SaveDirectoryButton = (

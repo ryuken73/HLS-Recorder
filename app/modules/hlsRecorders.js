@@ -46,7 +46,8 @@ const intervalStore = new Store({
 // initialize recorder
 const path = require('path');
 for(let channelNumber=1 ; channelNumber<=NUMBER_OF_CHANNELS ; channelNumber++){
-    const {title, url} = sources[channelNumber];
+    const source = sources[channelNumber] || {};
+    const {title="없음", url=""} = source;
     const channelName = `${CHANNEL_PREFIX}${channelNumber}`;
     const channelDirectory = path.join(BASE_DIRECTORY, channelName);
     const hlsRecorder = {

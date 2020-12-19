@@ -2,13 +2,20 @@ import React from 'react';
 import Box from '@material-ui/core/Box'
 import BorderedBox from './template/BorderedBox';
 import IconButton from '@material-ui/core/IconButton';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import SettingsIcon from '@material-ui/icons/Settings';
+// const {remote} = require('electron');
 
 const Header = (props) => {
+    const {setConfirmOpen} = props;
     const {openOptionsDialog} = props.OptionDialogActions;
     const openDialog = React.useCallback(() => {
         openOptionsDialog();
         // setOptionsDialogOpen({dialogOpen:true})
+    },[])
+    const reload = React.useCallback(() => {
+        setConfirmOpen(true);
+        // remote.getCurrentWebContents().reload();
     },[])
     return (      
         <Box 
@@ -21,7 +28,14 @@ const Header = (props) => {
             justifyContent="space-between"
         >
             <Box width="100px">
-                
+                <Box mr="auto">
+                    <IconButton aria-label="configuration" onClick={reload}>
+                        <RefreshIcon 
+                            fontSize="large"
+                            style={{color:"grey"}}
+                        ></RefreshIcon>
+                    </IconButton>
+                </Box>
             </Box>
             <Box 
                 fontFamily="Roboto, Helvetica, Arial, sans-serif" 

@@ -47,9 +47,9 @@ export const setDefaultConfig = () => (dispatch, getState) => {
 
 export const saveConfig = ({config}) => (dispatch, getState) => {
     optionStore.store = config;
+    // const mainWindow = remote.getCurrentWindow();
+    // mainWindow.reload();
 }
-
-
 
 const defaultConfig = require('../config/default/config.json');
 const initialState = {

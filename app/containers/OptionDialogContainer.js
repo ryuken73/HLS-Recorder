@@ -13,7 +13,7 @@ function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
     config,
-    dialogOpen:optionsDialogOpen
+    dialogOpen: optionsDialogOpen
   }
 }
 
