@@ -51,9 +51,11 @@ export const saveConfig = ({config}) => (dispatch, getState) => {
     // mainWindow.reload();
 }
 
-const defaultConfig = require('../config/default/config.json');
+// const defaultConfig = require('../config/default/config.json');
+const initialConfig = getCombinedConfig({storeName:'optionStore', electronPath:'home'});
+
 const initialState = {
-    config: defaultConfig,
+    config: initialConfig,
     optionsDialogOpen:false
 }
 

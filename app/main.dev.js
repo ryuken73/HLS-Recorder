@@ -93,7 +93,7 @@ app.on('ready', async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: width,
-    minWidth: 800,
+    minWidth: 1012,
     height: height,
     backgroundColor: '#252839',
     webPreferences: {

@@ -15,6 +15,8 @@ const ButtomMenu = (props) => {
     const {
         scheduleStatusAllStop:scheduleStatusAllStopped,
         recorderStatusAllStop:recorderStatusAllStopped,
+        scheduleStatusAllSame,
+        recorderStatusAllSame,
         recorderStatusAnyInTransition,
         intervalsForSelection,
     } = props;
@@ -57,7 +59,8 @@ const ButtomMenu = (props) => {
                     mr={"0px"}
                     bgcolor={scheduleButtonColor}
                     minwidth={"130px"}
-                    disabled={recorderStatusAnyInTransition}
+                    disabled={recorderStatusAnyInTransition || !scheduleStatusAllSame
+                    }
                     onClick={scheduleStatusAllStopped ? startScheduleAll : stopScheduleAll}
                 >{scheduleStatusAllStopped ? "start schedule" : "stop schedule"}</SmallButton>
                 <SmallButton 
@@ -70,7 +73,7 @@ const ButtomMenu = (props) => {
                     mr={"0px"}
                     bgcolor={recordButtonColor}
                     minwidth={"130px"}
-                    disabled={recorderStatusAnyInTransition}
+                    disabled={recorderStatusAnyInTransition || !recorderStatusAllSame}
                     onClick={recorderStatusAllStopped ? startRecordAll : stopRecordAll}
                 >{recorderStatusAllStopped ? "start record" : "stop record"}
                 </SmallButton>

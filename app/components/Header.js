@@ -4,10 +4,14 @@ import BorderedBox from './template/BorderedBox';
 import IconButton from '@material-ui/core/IconButton';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import SettingsIcon from '@material-ui/icons/Settings';
-// const {remote} = require('electron');
+import FolderOpenIcon from '@material-ui/icons/FolderOpen';
+const {remote} = require('electron');
 
 const Header = (props) => {
     const {setConfirmOpen} = props;
+    const {BASE_DIRECTORY="c:/temp"} =  props.config;
+    console.log('$$$$', BASE_DIRECTORY)
+
     const {openOptionsDialog} = props.OptionDialogActions;
     const openDialog = React.useCallback(() => {
         openOptionsDialog();
@@ -17,6 +21,10 @@ const Header = (props) => {
         setConfirmOpen(true);
         // remote.getCurrentWebContents().reload();
     },[])
+    const openDirectory = React.useCallback(() => {
+        // remote.shell.showItemInFolder(BASE_DIRECTORY)
+        remote.shell.openItem(BASE_DIRECTORY)
+    },[BASE_DIRECTORY])
     return (      
         <Box 
             display="flex" 
@@ -27,13 +35,21 @@ const Header = (props) => {
             alignContent="center"
             justifyContent="space-between"
         >
-            <Box width="100px">
-                <Box mr="auto">
+            <Box display="flex" width="100px">
+                <Box>
                     <IconButton aria-label="configuration" onClick={reload}>
                         <RefreshIcon 
                             fontSize="large"
                             style={{color:"grey"}}
                         ></RefreshIcon>
+                    </IconButton>
+                </Box>
+                <Box mr="auto">
+                    <IconButton aria-label="configuration" onClick={openDirectory}>
+                        <FolderOpenIcon 
+                            fontSize="large"
+                            style={{color:"grey"}}
+                        ></FolderOpenIcon>
                     </IconButton>
                 </Box>
             </Box>
