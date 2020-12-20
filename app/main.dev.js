@@ -138,27 +138,35 @@ app.on('ready', async () => {
   const electronUtil = require('./lib/electronUtil');
   const electronLog = electronUtil.initElectronLog({}); 
 
+  const getConfig = require('./lib/getConfig');
+  const config = getConfig.getCombinedConfig();
+  const {DELETE_SCHEDULE_CRON='* * * * *'} = config;
+
   const scheduler = require('./lib/scheduleManager');
   const scheduleManager = scheduler(true, electronLog);
-  const deleteScheduler = scheduleManager.register('deleteClips', '0,10,20,30,40,50 * * * *');
+  const deleteScheduler = scheduleManager.register('deleteClips', DELETE_SCHEDULE_CRON);
 
   const {fork} = require('child_process');
-  const getConfig = require('./lib/getConfig');
+  
   deleteScheduler.on('triggered', name => {
     const config = getConfig.getCombinedConfig();
-    const {BASE_DIRECTORY="none", CHANNEL_PREFIX="channel"} = config;
-    electronLog.log(`triggered: ${name} ${BASE_DIRECTORY} ${CHANNEL_PREFIX}`);
-    // const channelNumbers = Array(20).fill(0).map((elemeint, index) => index+1);
-    // channelNumbers.map(channelNumber => {
-    //   const channelDirectory = path.join(BASE_DIRECTORY, `${CHANNEL_PREFIX}${channelNumber}`);
-    //   const args = [
-    //     channelDirectory,
-    //     60 * 60 * 3, /* seconds */
-    //     '*', /* dir */
-    //     false /* test */
-    //   ]
-    //   const child = fork('./app/lib/deleteOldFiles.js', args)
-    // })
+    const {
+      BASE_DIRECTORY="none", 
+      CHANNEL_PREFIX="channel",
+      KEEP_SAVED_CLIP_AFTER_HOURS=24
+    } = config;
+    electronLog.log(`triggered: ${name} baseDirectory:[${BASE_DIRECTORY}] channel prefix:[${CHANNEL_PREFIX}] delete before hours: [${KEEP_SAVED_CLIP_AFTER_HOURS}]`);
+    const channelNumbers = Array(20).fill(0).map((element, index) => index+1);
+    channelNumbers.map(channelNumber => {
+      const channelDirectory = path.join(BASE_DIRECTORY, `${CHANNEL_PREFIX}${channelNumber}`);
+      const args = [
+        channelDirectory,
+        60 * 60 * KEEP_SAVED_CLIP_AFTER_HOURS, /* seconds */
+        '*', /* dir */
+        false /* test */
+      ]
+      const child = fork('./app/lib/deleteOldFiles.js', args)
+    })
   }); 
   deleteScheduler.start();
 });

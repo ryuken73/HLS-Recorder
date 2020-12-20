@@ -33,7 +33,7 @@ const successiveEvent = (checkFunction,logger=console) => {
         if(occurred === limit){
             return true;
         }
-        logger.info(`check successiveEvent : ${value} - ${occurred}`);
+        logger.debug(`check successiveEvent : ${value} - ${occurred}`);
         return false;   
     }
 }
