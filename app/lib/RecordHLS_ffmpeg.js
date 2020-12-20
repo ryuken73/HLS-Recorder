@@ -180,7 +180,11 @@ class RecoderHLS extends EventEmitter {
         this.log.info(`start encoding.... ${this.src}`);
         // this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this.target).outputOptions(mp4Options);
         // this.enablePlayback && this.command.output(this._localm3u8).outputOptions(hlsOptions);
-        this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this._localm3u8).outputOptions(hlsOptions);
+        try {
+            this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this._localm3u8).outputOptions(hlsOptions);
+        } catch (error) {
+            this.log.error(error.message)
+        }
         this.command
         .on('start', this.startHandler)
         .on('progress', this.progressHandler)

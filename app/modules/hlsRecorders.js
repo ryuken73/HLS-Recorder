@@ -46,7 +46,8 @@ const intervalStore = new Store({
 // initialize recorder
 const path = require('path');
 for(let channelNumber=1 ; channelNumber<=NUMBER_OF_CHANNELS ; channelNumber++){
-    const source = sources[channelNumber] || {};
+    const arrayIndex = channelNumber - 1;
+    const source = sources[arrayIndex] || {};
     const {title="없음", url=""} = source;
     const channelName = `${CHANNEL_PREFIX}${channelNumber}`;
     const channelDirectory = path.join(BASE_DIRECTORY, channelName);
@@ -123,12 +124,15 @@ export const createRecorder = (channelNumber, createdByError=false) => (dispatch
         scheduleStatus
     } = hlsRecorder;
 
+    const {source={}} = hlsPlayer;
+    const {url=''} = source;
+
     channelLog.info(`create HLS Recorder`)
 
     const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
     const recorderOptions = {
         name: channelName,
-        src: '', 
+        src: url, 
         channelDirectory,
         enablePlayback: true, 
         localm3u8:'',
