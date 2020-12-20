@@ -15,6 +15,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import path from 'path';
+import { serialize } from 'v8';
 // const path = require('path')
 
 export default class AppUpdater {
@@ -94,8 +95,11 @@ app.on('ready', async () => {
     show: false,
     width: width,
     minWidth: 1012,
+    minHeight: 750,
     height: height,
     backgroundColor: '#252839',
+    title: 'HLS Recorder',
+    minimizable: false,
     webPreferences: {
       nodeIntegration: true,
       nativeWindowOpen: true
@@ -147,7 +151,7 @@ app.on('ready', async () => {
   const deleteScheduler = scheduleManager.register('deleteClips', DELETE_SCHEDULE_CRON);
 
   const {fork} = require('child_process');
-  
+
   deleteScheduler.on('triggered', name => {
     const config = getConfig.getCombinedConfig();
     const {
@@ -157,7 +161,7 @@ app.on('ready', async () => {
     } = config;
     electronLog.log(`triggered: ${name} baseDirectory:[${BASE_DIRECTORY}] channel prefix:[${CHANNEL_PREFIX}] delete before hours: [${KEEP_SAVED_CLIP_AFTER_HOURS}]`);
     const channelNumbers = Array(20).fill(0).map((element, index) => index+1);
-    channelNumbers.map(channelNumber => {
+    const deleteJobs = channelNumbers.map(channelNumber => {
       const channelDirectory = path.join(BASE_DIRECTORY, `${CHANNEL_PREFIX}${channelNumber}`);
       const args = [
         channelDirectory,
@@ -165,8 +169,40 @@ app.on('ready', async () => {
         '*', /* dir */
         false /* test */
       ]
-      const child = fork('./app/lib/deleteOldFiles.js', args)
+      // const child = fork('./app/lib/deleteOldFiles.js', args)
+      return args;
     })
+    sequenceExecute(deleteJobs);
   }); 
+
+  const sequenceExecute = deleteJobs => {
+    if(deleteJobs.length > 0){
+      const args = deleteJobs.shift();
+      const channelDirectory = args[0];
+      deleteClipStore(channelDirectory);
+      electronLog.info(`Delete Start...[${channelDirectory}]`);
+      const child = fork('./app/lib/deleteOldFiles.js', args);
+      child.on('message', results => {
+        electronLog.info(`Deleted:[${JSON.stringify(results)}]`);
+        const deleteDirectories = Object.keys(results);
+        deleteDirectories.forEach(directory => {
+          deleteClipStore(directory)
+        })
+      })
+      child.on('exit', () => {
+        sequenceExecute(deleteJobs);
+      })
+    }
+  }
   deleteScheduler.start();
 });
+
+const Store = require('electron-store');
+const deleteClipStore = channelDirectory => {
+  const clipStore = new Store({
+    name:'clipStore',
+    cwd:app.getPath('home')
+  })
+  const clipId = path.basename(channelDirectory);
+  clipStore.delete(clipId);
+}

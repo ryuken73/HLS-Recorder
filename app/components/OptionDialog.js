@@ -66,7 +66,8 @@ export default function OptionDialog(props) {
     SLEEP_MS_BETWEEN_ALL_STOP,
     NUMBER_OF_CHANNELS,
     DEFAULT_PLAYER_PROPS,
-    KEEP_SAVED_CLIP_AFTER_HOURS
+    KEEP_SAVED_CLIP_AFTER_HOURS,
+    DELETE_SCHEDULE_CRON
   } = config;
   const {deleteOnClose=()=>{}} = props;
   const {setOptionsDialogOpen=()=>{}, saveConfig=()=>{}} = props.OptionDialogActions;
@@ -81,6 +82,7 @@ export default function OptionDialog(props) {
     setNumberOfChannels=()=>{},
     setKeepClipsAfterHours=()=>{},
     setWaitSecondsBeforePlayback=()=>{},
+    setDeleteScheduleCron=()=>{}
   } = props.OptionDialogActions;
 
   const [scroll, setScroll] = React.useState('paper');
@@ -94,6 +96,7 @@ export default function OptionDialog(props) {
     'numberOfChannels': setNumberOfChannels,
     'saveClipAfterHours': setKeepClipsAfterHours,
     'waitSecondsForPlayback': setWaitSecondsBeforePlayback,
+    'deleteScheduleCron': setDeleteScheduleCron
   }
 
   const onChange = type => {
@@ -163,6 +166,7 @@ export default function OptionDialog(props) {
         <OptionTextInputWithDefault subtitle='Wait for Playback(ms)' value={WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE} onChange={onChange('waitSecondsForPlayback')}></OptionTextInputWithDefault>
         <OptionTextInputWithDefault subtitle='Delay All Starting(ms)' value={SLEEP_MS_BETWEEN_ALL_START} onChange={onChange('sleepBetweenStart')}></OptionTextInputWithDefault>
         <OptionTextInputWithDefault subtitle='Delay All Stopping(ms)' value={SLEEP_MS_BETWEEN_ALL_STOP} onChange={onChange('sleepBetweenStop')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Delete Schedule Cron' value={DELETE_SCHEDULE_CRON} onChange={onChange('deleteScheduleCron')}></OptionTextInputWithDefault>
         <OptionTextInputWithDefault subtitle='Save Directory' value={BASE_DIRECTORY} onChange={onChange('saveDir')} iconButton={SaveDirectoryButton}></OptionTextInputWithDefault>
         <OptionRadioButtonWithDefault subtitle="Delete on tab close" currentvalue={deleteOnClose} onChange={onChange('deleteOnClose')}></OptionRadioButtonWithDefault>
         

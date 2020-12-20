@@ -175,12 +175,13 @@ export const createRecorder = (channelNumber, createdByError=false) => (dispatch
 const getOutputName = (hlsRecorder, hlsPlayer) => {
     const {channelName, channelDirectory} = hlsRecorder;
     const {source} = hlsPlayer;
-    const now = utils.date.getString(new Date());
+    const now = utils.date.getString(new Date(),{sep:'-'});
     const jobDescString = `${channelName}_${now}_${Date.now()}_${source.title}`;
     const safeForWinFile = utils.file.toSafeFileNameWin(jobDescString);
     const saveDirectory = path.join(channelDirectory, safeForWinFile);
+    const subDirectory = safeForWinFile;
     const localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
-    return [saveDirectory, localm3u8];
+    return [saveDirectory, localm3u8, subDirectory];
 }
 
 export const setScheduleIntervalNSave = ({channelNumber, scheduleInterval}) => (dispatch, getState) => {
@@ -221,7 +222,7 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
     
         channelLog.info(`start startRecroding() recorder.createTime:${recorder.createTime}`)
     
-        const [saveDirectory, localm3u8] = getOutputName(hlsRecorder, hlsPlayer);
+        const [saveDirectory, localm3u8, subDirectory] = getOutputName(hlsRecorder, hlsPlayer);
         mkdir(saveDirectory);
         
         recorder.src = hlsRecorder.playerHttpURL;
@@ -247,7 +248,8 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
                 const url = hlsRecorder.playerHttpURL;
                 const title = source.title;
                 const hlsDirectory = saveDirectory;
-                const clipId = `${channelName}_${startTime}_${endTime}`
+                // const clipId = `${channelName}_${startTime}_${startTimestamp}_${title}`
+                const clipId = subDirectory;
                 const hlsm3u8 = localm3u8;
                 const clipData = {
                     clipId,

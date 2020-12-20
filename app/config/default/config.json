@@ -33,5 +33,6 @@
    ]
   },
   "BASE_DIRECTORY": "c:/cctv",
-  "KEEP_SAVED_CLIP_AFTER_HOURS": "24"
+  "KEEP_SAVED_CLIP_AFTER_HOURS": "24",
+  "DELETE_SCHEDULE_CRON": "* * * * *"
 }

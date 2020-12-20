@@ -18,6 +18,7 @@ const NUMBER_OF_CHANNELS = 'options/NUMBER_OF_CHANNELS';
 const KEEP_SAVED_CLIP_AFTER_HOURS = 'options/KEEP_SAVED_CLIP_AFTER_HOURS';
 const WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE = 'options/WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE';
 const SET_OPTIONS_DIALOG_OPEN = 'options/SET_OPTIONS_DIALOG_OPEN';
+const SET_DELETE_SCHEDULE_CRON = 'options/SET_DELETE_SCHEDULE_CRON';
 
 // action creator
 export const setConfig = createAction(SET_CONFIG);
@@ -29,6 +30,7 @@ export const setSleepBetweenStop = createAction(SLEEP_MS_BETWEEN_ALL_STOP);
 export const setNumberOfChannels = createAction(NUMBER_OF_CHANNELS);
 export const setKeepClipsAfterHours = createAction(KEEP_SAVED_CLIP_AFTER_HOURS);
 export const setWaitSecondsBeforePlayback = createAction(WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE);
+export const setDeleteScheduleCron = createAction(SET_DELETE_SCHEDULE_CRON);
 
 export const setOptionsDialogOpen = createAction(SET_OPTIONS_DIALOG_OPEN);
 
@@ -141,6 +143,16 @@ export default handleActions({
         const seconds = action.payload;
         const config = {...state.config};
         config.WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE = seconds;
+        console.log('#######', config)
+        return {
+            ...state,
+            config,
+        }
+    },
+    [SET_DELETE_SCHEDULE_CRON]: (state, action) => {
+        const schedule = action.payload;
+        const config = {...state.config};
+        config.DELETE_SCHEDULE_CRON = schedule;
         console.log('#######', config)
         return {
             ...state,
