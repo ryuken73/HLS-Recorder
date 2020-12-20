@@ -47,8 +47,18 @@ const BasicLink = styled(Link)`
     }
 `
 
+const BasicIconButton = styled(IconButton)`
+    padding: ${props => props.padding || "5px"};
+    .MuiIconButton-label {
+        .MuiSvgIcon-root {
+            color: ${props => props.iconcolor || 'white'};
+        }
+    }
+`
+
 export {
     BasicButton,
     BasicSelect,
-    BasicLink
+    BasicLink,
+    BasicIconButton
 }

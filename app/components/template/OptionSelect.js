@@ -1,10 +1,10 @@
 import React from 'react'
 import Typography from '@material-ui/core/Typography';
-import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import BorderedList from './BorderedList';
 import {SmallPaddingSelect}  from './smallComponents';
+import {BasicSelect}  from './basicComponents';
 
 
 export default function OptionSelectList(props) {
@@ -25,7 +25,7 @@ export default function OptionSelectList(props) {
     } = props;
 
     const {smallComponent=true} = props;
-    const SelectComponent = smallComponent ? SmallPaddingSelect : Select;
+    const SelectComponent = smallComponent ? SmallPaddingSelect : BasicSelect;
 
     const selectItems = intervalsForSelection.map(interval => {
         return {

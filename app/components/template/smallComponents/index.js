@@ -16,7 +16,6 @@ const SmallPaddingIconButton = styled(IconButton)`
             color: ${props => props.iconcolor || 'white'};
         }
     }
-
 `
 const SmallButton  = styled(Button)`
     margin-top: ${props => props.mt || "2px"};

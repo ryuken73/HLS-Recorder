@@ -1,18 +1,46 @@
 import React from 'react';
 import Box from '@material-ui/core/Box'
 import BorderedBox from './template/BorderedBox';
-import IconButton from '@material-ui/core/IconButton';
+// import IconButton from '@material-ui/core/IconButton';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import SettingsIcon from '@material-ui/icons/Settings';
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
+import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import OptionSelect from './template/OptionSelect';
+import {BasicIconButton} from './template/basicComponents';
+
 const {remote} = require('electron');
 
 const Header = (props) => {
+    console.log('$$$$', props)
     const {setConfirmOpen} = props;
     const {BASE_DIRECTORY="c:/temp"} =  props.config;
-    console.log('$$$$', BASE_DIRECTORY)
 
     const {openOptionsDialog} = props.OptionDialogActions;
+
+    const {
+        scheduleStatusAllStop:scheduleStatusAllStopped,
+        recorderStatusAllStop:recorderStatusAllStopped,
+        scheduleStatusAllSame,
+        recorderStatusAllSame,
+        recorderStatusAnyInTransition,
+        intervalsForSelection,
+    } = props;
+
+    const {
+        startScheduleAll=()=>{},
+        stopScheduleAll=()=>{},
+        startRecordAll=()=>{},
+        stopRecordAll=()=>{},
+        changeAllIntervals=()=>{}
+    } = props.HLSRecorderActions;
+    console.log('$$$$$$$$', changeAllIntervals)
+
+    const scheduleButtonColor =  scheduleStatusAllStopped ? 'grey' : 'maroon';
+    const recordButtonColor =  recorderStatusAllStopped ? 'grey' : 'maroon';
+
+
     const openDialog = React.useCallback(() => {
         openOptionsDialog();
         // setOptionsDialogOpen({dialogOpen:true})
@@ -35,22 +63,40 @@ const Header = (props) => {
             alignContent="center"
             justifyContent="space-between"
         >
-            <Box display="flex" width="100px">
+            <Box display="flex" alignItems="center" width="300px">
                 <Box>
-                    <IconButton aria-label="configuration" onClick={reload}>
-                        <RefreshIcon 
+                    <BasicIconButton 
+                        aria-label="all recording" 
+                        iconcolor={recordButtonColor}
+                        onClick={recorderStatusAllStopped ? startRecordAll : stopRecordAll}
+                        disabled={recorderStatusAnyInTransition || !recorderStatusAllSame}
+                    >
+                        <FiberManualRecordIcon 
                             fontSize="large"
-                            style={{color:"grey"}}
-                        ></RefreshIcon>
-                    </IconButton>
+                        ></FiberManualRecordIcon>
+                    </BasicIconButton>
                 </Box>
-                <Box mr="auto">
-                    <IconButton aria-label="configuration" onClick={openDirectory}>
-                        <FolderOpenIcon 
+                <Box>
+                    <BasicIconButton 
+                        aria-label="all schedule" 
+                        iconcolor={scheduleButtonColor}
+                        onClick={scheduleStatusAllStopped ? startScheduleAll : stopScheduleAll}
+                        disabled={recorderStatusAnyInTransition || !scheduleStatusAllSame}
+                    >
+                        <AccessAlarmIcon 
                             fontSize="large"
-                            style={{color:"grey"}}
-                        ></FolderOpenIcon>
-                    </IconButton>
+                        ></AccessAlarmIcon>
+                    </BasicIconButton>
+                </Box>
+                <Box ml="5px" mr={"auto"}>
+                    <OptionSelect
+                        selectColor={"darkslategrey"}
+                        disabled={!scheduleStatusAllStopped || recorderStatusAnyInTransition}
+                        intervalsForSelection={intervalsForSelection}
+                        minWidth="200px"
+                        onChangeSelect={changeAllIntervals}
+                        smallComponent={false}
+                    ></OptionSelect>
                 </Box>
             </Box>
             <Box 
@@ -63,14 +109,30 @@ const Header = (props) => {
                 // width="95%"
             >CCTV Recorder
             </Box>
-            <Box display="flex" width="100px">
+            <Box display="flex" width="300px">
                 <Box ml="auto">
-                    <IconButton aria-label="configuration" onClick={openDialog}>
+                    <BasicIconButton aria-label="reload" onClick={reload}>
+                        <RefreshIcon 
+                            fontSize="large"
+                            style={{color:"grey"}}
+                        ></RefreshIcon>
+                    </BasicIconButton>
+                </Box>
+                <Box>
+                    <BasicIconButton aria-label="open directory" onClick={openDirectory}>
+                        <FolderOpenIcon 
+                            fontSize="large"
+                            style={{color:"grey"}}
+                        ></FolderOpenIcon>
+                    </BasicIconButton>
+                </Box>
+                <Box>
+                    <BasicIconButton aria-label="configuration" onClick={openDialog}>
                         <SettingsIcon 
                             fontSize="large"
                             style={{color:"grey"}}
                         ></SettingsIcon>
-                    </IconButton>
+                    </BasicIconButton>
                 </Box>
             </Box>
         </Box>  

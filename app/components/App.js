@@ -1,10 +1,10 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import HeaderContainer from '../containers/HeaderContainer';
 import BottomMenuContainer from '../containers/BottomMenuContainer';;
 import BodyContainer from '../containers/BodyContainer';
 import OptionDialogContainer from '../containers/OptionDialogContainer';
+import HeaderContainer from '../containers/HeaderContainer';
 import ReloadConfirm from './ReloadConfirm';
 import MessageContainer from './MessagePanel';
 const { BrowserView, getCurrentWindow } = require('electron').remote;
@@ -34,7 +34,8 @@ function App(props) {
           setConfirmOpen={setConfirmOpen}
         ></HeaderContainer>
         <BodyContainer></BodyContainer>
-        <BottomMenuContainer mt="auto"></BottomMenuContainer> 
+        {/* <BottomMenuContainer mt="auto"></BottomMenuContainer>  */}
+        <MessageContainer mt="auto"></MessageContainer> 
         <ReloadConfirm 
           open={confirmOpen} 
           setOpen={setConfirmOpen}
@@ -47,7 +48,6 @@ function App(props) {
           setDialogTitle={setDialogTitle}
           setDialogText={setDialogText}
         ></OptionDialogContainer>
-        <MessageContainer></MessageContainer> 
       </Box>
     </ThemeProvider>
   );
