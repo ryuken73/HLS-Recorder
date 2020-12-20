@@ -160,10 +160,10 @@ class RecoderHLS extends EventEmitter {
     progressHandler = event => {
         // this.bytesRecorded = this.wStream.bytesWritten;
         this.duration = event.timemark;
-        this.log.info(`duration: ${this.duration}`);
+        this.log.debug(`duration: ${this.duration}`);
         const CRITICAL_SUCCESSIVE_OCCUR_COUNT = 5;
         const durationNotChanged = this.checkSuccessiveEvent(this.duration, CRITICAL_SUCCESSIVE_OCCUR_COUNT);
-        this.log.info(`value of durationNotChanged: ${durationNotChanged}, duration=${this.duration}`);
+        this.log.debug(`value of durationNotChanged: ${durationNotChanged}, duration=${this.duration}`);
         if(durationNotChanged){
             this.log.error(`duration not changed last ${CRITICAL_SUCCESSIVE_OCCUR_COUNT} times`)
             this.log.error(`kill ffmpeg`)

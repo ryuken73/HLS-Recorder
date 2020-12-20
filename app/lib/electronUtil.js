@@ -3,6 +3,8 @@ const fs = require('fs');
 const log = require('electron-log');
 const utils = require('../utils');
 
+const isRenderer = (process && process.type === 'renderer');
+
 const getAbsolutePath = (file='app.html', asarUnpack=false) => {
     try {
         console.log(file)
@@ -71,12 +73,13 @@ const initElectronLog = options => {
         consoleFormat='[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}',
         fileMaxSize=10485760,
         fileLogLevel='info',
-        consoleLogLevel='info'
+        consoleLogLevel='info',
+        fileName='HLSRecorder.log'
     } = options;
     log.transports.console.format = consoleFormat;
     log.transports.file.maxSize = fileMaxSize;
     log.transports.file.level = fileLogLevel;
-    log.transports.file.fileName = 'HLSRecorder.log';
+    log.transports.file.fileName = fileName;
     log.transports.console.level = consoleLogLevel;
     log.transports.console.level = consoleLogLevel;
     log.transports.file.archiveLog = file => {
@@ -89,6 +92,7 @@ const initElectronLog = options => {
             console.warn('Could not rotate log', e);
         }
     }
+    return log;
 }
 
 const Store = require('electron-store');
@@ -137,6 +141,7 @@ const createElectronStore = options => {
 }
 
 module.exports = {
+    isRenderer,
     getAbsolutePath,
     readJSONFile,
     getFromJsonFile,

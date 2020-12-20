@@ -108,57 +108,6 @@ app.on('ready', async () => {
     saveDirectory = arg;
   })
 
-  const session = mainWindow.webContents.session;
-  session.on('will-download', (event, item, webContents) => {
-      console.log('downloading!!!', saveDirectory);
-      // event.preventDefault()
-      const fname = item.getFilename();
-      // const downloadFname = "d:\\temp\\" + fname;
-      const downloadFname = path.join(saveDirectory, fname);
-      item.setSavePath(downloadFname)
-
-      const id = item.getStartTime();
-      const url = item.getURL();
-      const savePath = item.getSavePath();
-      const totalBytes = item.getTotalBytes();
-      const itemInfo = {
-        id, 
-        url, 
-        fname,
-        savePath, 
-        totalBytes,
-        receivedBytes:0,
-        status:'started',
-        downloadStartTime: Date.now(),
-      }
-      mainWindow.webContents.send('downloadStarted', itemInfo);
-  
-      item.on('updated', (event, state) => {
-        if (state === 'interrupted') {
-          console.log('Download is interrupted but can be resumed');
-          mainWindow.webContents.send('downloadStatusChanged', {id, status:'interrupted'});
-        } else if (state === 'progressing') {
-          if (item.isPaused()) {
-              console.log('Download is paused')
-          mainWindow.webContents.send('downloadStatusChanged', {id, status:'paused'});
-          } else {
-              const receivedBytes = item.getReceivedBytes();
-              console.log(`Received bytes: ${receivedBytes}`)
-              mainWindow.webContents.send('downloadProgress', {id, receivedBytes});
-          }
-        }
-      })
-      item.once('done', (event, state) => {
-        if (state === 'completed') {
-          mainWindow.webContents.send('downloadStatusChanged', {id, status:'completed'});
-          console.log('Download successfully')
-        } else {
-          mainWindow.webContents.send('downloadStatusChanged', {id, status:'faild'});
-          console.log(`Download failed: ${state}`)
-        }
-      })  
-  })
-
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   // @TODO: Use 'ready-to-show' event
@@ -175,11 +124,6 @@ app.on('ready', async () => {
     }
   });
 
-  // mainWindow.webContents.on('new-window', ([...args]) => {
-  //   console.log(mainWindow.getChildWindows());
-  //   console.log(args)
-  // })
-
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -190,4 +134,31 @@ app.on('ready', async () => {
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
+
+  const electronUtil = require('./lib/electronUtil');
+  const electronLog = electronUtil.initElectronLog({}); 
+
+  const scheduler = require('./lib/scheduleManager');
+  const scheduleManager = scheduler(true, electronLog);
+  const deleteScheduler = scheduleManager.register('deleteClips', '0,10,20,30,40,50 * * * *');
+
+  const {fork} = require('child_process');
+  const getConfig = require('./lib/getConfig');
+  deleteScheduler.on('triggered', name => {
+    const config = getConfig.getCombinedConfig();
+    const {BASE_DIRECTORY="none", CHANNEL_PREFIX="channel"} = config;
+    electronLog.log(`triggered: ${name} ${BASE_DIRECTORY} ${CHANNEL_PREFIX}`);
+    // const channelNumbers = Array(20).fill(0).map((elemeint, index) => index+1);
+    // channelNumbers.map(channelNumber => {
+    //   const channelDirectory = path.join(BASE_DIRECTORY, `${CHANNEL_PREFIX}${channelNumber}`);
+    //   const args = [
+    //     channelDirectory,
+    //     60 * 60 * 3, /* seconds */
+    //     '*', /* dir */
+    //     false /* test */
+    //   ]
+    //   const child = fork('./app/lib/deleteOldFiles.js', args)
+    // })
+  }); 
+  deleteScheduler.start();
 });
