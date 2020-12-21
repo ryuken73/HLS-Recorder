@@ -67,6 +67,7 @@
       "dist/",
       "node_modules/",
       "app.html",
+      "lib/deleteOldFiles.js",
       "main.prod.js",
       "main.prod.js.map",
       "package.json",

@@ -175,24 +175,45 @@ app.on('ready', async () => {
     sequenceExecute(deleteJobs);
   }); 
 
+  const {getAbsolutePath} = electronUtil;
   const sequenceExecute = deleteJobs => {
-    if(deleteJobs.length > 0){
-      const args = deleteJobs.shift();
-      const channelDirectory = args[0];
-      deleteClipStore(channelDirectory);
-      electronLog.info(`Delete Start...[${channelDirectory}]`);
-      const child = fork('./app/lib/deleteOldFiles.js', args);
-      child.on('message', results => {
-        electronLog.info(`Deleted:[${JSON.stringify(results)}]`);
-        const deleteDirectories = Object.keys(results);
-        deleteDirectories.forEach(directory => {
-          deleteClipStore(directory)
+    try {
+      if(deleteJobs.length > 0){
+        const args = deleteJobs.shift();
+        const channelDirectory = args[0];
+        deleteClipStore(channelDirectory);
+        electronLog.info(`Delete Start...[${channelDirectory}]`);
+        const childModule = getAbsolutePath('lib/deleteOldFiles.js');
+
+        electronLog.info(`Delete Module : [${childModule}]`)
+        electronLog.info(`__dirname : [${__dirname}]`)
+        // const child = fork(childModule, args);
+        const child = fork(path.join(__dirname, 'lib/deleteOldFiles.js'), args, {
+          env: {
+            ELECTRON_RUN_AS_NODE:1
+          }
+        });
+        console.log(child)
+        child.on('message', results => {
+          electronLog.log(results)
+          electronLog.info(`Deleted:[${JSON.stringify(results)}]`);
+          const deleteDirectories = Object.keys(results);
+          deleteDirectories.forEach(directory => {
+            deleteClipStore(directory)
+          })
         })
-      })
-      child.on('exit', () => {
-        sequenceExecute(deleteJobs);
-      })
+        child.on('error', (err) => {
+          electronLog.error(error)
+        })
+        child.on('exit', () => {
+          sequenceExecute(deleteJobs);
+        })
+      }
+    } catch (error) {
+      electronLog.error(error)
+      console.error('error in delete clips')
     }
+
   }
   deleteScheduler.start();
 });
@@ -204,5 +225,6 @@ const deleteClipStore = channelDirectory => {
     cwd:app.getPath('home')
   })
   const clipId = path.basename(channelDirectory);
+  console.log(clipId)
   clipStore.delete(clipId);
 }

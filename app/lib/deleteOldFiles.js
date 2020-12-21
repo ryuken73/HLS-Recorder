@@ -1,4 +1,9 @@
 const fileRemoveSync = require('find-remove');
+const log = require('electron-log');
+log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
+log.transports.file.fileName = 'HLSDelete.log';
+log.transports.file.maxSize = 10485760;
+
 const deleteOldFiles = (props) => {
     const {
         basePath="none",
@@ -7,23 +12,22 @@ const deleteOldFiles = (props) => {
     const results = fileRemoveSync(basePath, options);
     return results
 }
-
-const [nodeBinary, moduleFile, basePath, seconds, dir, testString] = process.argv;
-const isTest = testString === 'true'
-const options = {
-    age: {seconds},
-    dir: [dir],
-    test: isTest
+try {
+    const [nodeBinary, moduleFile, basePath, seconds, dir, testString] = process.argv;
+    const isTest = testString === 'true'
+    const options = {
+        age: {seconds},
+        dir: [dir],
+        test: isTest
+    }
+    const results = deleteOldFiles({basePath, options});
+    process.send(results)
+    log.info(`Delete Done[${basePath}]:${JSON.stringify(results)}`);
+} catch (error) {
+    log.error('deleteOldFiles error!');
+    log.error(error);
 }
-const results = deleteOldFiles({basePath, options});
-process.send(results)
 
-const log = require('electron-log');
-log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
-log.transports.file.fileName = 'HLSDelete.log';
-log.transports.file.maxSize = 10485760;
-
-log.info(`Delete Done[${basePath}]:${JSON.stringify(results)}`);
 
 
 // module.exports = deleteOldFiles;
