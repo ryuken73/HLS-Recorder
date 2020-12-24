@@ -190,10 +190,10 @@ app.on('ready', async () => {
         // const child = fork(childModule, args);
         const child = fork(path.join(__dirname, 'lib/deleteOldFiles.js'), args, {
           env: {
-            ELECTRON_RUN_AS_NODE:1
+            ELECTRON_RUN_AS_NODE:1,
+            ...process.env
           }
         });
-        console.log(child)
         child.on('message', results => {
           electronLog.log(results)
           electronLog.info(`Deleted:[${JSON.stringify(results)}]`);
@@ -215,7 +215,7 @@ app.on('ready', async () => {
     }
 
   }
-  deleteScheduler.start();
+  // deleteScheduler.start();
 });
 
 const Store = require('electron-store');

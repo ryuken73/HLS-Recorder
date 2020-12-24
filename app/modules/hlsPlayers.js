@@ -39,11 +39,12 @@ const sourceStore = new Store({
 })
 
 for(let channelNumber=1;channelNumber<=NUMBER_OF_CHANNELS;channelNumber++){
-    const source = sources[channelNumber] || {};
+    // const source = sources[channelNumber-1] || {};
+    const source = sourceStore.get(channelNumber.toString()) || sources[channelNumber-1]
     const {title="없음", url=""} = source;
     const hlsPlayer = {
         ...DEFAULT_PLAYER_PROPS,
-        source: sourceStore.get(channelNumber.toString()) || sources[channelNumber],
+        source,
         channelName: `${CHANNEL_PREFIX}${channelNumber}`,
         overlayContent: mkOverlayContent(url)
     }
