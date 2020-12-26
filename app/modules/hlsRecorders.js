@@ -43,11 +43,17 @@ const intervalStore = new Store({
     cwd:remote.app.getPath('home')
 })
 
+const sourceStore = new Store({
+    name:'sourceStore',
+    cwd:remote.app.getPath('home')
+})
+
 // initialize recorder
 const path = require('path');
 for(let channelNumber=1 ; channelNumber<=NUMBER_OF_CHANNELS ; channelNumber++){
     const arrayIndex = channelNumber - 1;
-    const source = sources[arrayIndex] || {};
+    // const source = sources[arrayIndex] || {};
+    const source = sourceStore.get(channelNumber.toString()) || sources[channelNumber-1]
     const {title="없음", url=""} = source;
     const channelName = `${CHANNEL_PREFIX}${channelNumber}`;
     const channelDirectory = path.join(BASE_DIRECTORY, channelName);
