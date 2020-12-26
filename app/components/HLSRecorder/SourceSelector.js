@@ -7,6 +7,7 @@ function Selection(props) {
         source={}, 
         sources=[], 
         recorderStatus='stopped',
+        hidden=false
     } = props;
     const {setSourceNSave=()=>{}} = props.HLSPlayersActions;
     const {savePlayerHttpURL=()=>{}} = props.HLSRecordersActions;
@@ -27,6 +28,7 @@ function Selection(props) {
 
     return (
         <OptionSelectList 
+            hidden={hidden}
             subtitle='source'
             titlewidth={"80px"}
             minWidth='200px'

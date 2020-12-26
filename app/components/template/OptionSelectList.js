@@ -11,6 +11,7 @@ export default function OptionSelectList(props) {
     const {subtitle, minWidth, currentItem, menuItems, onChangeSelect, multiple=true, titlewidth="20%", bgcolor, selectColor, disabled=false} = props;
     const {mb="0px", mt="0px", maxWidth} = props;
     const {smallComponent} = props;
+    const {hidden=false} = props
     const SelectComponent = smallComponent ? SmallPaddingSelect : Select;
     const optionSelect = {
         subject: <Typography component={'span'} variant="body1">{subtitle}</Typography>,
@@ -44,6 +45,7 @@ export default function OptionSelectList(props) {
             mb={mb}
             mt={mt}
             bgcolor={bgcolor}
+            hidden={hidden}
         ></BorderedList>
     )
 }
