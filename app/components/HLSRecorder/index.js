@@ -7,6 +7,7 @@ import SourceSelectorContainer from '../../containers/SourceSelectorContainer';
 import HLSPlayerContainer from '../../containers/HLSPlayerContainer';
 import ControlsContainer from '../../containers/ControlsContainer';
 import SchedulerContainer from '../../containers/SchedulerContainer';
+import SourceRecordingContainer from '../../containers/SourceRecordingContainer';
 // import Controls from './Controls';
 // import Scheduler from './Scheduler';
 
@@ -26,6 +27,7 @@ const HLSRecorder = (props) => {
     }
 
     const bgColor = bgColors[recorderStatus];
+    const hideSourceSelect = recorderStatus === "stopped" ? false : true;
 
     return (
         <SectionWithFullHeight m={"5px"} flexGrow={0} width="320px" bgcolor={"#2d2f3b"} border={1} borderColor={"black"} p="1px">
@@ -33,7 +35,12 @@ const HLSRecorder = (props) => {
                 channelNumber={channelNumber}
                 bgColors={bgColors}
             ></DurationContainer>
+            <SourceRecordingContainer
+                channelNumber={channelNumber}
+                hidden={!hideSourceSelect}
+            ></SourceRecordingContainer>
             <SourceSelectorContainer 
+                hidden={hideSourceSelect}
                 channelNumber={channelNumber}
             ></SourceSelectorContainer>
             <Box display="flex" alignItems="flex-start">

@@ -1,3 +1,5 @@
+console.log(module.paths);
+
 const fileRemoveSync = require('find-remove');
 const log = require('electron-log');
 log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';

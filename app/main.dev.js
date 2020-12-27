@@ -144,13 +144,11 @@ app.on('ready', async () => {
 
   const getConfig = require('./lib/getConfig');
   const config = getConfig.getCombinedConfig();
-  const {DELETE_SCHEDULE_CRON='* * * * *'} = config;
+  const {DELETE_SCHEDULE_CRON='0,10,20,30,40,50 * * * *'} = config;
 
   const scheduler = require('./lib/scheduleManager');
   const scheduleManager = scheduler(true, electronLog);
   const deleteScheduler = scheduleManager.register('deleteClips', DELETE_SCHEDULE_CRON);
-
-  const {fork} = require('child_process');
 
   deleteScheduler.on('triggered', name => {
     const config = getConfig.getCombinedConfig();
@@ -169,45 +167,28 @@ app.on('ready', async () => {
         '*', /* dir */
         false /* test */
       ]
-      // const child = fork('./app/lib/deleteOldFiles.js', args)
       return args;
     })
     sequenceExecute(deleteJobs);
   }); 
 
-  const {getAbsolutePath} = electronUtil;
-  const sequenceExecute = deleteJobs => {
+  const deleteDirectoryR = require('./utils/deleteDirectoryR');
+  const sequenceExecute = async deleteJobs => {
     try {
       if(deleteJobs.length > 0){
         const args = deleteJobs.shift();
         const channelDirectory = args[0];
-        deleteClipStore(channelDirectory);
+        const deleteBeforeSeconds = args[1]
         electronLog.info(`Delete Start...[${channelDirectory}]`);
-        const childModule = getAbsolutePath('lib/deleteOldFiles.js');
-
-        electronLog.info(`Delete Module : [${childModule}]`)
-        electronLog.info(`__dirname : [${__dirname}]`)
-        // const child = fork(childModule, args);
-        const child = fork(path.join(__dirname, 'lib/deleteOldFiles.js'), args, {
-          env: {
-            ELECTRON_RUN_AS_NODE:1
+        const results = await deleteDirectoryR(channelDirectory, deleteBeforeSeconds);
+        electronLog.info('Delete End:', results);
+        results.forEach(result => {
+          if(result.deleted){
+            deleteClipStore(result.file);
+            electronLog.info('Delete clipStore too');
           }
-        });
-        console.log(child)
-        child.on('message', results => {
-          electronLog.log(results)
-          electronLog.info(`Deleted:[${JSON.stringify(results)}]`);
-          const deleteDirectories = Object.keys(results);
-          deleteDirectories.forEach(directory => {
-            deleteClipStore(directory)
-          })
         })
-        child.on('error', (err) => {
-          electronLog.error(error)
-        })
-        child.on('exit', () => {
-          sequenceExecute(deleteJobs);
-        })
+        await sequenceExecute(deleteJobs);
       }
     } catch (error) {
       electronLog.error(error)
@@ -219,12 +200,11 @@ app.on('ready', async () => {
 });
 
 const Store = require('electron-store');
-const deleteClipStore = channelDirectory => {
+const deleteClipStore = deletedPath => {
   const clipStore = new Store({
     name:'clipStore',
     cwd:app.getPath('home')
   })
-  const clipId = path.basename(channelDirectory);
-  console.log(clipId)
+  const clipId = path.basename(deletedPath);
   clipStore.delete(clipId);
 }
