@@ -22,7 +22,12 @@ class VideoPlayer extends Component {
     }
 
     componentWillUnmount() {
-        if (this.player) this.player.dispose();
+        console.log('##### player dismounted');
+        if (this.player) {
+            console.log('##### dispose and nullify player')
+            this.player.dispose();
+            this.player=null;
+        }
     }
 
     init_player(props) {

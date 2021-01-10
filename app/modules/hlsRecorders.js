@@ -247,7 +247,7 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
         })
         recorder.once('end', async (clipName, startTimestamp, duration, error) => {
             try {
-                if(error !== undefined){
+                if(error !== undefined && duration === '00:00:00.00'){
                     channelLog.info(`recorder emitted end (listener1) with error: ${clipName} error:${error}`)
                     dispatch(refreshRecorder({channelNumber}));
                     return;
