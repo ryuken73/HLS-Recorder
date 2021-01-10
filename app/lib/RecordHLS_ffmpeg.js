@@ -138,7 +138,7 @@ class RecoderHLS extends EventEmitter {
             this.log.error(`ended abnormally: startime =${this.startTime}:duration=${this.duration}`);
             this.initialize();            
             this.emit('error', error);
-            this.emit('end', this.target, this.startTime, this.duration)
+            this.emit('end', this.target, this.startTime, this.duration, error)
             return
             // this.emit('end', this.target, this.startTime, this.duration)
             // return;

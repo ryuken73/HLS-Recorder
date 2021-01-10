@@ -245,9 +245,14 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
                 resolve(true);
             },WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE);
         })
-        recorder.once('end', async (clipName, startTimestamp, duration) => {
+        recorder.once('end', async (clipName, startTimestamp, duration, error) => {
             try {
-                channelLog.info(`recorder emitted end (listener1): ${clipName}`)
+                if(error !== undefined){
+                    channelLog.info(`recorder emitted end (listener1) with error: ${clipName} error:${error}`)
+                    dispatch(refreshRecorder({channelNumber}));
+                    return;
+                }
+                channelLog.info(`recorder emitted end (listener1): ${clipName} ${startTimestamp} error:${error}`)
                 const endTimestamp = Date.now();
                 const startTime = utils.date.getString(new Date(startTimestamp),{sep:'-'})
                 const endTime = utils.date.getString(new Date(endTimestamp),{sep:'-'})
