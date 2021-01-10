@@ -134,11 +134,10 @@ const HLSPlayer = (props) => {
             refreshTimer = null;
             return
         }
-
         // if(eventName === 'abort' && enableAutoRefresh !== null){
         //     refreshTimer = setInterval(() => {
         //         channelLog.info('refresh player because of long buffering')
-        //         setVersion(Date.now())
+        //         refreshPlayer({channelNumber});
         //     },LONG_BUFFERING_MS_SECONDS)
         //     return
         // } else if(eventName === 'abort' && enableAutoRefresh === null) {

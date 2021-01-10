@@ -9,6 +9,7 @@ class VideoPlayer extends Component {
     playerId = `video-player-${Date.now() + (Math.random()*10000).toFixed(0)}`
     player = {};
     componentDidMount() {
+        console.log('##### player mounted!')
         this.init_player(this.props);
         this.init_player_events(this.props);
     }
@@ -26,7 +27,7 @@ class VideoPlayer extends Component {
         if (this.player) {
             console.log('##### dispose and nullify player')
             this.player.dispose();
-            this.player=null;
+            this.player = {};
         }
     }
 
