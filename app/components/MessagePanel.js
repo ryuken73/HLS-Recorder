@@ -3,14 +3,16 @@ import Box from '@material-ui/core/Box';
 import BorderedBox from './template/BorderedBox';
 import Typography from '@material-ui/core/Typography';
 import SectionWithFullHeightFlex from './template/SectionWithFullHeightFlex';
-const { app } = require('electron').remote;
-
+const {remote} = require('electron');
+const {app} = remote;
 
 export default function MessagePanel(props) {
     // console.log('######################## re-render MessagePanel', props);
     const {logLevel="INFO", message="READY", mt="auto"} = props;
+    const {maxMemory=1000, setReloadDialogOpen=()=>{}, reloadWaitSeconds=5000} = props
     const [memUsed, setMemUsed] = React.useState(0);
     const messageText = `[${logLevel}] ${message}`;
+
     React.useEffect(() => {
         setInterval(() => {
             process.getProcessMemoryInfo()
@@ -19,6 +21,12 @@ export default function MessagePanel(props) {
             })
         }, 1000)
     },[])
+    if(memUsed > maxMemory){
+        setReloadDialogOpen(true);
+        setTimeout(() => {
+            remote.getCurrentWebContents().reload();
+        }, reloadWaitSeconds)
+    }
     return (
         <SectionWithFullHeightFlex outerbgcolor={"#2d2f3b"} className="SectionWithFullHeightFlex ImageBox" flexGrow="0" width="1" mt={mt} mb="2px">
             <BorderedBox bgcolor={"#2d2f3b"} display="flex" alignContent="center" flexGrow="1">
