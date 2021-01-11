@@ -49,6 +49,8 @@ const sourceStore = new Store({
     cwd:remote.app.getPath('home')
 })
 
+const fs = require('fs');
+
 // initialize recorder
 const path = require('path');
 for(let channelNumber=1 ; channelNumber<=NUMBER_OF_CHANNELS ; channelNumber++){
@@ -158,17 +160,27 @@ export const createRecorder = (channelNumber, createdByError=false) => (dispatch
     const progressHandler = progress => {
         dispatch(setDuration({channelNumber, duration:progress.duration}));
     }
-    const errorHandler = (localm3u8, duration, error, saveDirectory) => {
+    const errorHandler = (localm3u8, startTimestamp, duration, error) => {
         channelLog.error(`error occurred`);
         channelLog.info(`recorder emitted error: m3u8:${localm3u8} error:${error} duration:${duration}`)
-        // after recorder emits error
-        // 1. resetPlayer => change mode from playback to source streaming
-        dispatch(refreshPlayer({channelNumber}));
-        // 2. resetRecorder => initialize recorder status(duration, status..)
-        dispatch(refreshRecorder({channelNumber}));
-        // 3. recreateRecorder with createdByError=true
-        //    this will recreate recorder and restart scheule
-        //    need some sleep time
+        // if directory empty, remove directory or emit end to save record on clipStore
+        fs.lstat(localm3u8, (error, stats) => {
+          if(error){
+              // file not exists, delete directory
+              fs.rmdir(path.dirname(localm3u8), err => console.error(err));
+              // resetPlayer => change mode from playback to source streaming
+              dispatch(refreshPlayer({channelNumber}));
+              // resetRecorder => initialize recorder status(duration, status..)
+              dispatch(refreshRecorder({channelNumber}));
+          } else {
+              // file is valid. emit normal end event to save clip on clipStore
+              recorder.emit('end', localm3u8, startTimestamp, duration);
+          }
+        })
+
+        // finally recreateRecorder with createdByError=true
+        // this will recreate recorder and restart scheule
+        // need some sleep time
         setTimeout(() => {
             dispatch(createRecorder(channelNumber, /*createdByError */ true));
         }, RESTART_SCHEDULE_SLEPP_MS);

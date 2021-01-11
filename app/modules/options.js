@@ -7,6 +7,8 @@ const optionStore = new Store({
     cwd:remote.app.getPath('home')
 })
 
+const MAX_NUMBER_OF_CHANNEL = 10;
+
 // action types
 const SET_CONFIG = 'options/SET_CONFIG';
 const SET_BASE_DIRECTORY = 'options/SET_BASE_DIRECTORY';
@@ -122,7 +124,7 @@ export default handleActions({
     [NUMBER_OF_CHANNELS]: (state, action) => {
         const numberOfChannels = action.payload;
         const config = {...state.config};
-        config.NUMBER_OF_CHANNELS = numberOfChannels;
+        config.NUMBER_OF_CHANNELS = numberOfChannels <= MAX_NUMBER_OF_CHANNEL ? numberOfChannels : MAX_NUMBER_OF_CHANNEL;
         console.log('#######', config)
         return {
             ...state,
