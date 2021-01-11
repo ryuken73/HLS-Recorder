@@ -27,6 +27,14 @@ function App(props) {
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [dialogTitle, setDialogTitle] = React.useState('Really Reload?');
   const [dialogText, setDialogText] = React.useState('Reload will stop current recordings and schedules. OK?');
+  React.useEffect(() => {
+    setInterval(() => {
+      process.getProcessMemoryInfo()
+      .then(memInfo => {
+        console.log('@@@@@', memInfo)
+      })
+    }, 10000)
+  },[])
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex" flexDirection="column" height="1">

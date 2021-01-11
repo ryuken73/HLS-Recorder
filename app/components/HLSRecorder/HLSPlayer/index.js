@@ -7,12 +7,13 @@ const Store = require('electron-store');
 const store = new Store({watch: true});
 
 const HLSPlayer = (props) => {
-    console.log('rerender hlsplayer', props.player)
+    console.log('rerender hlsplayer', props)
+    const [version, setVersion] = React.useState(Date.now());
     const {
         player=null, 
         enableAutoRefresh=null, 
         enableOverlay=true,
-        overlayContent='Default Overlay Content'
+        overlayContent='Default Overlay Content',
     } = props;
     const {
         channelNumber=1,
@@ -117,27 +118,39 @@ const HLSPlayer = (props) => {
     const onVideoOtherEvent = eventName => {
         // channelLog.debug(`event occurred: ${eventName}`)
         if(eventName === 'abort' && enableAutoRefresh !== null){
-            refreshTimer = setInterval(() => {
+            refreshTimer = setTimeout(() => {
                 channelLog.info('refresh player because of long buffering')
-                // todo: url can be file url when recording
-                // refreshChannelPlayer({channelNumber, url:source.url});
-                refreshPlayer({channelNumber});
+                setVersion(Date.now())
             },LONG_BUFFERING_MS_SECONDS)
             return
         } else if(eventName === 'abort' && enableAutoRefresh === null) {
-            // channelLog.debug('abort but not start refresh timer because enableAutoRefresh parameter is null');
             return
         }
         if(eventName === 'playing' || eventName === 'loadstart' || eventName === 'waiting'){
             if(refreshTimer === null) {
-                // channelLog.debug('playing, loadstart or waiting event emitted. but do not clearTimeout(refreshTimer) because refreshTimer is null. exit')
                 return;
             }
-            // channelLog.debug('clear refresh timer.')
             clearTimeout(refreshTimer);
             refreshTimer = null;
             return
         }
+        // if(eventName === 'abort' && enableAutoRefresh !== null){
+        //     refreshTimer = setInterval(() => {
+        //         channelLog.info('refresh player because of long buffering')
+        //         refreshPlayer({channelNumber});
+        //     },LONG_BUFFERING_MS_SECONDS)
+        //     return
+        // } else if(eventName === 'abort' && enableAutoRefresh === null) {
+        //     return
+        // }
+        // if(eventName === 'playing' || eventName === 'loadstart' || eventName === 'waiting'){
+        //     if(refreshTimer === null) {
+        //         return;
+        //     }
+        //     clearTimeout(refreshTimer);
+        //     refreshTimer = null;
+        //     return
+        // }
         if(eventName === 'ratechange'){
             // if ratechange occurred not manually but by changing media, just return
             if(player.readyState() === 0) return;
@@ -147,7 +160,8 @@ const HLSPlayer = (props) => {
     }
 
     return (
-        <Box>
+        <Box key={version}>
+            {/* {mountPlayer ? */}
             <VideoPlayer
                 controls={controls}
                 src={srcObject}
@@ -172,7 +186,20 @@ const HLSPlayer = (props) => {
                 enableOverlay={enableOverlay}
                 overlayContent={overlayContent}
                 inactivityTimeout={0}
-            />
+            /> 
+            {/* : */}
+            {/* <Box 
+                width={width} 
+                height={height}
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+            >
+                <Box>player dismounted!</Box>
+
+            </Box>
+
+            } */}
         </Box>
     );
 };
