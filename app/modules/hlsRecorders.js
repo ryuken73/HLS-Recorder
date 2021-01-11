@@ -15,6 +15,7 @@ const {
     WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE,
     SLEEP_MS_BETWEEN_ALL_START=2000,
     SLEEP_MS_BETWEEN_ALL_STOP=300,
+    RESTART_SCHEDULE_SLEPP_MS=5000
 } = config;
 
 const {
@@ -157,17 +158,20 @@ export const createRecorder = (channelNumber, createdByError=false) => (dispatch
     const progressHandler = progress => {
         dispatch(setDuration({channelNumber, duration:progress.duration}));
     }
-    const errorHandler = error => {
+    const errorHandler = (localm3u8, duration, error, saveDirectory) => {
         channelLog.error(`error occurred`);
-        channelLog.error(error);
+        channelLog.info(`recorder emitted error: m3u8:${localm3u8} error:${error} duration:${duration}`)
         // after recorder emits error
         // 1. resetPlayer => change mode from playback to source streaming
         dispatch(refreshPlayer({channelNumber}));
         // 2. resetRecorder => initialize recorder status(duration, status..)
-        //    because recorder's error emits end event, resetRecorder is
-        //    done in recorder's end handler in RecordHLS_ffmpeg.js.
+        dispatch(refreshRecorder({channelNumber}));
         // 3. recreateRecorder with createdByError=true
-        dispatch(createRecorder(channelNumber, /*createdByError */ true));
+        //    this will recreate recorder and restart scheule
+        //    need some sleep time
+        setTimeout(() => {
+            dispatch(createRecorder(channelNumber, /*createdByError */ true));
+        }, RESTART_SCHEDULE_SLEPP_MS);
     }
     
     recorder.on('start', startHandler)
@@ -245,14 +249,16 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
                 resolve(true);
             },WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE);
         })
-        recorder.once('end', async (clipName, startTimestamp, duration, error) => {
+        recorder.once('end', async (clipName, startTimestamp, duration) => {
             try {
-                if(error !== undefined && duration === '00:00:00.00'){
-                    channelLog.info(`recorder emitted end (listener1) with error: ${clipName} error:${error}`)
-                    dispatch(refreshRecorder({channelNumber}));
-                    return;
-                }
-                channelLog.info(`recorder emitted end (listener1): ${clipName} ${startTimestamp} error:${error}`)
+                // channelLog.info(`recorder emitted end (listener1) with error: ${clipName} error:${error} duration:${duration} directory:${saveDirectory}`)
+
+                // if(error !== undefined && duration === INITIAL_DURATION){
+                //     channelLog.info(`recorder emitted end (listener1) with error: ${clipName} error:${error} directory:${saveDirectory}`)
+                //     dispatch(refreshRecorder({channelNumber}));
+                //     return;
+                // }
+                // channelLog.info(`recorder emitted end (listener1): ${clipName} ${startTimestamp} error:${error}`)
                 const endTimestamp = Date.now();
                 const startTime = utils.date.getString(new Date(startTimestamp),{sep:'-'})
                 const endTime = utils.date.getString(new Date(endTimestamp),{sep:'-'})
@@ -394,14 +400,19 @@ export const stopSchedule = channelNumber => async (dispatch, getState) => {
     dispatch(setScheduleStatus({channelNumber, scheduleStatus:'stopping'}))
     clearInterval(scheduleFunction);
     dispatch(setScheduleFunction({channelNumber, scheduleFunction:null}));
-    if(recorder.isBusy) {
-        dispatch(await stopRecording(channelNumber))
-        .then(result => {
-            dispatch(setScheduleStatus({channelNumber, scheduleStatus:'stopped'}));
-        })
-    } else {
+    // if(recorder.isBusy) {
+    //     dispatch(await stopRecording(channelNumber))
+    //     .then(result => {
+    //         dispatch(setScheduleStatus({channelNumber, scheduleStatus:'stopped'}));
+    //     })
+    // } else {
+    //     dispatch(setScheduleStatus({channelNumber, scheduleStatus:'stopped'}));
+    // }
+    dispatch(await stopRecording(channelNumber))
+    .then(result => {
         dispatch(setScheduleStatus({channelNumber, scheduleStatus:'stopped'}));
-    }
+    })
+
 }
 
 const sleepms = timems => {
