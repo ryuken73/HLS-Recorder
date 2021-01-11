@@ -9,16 +9,28 @@ const { app } = require('electron').remote;
 export default function MessagePanel(props) {
     // console.log('######################## re-render MessagePanel', props);
     const {logLevel="INFO", message="READY", mt="auto"} = props;
+    const [memUsed, setMemUsed] = React.useState(0);
     const messageText = `[${logLevel}] ${message}`;
-   return (
+    React.useEffect(() => {
+        setInterval(() => {
+            process.getProcessMemoryInfo()
+            .then(processMemory => {
+                setMemUsed((processMemory.private/1024).toFixed(0));
+            })
+        }, 1000)
+    },[])
+    return (
         <SectionWithFullHeightFlex outerbgcolor={"#2d2f3b"} className="SectionWithFullHeightFlex ImageBox" flexGrow="0" width="1" mt={mt} mb="2px">
             <BorderedBox bgcolor={"#2d2f3b"} display="flex" alignContent="center" flexGrow="1">
                 <Box bgcolor="#232738" display="flex" flexDirection="row" width="1">
                     <Box mx="10px">
                         <Typography variant={"caption"}>{messageText}</Typography>
                     </Box>
-                    <Box ml="auto" >
-                        <Typography variant={"caption"}>{app.getVersion()}</Typography>
+                    <Box ml="auto">
+                        <Typography variant={"caption"}>[{memUsed}MB]</Typography>
+                    </Box>
+                    <Box ml="5px">
+                        <Typography variant={"caption"}>v.{app.getVersion()}</Typography>
                     </Box>
                 </Box>
             </BorderedBox>

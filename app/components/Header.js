@@ -62,6 +62,7 @@ const Header = (props) => {
             mt="15px"
             alignContent="center"
             justifyContent="space-between"
+            flexShrink="0"
         >
             <Box display="flex" alignItems="center" width="300px">
                 <Box>
