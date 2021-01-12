@@ -21,6 +21,7 @@ const KEEP_SAVED_CLIP_AFTER_HOURS = 'options/KEEP_SAVED_CLIP_AFTER_HOURS';
 const WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE = 'options/WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE';
 const SET_OPTIONS_DIALOG_OPEN = 'options/SET_OPTIONS_DIALOG_OPEN';
 const SET_DELETE_SCHEDULE_CRON = 'options/SET_DELETE_SCHEDULE_CRON';
+const SET_MAX_MEMORY_TO_RELOAD_MB = 'options/SET_MAX_MEMORY_TO_RELOAD_MB';
 
 // action creator
 export const setConfig = createAction(SET_CONFIG);
@@ -33,6 +34,7 @@ export const setNumberOfChannels = createAction(NUMBER_OF_CHANNELS);
 export const setKeepClipsAfterHours = createAction(KEEP_SAVED_CLIP_AFTER_HOURS);
 export const setWaitSecondsBeforePlayback = createAction(WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE);
 export const setDeleteScheduleCron = createAction(SET_DELETE_SCHEDULE_CRON);
+export const setMaxMemoryToReloadMB = createAction(SET_MAX_MEMORY_TO_RELOAD_MB);
 
 export const setOptionsDialogOpen = createAction(SET_OPTIONS_DIALOG_OPEN);
 
@@ -155,6 +157,16 @@ export default handleActions({
         const schedule = action.payload;
         const config = {...state.config};
         config.DELETE_SCHEDULE_CRON = schedule;
+        console.log('#######', config)
+        return {
+            ...state,
+            config,
+        }
+    },
+    [SET_MAX_MEMORY_TO_RELOAD_MB]: (state, action) => {
+        const maxMemory = action.payload;
+        const config = {...state.config};
+        config.MAX_MEMORY_TO_RELOAD_MB = maxMemory;
         console.log('#######', config)
         return {
             ...state,

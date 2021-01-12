@@ -67,7 +67,8 @@ export default function OptionDialog(props) {
     NUMBER_OF_CHANNELS,
     DEFAULT_PLAYER_PROPS,
     KEEP_SAVED_CLIP_AFTER_HOURS,
-    DELETE_SCHEDULE_CRON
+    DELETE_SCHEDULE_CRON,
+    MAX_MEMORY_TO_RELOAD_MB
   } = config;
   const {deleteOnClose=()=>{}} = props;
   const {setOptionsDialogOpen=()=>{}, saveConfig=()=>{}} = props.OptionDialogActions;
@@ -82,7 +83,8 @@ export default function OptionDialog(props) {
     setNumberOfChannels=()=>{},
     setKeepClipsAfterHours=()=>{},
     setWaitSecondsBeforePlayback=()=>{},
-    setDeleteScheduleCron=()=>{}
+    setDeleteScheduleCron=()=>{},
+    setMaxMemoryToReloadMB=()=>{}
   } = props.OptionDialogActions;
 
   const [scroll, setScroll] = React.useState('paper');
@@ -96,7 +98,8 @@ export default function OptionDialog(props) {
     'numberOfChannels': setNumberOfChannels,
     'saveClipAfterHours': setKeepClipsAfterHours,
     'waitSecondsForPlayback': setWaitSecondsBeforePlayback,
-    'deleteScheduleCron': setDeleteScheduleCron
+    'deleteScheduleCron': setDeleteScheduleCron,
+    'maxMemoryToReloadMB' : setMaxMemoryToReloadMB
   }
 
   const onChange = type => {
@@ -167,6 +170,7 @@ export default function OptionDialog(props) {
         <OptionTextInputWithDefault subtitle='Delay All Starting(ms)' value={SLEEP_MS_BETWEEN_ALL_START} onChange={onChange('sleepBetweenStart')}></OptionTextInputWithDefault>
         <OptionTextInputWithDefault subtitle='Delay All Stopping(ms)' value={SLEEP_MS_BETWEEN_ALL_STOP} onChange={onChange('sleepBetweenStop')}></OptionTextInputWithDefault>
         <OptionTextInputWithDefault subtitle='Delete Schedule Cron' value={DELETE_SCHEDULE_CRON} onChange={onChange('deleteScheduleCron')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Max Memory to Reload' value={MAX_MEMORY_TO_RELOAD_MB} onChange={onChange('maxMemoryToReloadMB')}></OptionTextInputWithDefault>
         <OptionTextInputWithDefault subtitle='Save Directory' value={BASE_DIRECTORY} onChange={onChange('saveDir')} iconButton={SaveDirectoryButton}></OptionTextInputWithDefault>
         <OptionRadioButtonWithDefault subtitle="Delete on tab close" currentvalue={deleteOnClose} onChange={onChange('deleteOnClose')}></OptionRadioButtonWithDefault>
         
