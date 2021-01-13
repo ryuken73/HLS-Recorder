@@ -7,7 +7,7 @@ import OptionDialogContainer from '../containers/OptionDialogContainer';
 import HeaderContainer from '../containers/HeaderContainer';
 import ReloadConfirm from './ReloadConfirm';
 import MessageContainer from './MessagePanel';
-import MessageDialog from './MessageDialog';
+import AutoReloadDialog from './AutoReloadDialog';
 const { BrowserView, getCurrentWindow } = require('electron').remote;
 const { remote, ipcRenderer } = require('electron');
 const utils = require('../utils');
@@ -33,7 +33,18 @@ function App(props) {
   const [dialogTitle, setDialogTitle] = React.useState('Really Reload?');
   const [dialogText, setDialogText] = React.useState('Reload will stop current recordings and schedules. OK?');
   const [reloadDialogOpen, setReloadDialogOpen] = React.useState(false);
+  const [memUsed, setMemUsed] = React.useState(0);
+  React.useEffect(() => {
+    setInterval(() => {
+        process.getProcessMemoryInfo()
+        .then(processMemory => {
+            setMemUsed((processMemory.private/1024).toFixed(0));
+        })
+    }, 1000)
+  },[])
 
+  (memUsed > MAX_MEMORY_TO_RELOAD_MB) && setReloadDialogOpen(true);
+  
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex" flexDirection="column" height="1">
@@ -44,9 +55,7 @@ function App(props) {
         {/* <BottomMenuContainer mt="auto"></BottomMenuContainer>  */}
         <MessageContainer 
           mt="auto"
-          setReloadDialogOpen={setReloadDialogOpen}
-          maxMemory={MAX_MEMORY_TO_RELOAD_MB}
-          reloadWaitSeconds={MAX_MEMORY_RELOAD_WAIT_MS}
+          memUsed={memUsed}
         ></MessageContainer> 
         <ReloadConfirm 
           open={confirmOpen} 
@@ -61,11 +70,11 @@ function App(props) {
           setDialogText={setDialogText}
         ></OptionDialogContainer>
         { reloadDialogOpen && 
-          <MessageDialog
+          <AutoReloadDialog
             open={reloadDialogOpen}
             reloadWaitSeconds={MAX_MEMORY_RELOAD_WAIT_MS}
           >
-          </MessageDialog>
+          </AutoReloadDialog>
         }
       </Box>
     </ThemeProvider>
