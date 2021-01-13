@@ -34,18 +34,6 @@ function App(props) {
   const [dialogTitle, setDialogTitle] = React.useState('Really Reload?');
   const [dialogText, setDialogText] = React.useState('Reload will stop current recordings and schedules. OK?');
   const [reloadDialogOpen, setReloadDialogOpen] = React.useState(false);
-  const [memUsed, setMemUsed] = React.useState(0);
-  React.useEffect(() => {
-    setInterval(() => {
-        process.getProcessMemoryInfo()
-        .then(processMemory => {
-            setMemUsed((processMemory.private/1024).toFixed(0));
-        })
-    }, 1000)
-  },[])
-
-  (memUsed > MAX_MEMORY_TO_RELOAD_MB) && setReloadDialogOpen(true);
-  
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex" flexDirection="column" height="1">
@@ -56,7 +44,8 @@ function App(props) {
         {/* <BottomMenuContainer mt="auto"></BottomMenuContainer>  */}
         <MessageContainer 
           mt="auto"
-          memUsed={memUsed}
+          maxMemory={MAX_MEMORY_TO_RELOAD_MB}
+          setReloadDialogOpen={setReloadDialogOpen}
         ></MessageContainer> 
         <ReloadConfirm 
           open={confirmOpen} 
@@ -82,5 +71,5 @@ function App(props) {
   );
 }
 
-export default App;
+export default React.memo(App);
    

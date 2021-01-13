@@ -50,8 +50,7 @@ const OptionRadioButtonWithDefault = props => {
           {children}
         </OptionRadioButton>
 }
-
-export default function OptionDialog(props) {
+function OptionDialog(props) {
   console.log('######################## re-render OptionDialog', props);
   const [valueChanged, setValueChanged] = React.useState(false);
   const {setConfirmOpen, setDialogTitle, setDialogText} = props;
@@ -190,3 +189,6 @@ export default function OptionDialog(props) {
   </Dialog>
   )
 }
+
+
+export default React.memo(OptionDialog)

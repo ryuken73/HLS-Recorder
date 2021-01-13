@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import App from '../components/App';
 import * as appActions from '../modules/app';
 
-
+console.log('calling AppContainer')
 function mapStateToProps(state, ownProps) {
   // console.log('mapStateToProps:',state) 
   const {sources} = state.app;

@@ -6,7 +6,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 const {remote} = require('electron');
 
 
-export default function AlertDialog(props) {
+function AlertDialog(props) {
   console.log('*********', props)
   const {open, reloadWaitSeconds=5000} = props;
   const {stopRecordAll} = props.HLSRecorderActions;
@@ -30,6 +30,10 @@ export default function AlertDialog(props) {
     setTimer(timer);
   },[])
 
+  const dialogMessage = remainSeconds === 0 ? 
+                        "Now Waiting for recorder's stop..." : 
+                        `Automatically reloaded after ${remainSeconds} seconds!`
+
   return (
     <div>
       <Dialog
@@ -37,13 +41,15 @@ export default function AlertDialog(props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Too Large Memory Used!"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"WARN! Too Large Memory Used!"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Automatically reloaded after {remainSeconds} seconds!
+            {dialogMessage}
           </DialogContentText>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
+
+export default React.memo(AlertDialog)
