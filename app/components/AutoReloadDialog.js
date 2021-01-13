@@ -9,14 +9,18 @@ const {remote} = require('electron');
 export default function AlertDialog(props) {
   console.log('*********', props)
   const {open, reloadWaitSeconds=5000} = props;
+  const {stopRecordAll} = props.HLSRecorderActions;
   const [remainSeconds, setRemainSeconds] = React.useState(parseInt((reloadWaitSeconds/1000).toFixed(0)));
   const [timer, setTimer] = React.useState(null);
   
   if(remainSeconds === 0) {
     clearInterval(timer);
-    remote.getCurrentWebContents().reload();
-
+    stopRecordAll()
+    .then(() => {
+      remote.getCurrentWebContents().reload();
+    })
   }
+  
   React.useEffect(() => {
     const timer = setInterval(() => {
         setRemainSeconds(previousRemainSeconds => {
