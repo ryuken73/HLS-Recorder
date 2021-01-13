@@ -1,5 +1,7 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -30,9 +32,17 @@ function AutoStartDialog(props) {
     setTimer(timer);
   },[])
 
+  const handleClose = () => {
+    setAutoStartDialogOpen(false);
+  };
+
+  const cancelStart = () => {
+    setAutoStartDialogOpen(false);
+  }
+
   const dialogMessage = remainSeconds === 0 ? 
-                        "Now Waiting for recorder's start..." : 
-                        `Automatically start schedule after ${remainSeconds} seconds!`
+                        "Wait for recorders to start..." : 
+                        `Sstart schedule in ${remainSeconds} seconds!`
 
   return (
     <div>
@@ -47,6 +57,11 @@ function AutoStartDialog(props) {
             {dialogMessage}
           </DialogContentText>
         </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            {remainSeconds === 0 ? "Close" : "Cancel"}
+          </Button>
+        </DialogActions>
       </Dialog>
     </div>
   );

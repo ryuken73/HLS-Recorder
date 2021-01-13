@@ -6,9 +6,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 const {remote} = require('electron');
 
 
-function AlertDialog(props) {
+function AutoReloadDialog(props) {
   console.log('*********', props)
   const {open, reloadWaitSeconds=5000} = props;
+  const {reloadCountAutomatic} = props;
+  const {setAppStat} = props.StatisticsActions;
   const {stopRecordAll} = props.HLSRecorderActions;
   const [remainSeconds, setRemainSeconds] = React.useState(parseInt((reloadWaitSeconds/1000).toFixed(0)));
   const [timer, setTimer] = React.useState(null);
@@ -17,6 +19,8 @@ function AlertDialog(props) {
     clearInterval(timer);
     stopRecordAll()
     .then(() => {
+      setAppStat({statName:'reloadTimeAutomatic', value:Date.now()})
+      setAppStat({statName:'reloadCountAutomatic', value:reloadCountAutomatic+1})
       remote.getCurrentWebContents().reload();
     })
   }
@@ -31,8 +35,8 @@ function AlertDialog(props) {
   },[])
 
   const dialogMessage = remainSeconds === 0 ? 
-                        "Now Waiting for recorder's stop..." : 
-                        `Automatically reloaded after ${remainSeconds} seconds!`
+                        "Wait for recorders to stop..." : 
+                        `Reload in ${remainSeconds} seconds!`
 
   return (
     <div>
@@ -41,7 +45,7 @@ function AlertDialog(props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"WARN! Too Large Memory Used!"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"WARN! Too Much Memory Used!"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             {dialogMessage}
@@ -52,4 +56,4 @@ function AlertDialog(props) {
   );
 }
 
-export default React.memo(AlertDialog)
+export default React.memo(AutoReloadDialog)

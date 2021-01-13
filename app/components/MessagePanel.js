@@ -32,7 +32,7 @@ function MessagePanel(props) {
                         <Typography variant={"caption"}>{messageText}</Typography>
                     </Box>
                     <Box ml="auto">
-                        <Typography variant={"caption"}>[{memUsed}MB]</Typography>
+                        <Typography variant={"caption"}>[{memUsed}MB / {maxMemory}MB]</Typography>
                     </Box>
                     <Box ml="5px">
                         <Typography variant={"caption"}>v.{app.getVersion()}</Typography>

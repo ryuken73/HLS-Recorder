@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import App from '../components/App';
 import * as appActions from '../modules/app';
 import * as hlsRecorderActions from '../modules/hlsRecorders';
+import * as statisticsActions from '../modules/statistics';
 
 console.log('calling AppContainer')
 function mapStateToProps(state, ownProps) {
