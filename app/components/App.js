@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Box from '@material-ui/core/Box';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import BottomMenuContainer from '../containers/BottomMenuContainer';;
@@ -34,39 +34,52 @@ function App(props) {
   const [dialogTitle, setDialogTitle] = React.useState('Really Reload?');
   const [dialogText, setDialogText] = React.useState('Reload will stop current recordings and schedules. OK?');
   const [reloadDialogOpen, setReloadDialogOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+  React.useEffect(() => {
+    console.log('^^^ App Mounted')
+    setIsLoading(false);
+  },[])
   return (
     <ThemeProvider theme={theme}>
-      <Box display="flex" flexDirection="column" height="1">
-        <HeaderContainer 
-          setConfirmOpen={setConfirmOpen}
-        ></HeaderContainer>
-        <BodyContainer></BodyContainer>
-        {/* <BottomMenuContainer mt="auto"></BottomMenuContainer>  */}
-        <MessageContainer 
-          mt="auto"
-          maxMemory={MAX_MEMORY_TO_RELOAD_MB}
-          setReloadDialogOpen={setReloadDialogOpen}
-        ></MessageContainer> 
-        <ReloadConfirm 
-          open={confirmOpen} 
-          setOpen={setConfirmOpen}
-          dialogTitle={dialogTitle}
-          dialogText={dialogText}
-        ></ReloadConfirm>
-        <OptionDialogContainer 
-          title="Options"
-          setConfirmOpen={setConfirmOpen}
-          setDialogTitle={setDialogTitle}
-          setDialogText={setDialogText}
-        ></OptionDialogContainer>
-        { reloadDialogOpen && 
-          <AutoReloadDialog
-            open={reloadDialogOpen}
-            reloadWaitSeconds={MAX_MEMORY_RELOAD_WAIT_MS}
-          >
-          </AutoReloadDialog>
-        }
-      </Box>
+      {isLoading && 
+        <Box display="flex" height="100%">
+          <Box m="auto" fontSize="30px">
+              Loading.....
+          </Box>
+        </Box>
+      }
+      {!isLoading &&
+        <Box display="flex" flexDirection="column" height="1">
+          <HeaderContainer 
+            setConfirmOpen={setConfirmOpen}
+          ></HeaderContainer>
+          <BodyContainer></BodyContainer>
+          <MessageContainer 
+            mt="auto"
+            maxMemory={MAX_MEMORY_TO_RELOAD_MB}
+            setReloadDialogOpen={setReloadDialogOpen}
+          ></MessageContainer> 
+          <ReloadConfirm 
+            open={confirmOpen} 
+            setOpen={setConfirmOpen}
+            dialogTitle={dialogTitle}
+            dialogText={dialogText}
+          ></ReloadConfirm>
+          <OptionDialogContainer 
+            title="Options"
+            setConfirmOpen={setConfirmOpen}
+            setDialogTitle={setDialogTitle}
+            setDialogText={setDialogText}
+          ></OptionDialogContainer>
+          { reloadDialogOpen && 
+            <AutoReloadDialog
+              open={reloadDialogOpen}
+              reloadWaitSeconds={MAX_MEMORY_RELOAD_WAIT_MS}
+            >
+            </AutoReloadDialog>
+          }
+        </Box>
+      }
     </ThemeProvider>
   );
 }
