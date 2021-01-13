@@ -9,8 +9,7 @@ const {remote} = require('electron');
 function AutoReloadDialog(props) {
   console.log('*********', props)
   const {open, reloadWaitSeconds=5000} = props;
-  const {reloadCountAutomatic} = props;
-  const {setAppStat} = props.StatisticsActions;
+  const {setAppStatNStore, increaseAppStatNStore} = props.StatisticsActions;
   const {stopRecordAll} = props.HLSRecorderActions;
   const [remainSeconds, setRemainSeconds] = React.useState(parseInt((reloadWaitSeconds/1000).toFixed(0)));
   const [timer, setTimer] = React.useState(null);
@@ -19,8 +18,8 @@ function AutoReloadDialog(props) {
     clearInterval(timer);
     stopRecordAll()
     .then(() => {
-      setAppStat({statName:'reloadTimeAutomatic', value:Date.now()})
-      setAppStat({statName:'reloadCountAutomatic', value:reloadCountAutomatic+1})
+      setAppStatNStore({statName:'reloadTimeAutomatic', value:Date.now()})
+      increaseAppStatNStore({statName:'reloadCountAutomatic'})
       remote.getCurrentWebContents().reload();
     })
   }

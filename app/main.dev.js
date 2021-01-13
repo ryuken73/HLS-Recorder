@@ -135,6 +135,9 @@ app.on('ready', async () => {
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
+  //initialize statistics store
+  clearStatisticsStore();
+
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   // new AppUpdater();
@@ -207,4 +210,12 @@ const deleteClipStore = deletedPath => {
   })
   const clipId = path.basename(deletedPath);
   clipStore.delete(clipId);
+}
+
+const clearStatisticsStore = () => {
+  const statisticsStore = new Store({
+    name:'statisticsStore',
+    cwd:app.getPath('home')
+  })
+  statisticsStore.clear();
 }

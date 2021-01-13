@@ -9,7 +9,7 @@ module.exports = (enabled=true, logger) => {
         const scheduleEvent = new EventEmitter();
         const valid = cron.validate(schedule);
         if(!valid){
-            logger.error(`Not valid cron string (syntax: SS(0-59) MM(0-59) HH(0-23) DD(1-31) MO(1-12) W(0-7)`);
+            logger.error(`Not valid cron string (syntax: SS(0-59) MM(0-59) HH(0-23) DD(1-31) MO(1-12) W(0-7) : ${schedule}`);
             return false; 
         }
         const task = cron.schedule(schedule, () => scheduleEvent.emit(`triggered`, name), {

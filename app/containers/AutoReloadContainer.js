@@ -8,8 +8,7 @@ import * as statisticsActions from '../modules/statistics';
 function mapStateToProps(state, ownProps) {
   // console.log('mapStateToProps:',state) 
   return {
-    ...ownProps,
-    reloadCountAutomatic: state.statistics.reloadCountAutomatic
+    ...ownProps
   }
 }
 
