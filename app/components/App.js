@@ -7,8 +7,8 @@ import OptionDialogContainer from '../containers/OptionDialogContainer';
 import HeaderContainer from '../containers/HeaderContainer';
 import ReloadConfirm from './ReloadConfirm';
 import MessageContainer from './MessagePanel';
-// import AutoReloadDialog from './AutoReloadDialog';
 import AutoReloadDialog from '../containers/AutoReloadContainer';
+import AutoStartDialog from '../containers/AutoStartDialogContainer';
 const { BrowserView, getCurrentWindow } = require('electron').remote;
 const { remote, ipcRenderer } = require('electron');
 const utils = require('../utils');
@@ -25,20 +25,33 @@ const theme = createMuiTheme({
   }
 });
 
-const {getDefaultConfig} = require('../lib/getConfig');
-const config = getDefaultConfig();
-const {MAX_MEMORY_RELOAD_WAIT_MS, MAX_MEMORY_TO_RELOAD_MB} = config;
+const {getCombinedConfig} = require('../lib/getConfig');
+const config = getCombinedConfig();
+const {
+  MAX_MEMORY_RELOAD_WAIT_MS, 
+  MAX_MEMORY_TO_RELOAD_MB,
+  AUTO_START_SCHEDULE,
+  AUTO_START_SCHEDULE_DELAY_MS
+} = config;
 
 function App(props) { 
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [dialogTitle, setDialogTitle] = React.useState('Really Reload?');
   const [dialogText, setDialogText] = React.useState('Reload will stop current recordings and schedules. OK?');
   const [reloadDialogOpen, setReloadDialogOpen] = React.useState(false);
+  const [autoStartDialogOpen, setAutoStartDialogOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
+
   React.useEffect(() => {
-    console.log('^^^ App Mounted')
     setIsLoading(false);
   },[])
+  
+  React.useEffect(() => {
+    if(AUTO_START_SCHEDULE === true){
+      setAutoStartDialogOpen(true);
+    }
+  },[])
+
   return (
     <ThemeProvider theme={theme}>
       {isLoading && 
@@ -78,6 +91,15 @@ function App(props) {
             >
             </AutoReloadDialog>
           }
+          {autoStartDialogOpen &&
+            <AutoStartDialog
+              open={autoStartDialogOpen}
+              setAutoStartDialogOpen={setAutoStartDialogOpen}
+              scheduleStartDelay={AUTO_START_SCHEDULE_DELAY_MS}
+            >
+            </AutoStartDialog>
+          }
+
         </Box>
       }
     </ThemeProvider>

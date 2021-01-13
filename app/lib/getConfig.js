@@ -4,6 +4,15 @@ const Store = require('electron-store');
 // const {app} = require('electron');
 // console.log('isRenderer', electronUtil.isRenderer, getPath)
 
+const valuesToInt = obj => {
+    const valuesToInt = Object.entries(obj).reduce((acc, element) => {
+        const [key, value] = element;
+        const convertInt = isNaN(parseInt(value)) ? value: parseInt(value);
+        return {...acc, [key]:convertInt}
+    },{})
+    return valuesToInt;
+}
+
 const getCombinedConfig = (params={}) => {
     const {app} = electronUtil.isRenderer ? require('electron').remote : require('electron');
     const {storeName='optionStore', electronPath='home'} = params;
@@ -14,7 +23,9 @@ const getCombinedConfig = (params={}) => {
         cwd: app.getPath(electronPath)
     })
     const customConfig = sourceStore.store;
-    return {...defaultJson, ...customConfig};
+    const combinedConfig = {...defaultJson, ...customConfig};
+    const typeConverted = valuesToInt(combinedConfig)
+    return typeConverted;
 }
 
 const getDefaultConfig = () => {
