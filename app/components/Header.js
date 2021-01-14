@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Box from '@material-ui/core/Box'
 import BorderedBox from './template/BorderedBox';
 // import IconButton from '@material-ui/core/IconButton';
@@ -9,15 +9,18 @@ import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import HomeIcon from '@material-ui/icons/Home';
 import BugReportIcon from '@material-ui/icons/BugReport';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 import OptionSelect from './template/OptionSelect';
+import Tooltip from '@material-ui/core/Tooltip';
 import {BasicIconButton} from './template/basicComponents';
 
 const {remote} = require('electron');
 
 const Header = (props) => {
-    console.log('$$$$', props)
+    // console.log('$$$$', props)
     const {setConfirmOpen} = props;
     const {BASE_DIRECTORY="c:/temp"} =  props.config;
+    const [tooltipOpen, setTooltipOpen] = React.useState(false);
 
     const {openOptionsDialog} = props.OptionDialogActions;
 
@@ -37,7 +40,6 @@ const Header = (props) => {
         stopRecordAll=()=>{},
         changeAllIntervals=()=>{}
     } = props.HLSRecorderActions;
-    console.log('$$$$$$$$', changeAllIntervals)
 
     const scheduleButtonColor =  scheduleStatusAllStopped ? 'grey' : 'maroon';
     const recordButtonColor =  recorderStatusAllStopped ? 'grey' : 'maroon';
@@ -66,7 +68,17 @@ const Header = (props) => {
         const logFolder = remote.app.getPath('logs');
         remote.shell.openItem(logFolder)
     }
+    const showStatistics = () => {
+        setTooltipOpen(previous => {
+            return !previous;
+        })
+    }
 
+    const myMessage = `111
+    233
+    444
+    444
+    444`
     return (      
         <Box 
             display="flex" 
@@ -103,7 +115,7 @@ const Header = (props) => {
                         ></AccessAlarmIcon>
                     </BasicIconButton>
                 </Box>
-                <Box ml="5px" mr={"auto"}>
+                <Box ml="5px">
                     <OptionSelect
                         selectColor={"darkslategrey"}
                         disabled={!scheduleStatusAllStopped || recorderStatusAnyInTransition}
@@ -113,6 +125,29 @@ const Header = (props) => {
                         smallComponent={false}
                     ></OptionSelect>
                 </Box>
+                <Tooltip
+                    open={tooltipOpen}
+                    title={
+                    <Box>
+                        <Box>111</Box>    
+                        <Box>222</Box>    
+                        <Box>333</Box>    
+                    </Box>}
+                    arrow
+                >
+                    <Box ml="5px" mr={"auto"}>
+                        <BasicIconButton 
+                            aria-label="statistics" 
+                            onClick={showStatistics}
+                        >
+                            <AssignmentIcon 
+                                fontSize="large"
+                                style={{color:"grey"}}
+                            ></AssignmentIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
+
             </Box>
             <Box 
                 fontFamily="Roboto, Helvetica, Arial, sans-serif" 

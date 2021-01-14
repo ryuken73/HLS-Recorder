@@ -6,7 +6,10 @@ function ConfirmDialog(props) {
     const {open, setOpen} = props;
     const {dialogTitle = "Really Reload?"} = props
     const {dialogText = "Reload will stop current recordings and schedules. OK?"} = props;
+    const {setAppStatNStore, increaseAppStatNStore} = props.StatisticsActions;
     const reload = React.useCallback(() => {
+        setAppStatNStore({statName:'reloadTimeManual', value:Date.now()});
+        increaseAppStatNStore({statName:'reloadCountManual'});
         remote.getCurrentWebContents().reload();
     },[])
     return (

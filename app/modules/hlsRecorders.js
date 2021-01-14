@@ -164,8 +164,6 @@ export const createRecorder = (channelNumber, createdByError=false) => (dispatch
     const errorHandler = (localm3u8, startTimestamp, duration, error) => {
         channelLog.error(`error occurred`);
         channelLog.info(`recorder emitted error: m3u8:${localm3u8} error:${error} duration:${duration}`)
-        dispatch(setChannelStatNStore({channelNumber, statName:'lastFailureTime', value:Date.now()}))
-        dispatch(increaseChannelStatsNStore({channelNumber, statName:'failureCount'}))
         // if directory empty, remove directory or emit end to save record on clipStore
         fs.lstat(localm3u8, (error, stats) => {
           if(error){
@@ -175,8 +173,12 @@ export const createRecorder = (channelNumber, createdByError=false) => (dispatch
               dispatch(refreshPlayer({channelNumber}));
               // resetRecorder => initialize recorder status(duration, status..)
               dispatch(refreshRecorder({channelNumber}));
+              dispatch(setChannelStatNStore({channelNumber, statName:'lastAbrotTime', value:Date.now()}))
+              dispatch(increaseChannelStatsNStore({channelNumber, statName:'abortCount'}))
           } else {
               // file is valid. emit normal end event to save clip on clipStore
+              dispatch(setChannelStatNStore({channelNumber, statName:'lastFailureTime', value:Date.now()}))
+              dispatch(increaseChannelStatsNStore({channelNumber, statName:'failureCount'}))
               recorder.emit('end', localm3u8, startTimestamp, duration);
           }
         })
@@ -296,10 +298,14 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
                 console.log('#######', clipData)
                 if(duration === INITIAL_DURATION){
                     channelLog.error(`useless clip(duration === 00:00:00.00). discard!`);
+                    dispatch(setChannelStatNStore({channelNumber, statName:'lastAbrotTime', value:Date.now()}))
+                    dispatch(increaseChannelStatsNStore({channelNumber, statName:'abortCount'}))
                     dispatch(refreshRecorder({channelNumber}));
                     return
                 }
                 clipStore.set(clipId, clipData);
+                dispatch(setChannelStatNStore({channelNumber, statName:'lastSuccessTime', value:Date.now()}))
+                dispatch(increaseChannelStatsNStore({channelNumber, statName:'successCount'}))
                 dispatch(refreshRecorder({channelNumber}));
             } catch (error) {
                 if(error){

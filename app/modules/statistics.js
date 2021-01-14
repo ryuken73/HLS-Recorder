@@ -14,6 +14,23 @@ const statisticsStore = new Store({
     cwd:remote.app.getPath('home')
 })
 
+const clipStore = new Store({
+    name:'clipStore',
+    cwd:remote.app.getPath('home')
+})
+
+const getClipCountStore = channelNumber => {
+    const allClips = clipStore.store;
+    const count = Object.entries(allClips).filter(([id, clipInfo]) => {
+        return clipInfo.channelNumber === channelNumber
+    }).length
+    return count;
+}
+
+const getClipCountFolder = channelNumber => {
+
+}
+
 // action types
 const SET_APP_STAT = 'statistics/SET_APP_STAT';
 const SET_CHANNEL_STAT = 'statistics/SET_CHANNEL_STAT';
@@ -40,9 +57,20 @@ export const increaseAppStatNStore = ({statName}) => (dispatch, getState) => {
     dispatch(increaseAppStat({statName}));
 }
 
+const fs = require('fs');
 export const setChannelStatNStore = ({channelNumber, statName, value}) => (dispatch, getState) => {
     statisticsStore.set(`channelStats.${channelNumber}.${statName}`, value);
     dispatch(setAppStat({channelNumber, statName, value}));
+    const countInStore = getClipCountStore(channelNumber);
+    dispatch(setChannelStat({channelNumber, statName:'clipCountSotre', value:countInStore}))
+    statisticsStore.set(`channelStats.${channelNumber}.clipCountSotre`, countInStore);
+
+    const state = getState();
+    const saveFolder = state.hlsRecorders.recorders.get(channelNumber).channelDirectory;
+    fs.readdir(saveFolder, (err, files) => {
+        dispatch(setChannelStat({channelNumber, statName:'clipCountFolder', value:files.length}));
+        statisticsStore.set(`channelStats.${channelNumber}.clipCountFolder`, files.length);
+    })
 }
 
 export const increaseChannelStatsNStore = ({channelNumber, statName}) => (dispatch, getState) => {

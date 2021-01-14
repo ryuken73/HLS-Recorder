@@ -5,7 +5,8 @@ import BottomMenuContainer from '../containers/BottomMenuContainer';;
 import BodyContainer from '../containers/BodyContainer';
 import OptionDialogContainer from '../containers/OptionDialogContainer';
 import HeaderContainer from '../containers/HeaderContainer';
-import ReloadConfirm from './ReloadConfirm';
+import ReloadConfirmContainer from '../containers/ReloadConfirmContainer';
+// import ReloadConfirm from './ReloadConfirm';
 import MessageContainer from './MessagePanel';
 import AutoReloadDialog from '../containers/AutoReloadContainer';
 import AutoStartDialog from '../containers/AutoStartDialogContainer';
@@ -72,12 +73,12 @@ function App(props) {
             maxMemory={MAX_MEMORY_TO_RELOAD_MB}
             setReloadDialogOpen={setReloadDialogOpen}
           ></MessageContainer> 
-          <ReloadConfirm 
+          <ReloadConfirmContainer 
             open={confirmOpen} 
             setOpen={setConfirmOpen}
             dialogTitle={dialogTitle}
             dialogText={dialogText}
-          ></ReloadConfirm>
+          ></ReloadConfirmContainer>
           <OptionDialogContainer 
             title="Options"
             setConfirmOpen={setConfirmOpen}
