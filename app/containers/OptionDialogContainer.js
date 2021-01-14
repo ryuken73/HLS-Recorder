@@ -8,7 +8,7 @@ import * as optionDialogActions from '../modules/options';
 
 
 function mapStateToProps(state, ownProps) {
-  console.log('mapStateToProps:',state) 
+  // console.log('mapStateToProps:',state) 
   const {config, optionsDialogOpen} = state.options
   return {
     ...ownProps,

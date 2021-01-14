@@ -5,7 +5,7 @@ import * as hlsPlayersActions from '../modules/hlsPlayers';
 
 
 function mapStateToProps(state, ownProps) {
-  console.log('$$$$$', state)
+  // console.log('$$$$$', state)
   const {channelNumber} = ownProps;
   const hlsPlayer = state.hlsPlayers.players.get(channelNumber);
   return {
