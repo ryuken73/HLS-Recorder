@@ -95,6 +95,7 @@ app.on('ready', async () => {
     show: false,
     width: width,
     minWidth: 1012,
+    maxWidth: 1666,
     minHeight: 750,
     height: height,
     backgroundColor: '#252839',
