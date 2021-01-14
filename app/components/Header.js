@@ -7,6 +7,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import HomeIcon from '@material-ui/icons/Home';
+import BugReportIcon from '@material-ui/icons/BugReport';
 import OptionSelect from './template/OptionSelect';
 import {BasicIconButton} from './template/basicComponents';
 
@@ -45,14 +47,26 @@ const Header = (props) => {
         openOptionsDialog();
         // setOptionsDialogOpen({dialogOpen:true})
     },[])
+    
     const reload = React.useCallback(() => {
         setConfirmOpen(true);
         // remote.getCurrentWebContents().reload();
     },[])
+    
     const openDirectory = React.useCallback(() => {
-        // remote.shell.showItemInFolder(BASE_DIRECTORY)
         remote.shell.openItem(BASE_DIRECTORY)
     },[BASE_DIRECTORY])
+
+    const openHome = () => {
+        const home = remote.app.getPath('home');
+        remote.shell.openItem(home)
+
+    }
+    const openLogFolder = () => {
+        const logFolder = remote.app.getPath('logs');
+        remote.shell.openItem(logFolder)
+    }
+
     return (      
         <Box 
             display="flex" 
@@ -120,11 +134,27 @@ const Header = (props) => {
                     </BasicIconButton>
                 </Box>
                 <Box>
+                    <BasicIconButton aria-label="home directory" onClick={openHome}>
+                        <HomeIcon 
+                            fontSize="large"
+                            style={{color:"grey"}}
+                        ></HomeIcon>
+                    </BasicIconButton>
+                </Box>
+                <Box>
                     <BasicIconButton aria-label="open directory" onClick={openDirectory}>
                         <FolderOpenIcon 
                             fontSize="large"
                             style={{color:"grey"}}
                         ></FolderOpenIcon>
+                    </BasicIconButton>
+                </Box>
+                <Box>
+                    <BasicIconButton aria-label="open log(debug)" onClick={openLogFolder}>
+                        <BugReportIcon 
+                            fontSize="large"
+                            style={{color:"grey"}}
+                        ></BugReportIcon>
                     </BasicIconButton>
                 </Box>
                 <Box>
