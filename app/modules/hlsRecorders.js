@@ -289,6 +289,11 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
                 }
     
                 console.log('#######', clipData)
+                if(duration === INITIAL_DURATION){
+                    channelLog.error(`useless clip(duration === 00:00:00.00). discard!`);
+                    dispatch(refreshRecorder({channelNumber}));
+                    return
+                }
                 clipStore.set(clipId, clipData);
                 dispatch(refreshRecorder({channelNumber}));
             } catch (error) {
