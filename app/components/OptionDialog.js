@@ -57,57 +57,36 @@ function OptionDialog(props) {
   const {title="Dialog Box"} = props;
   const {dialogOpen=true, config} = props;
   const {
-    BASE_DIRECTORY="c:/temp",
+    NUMBER_OF_CHANNELS,
     CHANNEL_PREFIX="channel",
     WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE,
     LONG_BUFFERING_MS_SECONDS,
     SLEEP_MS_BETWEEN_ALL_START,
     SLEEP_MS_BETWEEN_ALL_STOP,
-    NUMBER_OF_CHANNELS,
     DEFAULT_PLAYER_PROPS,
+    BASE_DIRECTORY="c:/temp",
     KEEP_SAVED_CLIP_AFTER_HOURS,
     DELETE_SCHEDULE_CRON,
-    MAX_MEMORY_TO_RELOAD_MB
+    MAX_MEMORY_TO_RELOAD_MB,
+    MAX_MEMORY_RELOAD_WAIT_MS,
+    AUTO_START_SCHEDULE,
+    AUTO_START_SCHEDULE_DELAY_MS
   } = config;
   const {deleteOnClose=()=>{}} = props;
   const {setOptionsDialogOpen=()=>{}, saveConfig=()=>{}} = props.OptionDialogActions;
   const {setDefaultConfig=()=>{}} = props.OptionDialogActions;
-  const {setAllOptions=()=>{}} = props;
-  const {
-    setBaseDirectory=()=>{},
-    setChannelPrefix=()=>{},
-    setLongBufferSceonds=()=>{},
-    setSleepBetweenStart=()=>{},
-    setSleepBetweenStop=()=>{},
-    setNumberOfChannels=()=>{},
-    setKeepClipsAfterHours=()=>{},
-    setWaitSecondsBeforePlayback=()=>{},
-    setDeleteScheduleCron=()=>{},
-    setMaxMemoryToReloadMB=()=>{}
-  } = props.OptionDialogActions;
+  const {setConfigValue=()=>{}} = props.OptionDialogActions;
 
   const [scroll, setScroll] = React.useState('paper');
 
-  const actionFunctions = {
-    'saveDir': setBaseDirectory,
-    'channelPrefix': setChannelPrefix,
-    'longBufferSeconds': setLongBufferSceonds,
-    'sleepBetweenStart': setSleepBetweenStart,
-    'sleepBetweenStop': setSleepBetweenStop,
-    'numberOfChannels': setNumberOfChannels,
-    'saveClipAfterHours': setKeepClipsAfterHours,
-    'waitSecondsForPlayback': setWaitSecondsBeforePlayback,
-    'deleteScheduleCron': setDeleteScheduleCron,
-    'maxMemoryToReloadMB' : setMaxMemoryToReloadMB
-  }
-
-  const onChange = type => {
+  const onChangeConfig = configName => {
     return event => {
       setValueChanged(true);
-      console.log(type, event.target.value);
-      actionFunctions[type](event.target.value);
+      console.log(configName, event.target.value);
+      // actionFunctions[type](event.target.value);
+      setConfigValue({configName, value:event.target.value})
     }
-  }   
+  }  
 
   const handleClose = () => {
     setOptionsDialogOpen({dialogOpen:false});
@@ -161,17 +140,17 @@ function OptionDialog(props) {
         id="scroll-dialog-description"
         tabIndex={-1}
       >
-        <OptionTextInputWithDefault subtitle='Number of Recorders' value={NUMBER_OF_CHANNELS} onChange={onChange('numberOfChannels')}></OptionTextInputWithDefault>
-        <OptionTextInputWithDefault subtitle='Channel Prefix' value={CHANNEL_PREFIX} onChange={onChange('channelPrefix')}></OptionTextInputWithDefault>
-        <OptionTextInputWithDefault subtitle='Clip Keeping Hours(hh)' value={KEEP_SAVED_CLIP_AFTER_HOURS} onChange={onChange('saveClipAfterHours')}></OptionTextInputWithDefault>
-        <OptionTextInputWithDefault subtitle='Long Buffering(ms)' value={LONG_BUFFERING_MS_SECONDS} onChange={onChange('longBufferSeconds')}></OptionTextInputWithDefault>
-        <OptionTextInputWithDefault subtitle='Wait for Playback(ms)' value={WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE} onChange={onChange('waitSecondsForPlayback')}></OptionTextInputWithDefault>
-        <OptionTextInputWithDefault subtitle='Delay All Starting(ms)' value={SLEEP_MS_BETWEEN_ALL_START} onChange={onChange('sleepBetweenStart')}></OptionTextInputWithDefault>
-        <OptionTextInputWithDefault subtitle='Delay All Stopping(ms)' value={SLEEP_MS_BETWEEN_ALL_STOP} onChange={onChange('sleepBetweenStop')}></OptionTextInputWithDefault>
-        <OptionTextInputWithDefault subtitle='Delete Schedule Cron' value={DELETE_SCHEDULE_CRON} onChange={onChange('deleteScheduleCron')}></OptionTextInputWithDefault>
-        <OptionTextInputWithDefault subtitle='Max Memory to Reload' value={MAX_MEMORY_TO_RELOAD_MB} onChange={onChange('maxMemoryToReloadMB')}></OptionTextInputWithDefault>
-        <OptionTextInputWithDefault subtitle='Save Directory' value={BASE_DIRECTORY} onChange={onChange('saveDir')} iconButton={SaveDirectoryButton}></OptionTextInputWithDefault>
-        <OptionRadioButtonWithDefault subtitle="Delete on tab close" currentvalue={deleteOnClose} onChange={onChange('deleteOnClose')}></OptionRadioButtonWithDefault>
+        <OptionTextInputWithDefault subtitle='Number of Recorders' value={NUMBER_OF_CHANNELS} onChange={onChangeConfig('NUMBER_OF_CHANNELS')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Channel Prefix' value={CHANNEL_PREFIX} onChange={onChangeConfig('CHANNEL_PREFIX')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Clip Keeping Hours(hh)' value={KEEP_SAVED_CLIP_AFTER_HOURS} onChange={onChangeConfig('KEEP_SAVED_CLIP_AFTER_HOURS')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Long Buffering(ms)' value={LONG_BUFFERING_MS_SECONDS} onChange={onChangeConfig('LONG_BUFFERING_MS_SECONDS')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Wait for Playback(ms)' value={WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE} onChange={onChangeConfig('WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Delay All Starting(ms)' value={SLEEP_MS_BETWEEN_ALL_START} onChange={onChangeConfig('SLEEP_MS_BETWEEN_ALL_START')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Delay All Stopping(ms)' value={SLEEP_MS_BETWEEN_ALL_STOP} onChange={onChangeConfig('SLEEP_MS_BETWEEN_ALL_STOP')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Delete Schedule Cron' value={DELETE_SCHEDULE_CRON} onChange={onChangeConfig('DELETE_SCHEDULE_CRON')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Max Memory to Reload' value={MAX_MEMORY_TO_RELOAD_MB} onChange={onChangeConfig('MAX_MEMORY_TO_RELOAD_MB')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='Save Directory' value={BASE_DIRECTORY} onChange={onChangeConfig('BASE_DIRECTORY')} iconButton={SaveDirectoryButton}></OptionTextInputWithDefault>
+        <OptionRadioButtonWithDefault subtitle="Delete on tab close" currentvalue={deleteOnClose} onChange={onChangeConfig('deleteOnClose')}></OptionRadioButtonWithDefault>
         
       </DialogContentText>
     </DialogContent>
