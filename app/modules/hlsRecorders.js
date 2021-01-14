@@ -263,21 +263,12 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
         })
         recorder.once('end', async (clipName, startTimestamp, duration) => {
             try {
-                // channelLog.info(`recorder emitted end (listener1) with error: ${clipName} error:${error} duration:${duration} directory:${saveDirectory}`)
-
-                // if(error !== undefined && duration === INITIAL_DURATION){
-                //     channelLog.info(`recorder emitted end (listener1) with error: ${clipName} error:${error} directory:${saveDirectory}`)
-                //     dispatch(refreshRecorder({channelNumber}));
-                //     return;
-                // }
-                // channelLog.info(`recorder emitted end (listener1): ${clipName} ${startTimestamp} error:${error}`)
                 const endTimestamp = Date.now();
                 const startTime = utils.date.getString(new Date(startTimestamp),{sep:'-'})
                 const endTime = utils.date.getString(new Date(endTimestamp),{sep:'-'})
                 const url = hlsRecorder.playerHttpURL;
                 const title = source.title;
                 const hlsDirectory = saveDirectory;
-                // const clipId = `${channelName}_${startTime}_${startTimestamp}_${title}`
                 const clipId = subDirectory;
                 const hlsm3u8 = localm3u8;
                 const clipData = {
@@ -298,18 +289,8 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
                 }
     
                 console.log('#######', clipData)
-                //todo : save clipData in electron store
                 clipStore.set(clipId, clipData);
                 dispatch(refreshRecorder({channelNumber}));
-                //todo : remove old clips based on keey hours configuration parameter
-                // rimraf(hlsDirectory, err => {
-                //     if(err) {
-                //         channelLog.error(err);
-                //         channelLog.error(`delete working directory failed: ${hlsDirectory}`);
-                //         return
-                //     } 
-                //     channelLog.info(`delete working directory success: ${hlsDirectory}`);
-                // });
             } catch (error) {
                 if(error){
                     channelLog.error(error)
