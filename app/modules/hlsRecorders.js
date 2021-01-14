@@ -1,5 +1,6 @@
 import {createAction, handleActions} from 'redux-actions';
 import {setPlayerSource, refreshPlayer} from './hlsPlayers';
+import {setChannelStatNStore, increaseChannelStatsNStore} from './statistics';
 // import {logInfo, logError, logFail} from './messagePanel';
 const cctvFromConfig = require('../lib/getCCTVList');
 const {getCombinedConfig} = require('../lib/getConfig');
@@ -163,6 +164,8 @@ export const createRecorder = (channelNumber, createdByError=false) => (dispatch
     const errorHandler = (localm3u8, startTimestamp, duration, error) => {
         channelLog.error(`error occurred`);
         channelLog.info(`recorder emitted error: m3u8:${localm3u8} error:${error} duration:${duration}`)
+        dispatch(setChannelStatNStore({channelNumber, statName:'lastFailureTime', value:Date.now()}))
+        dispatch(increaseChannelStatsNStore({channelNumber, statName:'failureCount'}))
         // if directory empty, remove directory or emit end to save record on clipStore
         fs.lstat(localm3u8, (error, stats) => {
           if(error){

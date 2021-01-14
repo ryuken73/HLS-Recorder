@@ -2,6 +2,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import AutoStartDialog from '../components/AutoStartDialog';
 import * as hlsRecorderActions from '../modules/hlsRecorders';
+import * as statisticsActions from '../modules/statistics';
 
 
 function mapStateToProps(state, ownProps) {
@@ -12,7 +13,10 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {HLSRecorderActions: bindActionCreators(hlsRecorderActions, dispatch)};
+  return {
+    HLSRecorderActions: bindActionCreators(hlsRecorderActions, dispatch),
+    StatisticsActions: bindActionCreators(statisticsActions, dispatch),  
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AutoStartDialog);

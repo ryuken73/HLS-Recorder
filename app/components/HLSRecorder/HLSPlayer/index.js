@@ -36,6 +36,12 @@ const HLSPlayer = (props) => {
         refreshPlayer=()=>{}
     } = props.HLSPlayersActions;
 
+    const {
+        setChannelStatNStore=()=>{}, 
+        increaseChannelStatsNStore=()=>{}
+    } = props.StatisticsActions;
+
+
     const srcObject = {
         src: source.url,
         type,
@@ -120,6 +126,8 @@ const HLSPlayer = (props) => {
         if(eventName === 'abort' && enableAutoRefresh !== null){
             refreshTimer = setTimeout(() => {
                 channelLog.info('refresh player because of long buffering')
+                setChannelStatNStore({channelNumber, statName:'lastRefreshTime', value:Date.now()})
+                increaseChannelStatsNStore({channelNumber, statName:'refreshCount'})
                 setVersion(Date.now())
             },LONG_BUFFERING_MS_SECONDS)
             return

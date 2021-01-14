@@ -69,8 +69,11 @@ const getInitialState = statisticsStore => {
                 refreshCount: 0,
                 successCount: 0,
                 failureCount: 0,
+                abortCount:0,
+                lastRefreshTime: null,
                 lastSuccessTime: null,
                 lastFailureTime: null,
+                lastAbrotTime: null,
                 clipCountSotre: 0,
                 clipCountFolder: 0
             }
@@ -81,13 +84,13 @@ const getInitialState = statisticsStore => {
     return [statisticsStore.get('appStats'), statisticsStore.get('channelStats')];
 }
 
-const setStaticStore = (store, appStats, channelStats) => {
+const setStaticsStore = (store, appStats, channelStats) => {
     store.set('appStats', appStats);
     store.set('channelStats', channelStats);
 }
 
 const [initialAppStats, initialChannelStats] = getInitialState(statisticsStore);
-statisticsStore.size === 0 && setStaticStore(statisticsStore, initialAppStats, initialChannelStats)
+statisticsStore.size === 0 && setStaticsStore(statisticsStore, initialAppStats, initialChannelStats)
 
 const initialState = {
     appStat: initialAppStats,
