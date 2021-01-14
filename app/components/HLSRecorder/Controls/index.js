@@ -3,6 +3,7 @@ import Box from '@material-ui/core/Box';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import {SmallPaddingIconButton}  from '../../template/smallComponents';
 import log from 'electron-log';
 
@@ -101,6 +102,11 @@ const Controls = props => {
     const stopScheduleChannel = event => {
         stopSchedule(channelNumber);
     }
+
+    const {remote} = require('electron');
+    const openDirectory = () => {
+        remote.shell.openItem(channelDirectory)
+    }
     
     return (
         <Box display="flex" flexDirection="column" mr="3px">
@@ -120,6 +126,13 @@ const Controls = props => {
                     fontSize={"small"} 
                     onClick={scheduleStatus==="started" ? stopScheduleChannel : startScheduleChannel}
                 ></AccessAlarmIcon>
+            </SmallPaddingIconButton>
+            <SmallPaddingIconButton padding="1px" size="small" iconcolor="black">
+                <FolderOpenIcon 
+                    // color="primary" 
+                    fontSize={"small"} 
+                    onClick={openDirectory}
+                ></FolderOpenIcon>
             </SmallPaddingIconButton>
         </Box>
     );
