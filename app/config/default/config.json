@@ -21,7 +21,7 @@
     "overlayContent": "Default Overlay",
     "enableAutoRefresh": true
   },
-  "DEFAULT_SCHEDULE_PROS": {
+  "DEFAULT_SCHEDULE_PROPS": {
     "defaultInterval": 3600000,
     "intervalsForSelection": [
       {"title": "1 Hour", "milliseconds": 3600000},
