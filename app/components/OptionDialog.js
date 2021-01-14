@@ -33,8 +33,8 @@ const OptionTextInputWithDefault = props => {
 }
 
 const boolLabels = [
-  {value: 'YES', label: 'YES'},
-  {value: 'NO', label: 'NO'}
+  {value: true, label: 'YES'},
+  {value: false, label: 'NO'}
 ]
 
 const OptionRadioButtonWithDefault = props => {
@@ -72,19 +72,24 @@ function OptionDialog(props) {
     AUTO_START_SCHEDULE,
     AUTO_START_SCHEDULE_DELAY_MS
   } = config;
-  const {deleteOnClose=()=>{}} = props;
   const {setOptionsDialogOpen=()=>{}, saveConfig=()=>{}} = props.OptionDialogActions;
   const {setDefaultConfig=()=>{}} = props.OptionDialogActions;
   const {setConfigValue=()=>{}} = props.OptionDialogActions;
 
   const [scroll, setScroll] = React.useState('paper');
 
+  const stringToBool = value => {
+    if(value === 'true') return true; 
+    if(value === 'false') return false; 
+    return value;
+  }
+
   const onChangeConfig = configName => {
     return event => {
       setValueChanged(true);
-      console.log(configName, event.target.value);
-      // actionFunctions[type](event.target.value);
-      setConfigValue({configName, value:event.target.value})
+      console.log(configName, event.target.value, typeof(event.target.value));
+      const nomalizedValue = stringToBool(event.target.value)
+      setConfigValue({configName, value: nomalizedValue})
     }
   }  
 
@@ -119,8 +124,8 @@ function OptionDialog(props) {
         iconcolor="black"
       >
         <FolderIcon fontSize="small" />
-    </SmallPaddingIconButton>)
-
+    </SmallPaddingIconButton>
+  )
 
   return (
     
@@ -150,7 +155,8 @@ function OptionDialog(props) {
         <OptionTextInputWithDefault subtitle='Delete Schedule Cron' value={DELETE_SCHEDULE_CRON} onChange={onChangeConfig('DELETE_SCHEDULE_CRON')}></OptionTextInputWithDefault>
         <OptionTextInputWithDefault subtitle='Max Memory to Reload' value={MAX_MEMORY_TO_RELOAD_MB} onChange={onChangeConfig('MAX_MEMORY_TO_RELOAD_MB')}></OptionTextInputWithDefault>
         <OptionTextInputWithDefault subtitle='Save Directory' value={BASE_DIRECTORY} onChange={onChangeConfig('BASE_DIRECTORY')} iconButton={SaveDirectoryButton}></OptionTextInputWithDefault>
-        <OptionRadioButtonWithDefault subtitle="Delete on tab close" currentvalue={deleteOnClose} onChange={onChangeConfig('deleteOnClose')}></OptionRadioButtonWithDefault>
+        <OptionRadioButtonWithDefault subtitle="Schedule Auto Start" currentvalue={AUTO_START_SCHEDULE} onChange={onChangeConfig('AUTO_START_SCHEDULE')}></OptionRadioButtonWithDefault>
+        <OptionTextInputWithDefault subtitle='Schedule Auto Start Delay(ms)' value={AUTO_START_SCHEDULE_DELAY_MS} onChange={onChangeConfig('AUTO_START_SCHEDULE_DELAY_MS')}></OptionTextInputWithDefault>
         
       </DialogContentText>
     </DialogContent>
