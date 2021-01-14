@@ -150,13 +150,13 @@ export const createRecorder = (channelNumber, createdByError=false) => (dispatch
     }
     const recorder = HLSRecorder.createHLSRecoder(recorderOptions);
 
-    const startHandler = cmd => {
-        channelLog.info(`recorder emitted start : ${cmd}`)
-        setTimeout(() => {
-            dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
-            dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
-        },1000);
-    }
+    // const startHandler = cmd => {
+    //     channelLog.info(`recorder emitted start(default start handler)`)
+    //     // setTimeout(() => {
+    //         dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
+    //         dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
+    //     // },1000);
+    // }
     const progressHandler = progress => {
         dispatch(setDuration({channelNumber, duration:progress.duration}));
     }
@@ -186,7 +186,7 @@ export const createRecorder = (channelNumber, createdByError=false) => (dispatch
         }, RESTART_SCHEDULE_SLEPP_MS);
     }
     
-    recorder.on('start', startHandler)
+    // recorder.on('start', startHandler)
     recorder.on('progress', progressHandler)
     recorder.on('error', errorHandler)
     dispatch(setRecorder({channelNumber, recorder}))
@@ -255,7 +255,9 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
         dispatch(setRecorderStatus({channelNumber, recorderStatus: 'starting'}))
     
         recorder.once('start', (cmd) => {
-            channelLog.info(`recorder emitted start : ${cmd}`)
+            channelLog.info(`recorder emitted start (start handler to change playback source) : ${cmd}`)
+            dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
+            dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
             setTimeout(() => {
                 dispatch(setPlayerSource({channelNumber, url:localm3u8}))
                 resolve(true);
