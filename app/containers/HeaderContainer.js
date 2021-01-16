@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import * as optionDialogActions from '../modules/options';
 import * as hlsPlayersActions from '../modules/hlsPlayers';
 import * as hlsRecorderActions from '../modules/hlsRecorders';
+import * as statisticsActions from '../modules/statistics';
 
 function mapStateToProps(state, ownProps) {
   // console.log('mapStateToProps:',state) 
@@ -18,6 +19,7 @@ function mapStateToProps(state, ownProps) {
   const recorderStatusAllSame = [...recorders.values()].every((recorder,i,values) => recorder.recorderStatus===values[0].recorderStatus);
   const recorderStatusAnyInTransition = [...recorders.values()].some(recorder => recorder.inTransition===true);
   const {config:configHLSRecorders} = state.hlsRecorders;
+  const {appStat} = state.statistics;
 
   return {
     ...ownProps,
@@ -28,7 +30,8 @@ function mapStateToProps(state, ownProps) {
     scheduleStatusAllSame,
     recorderStatusAllSame,
     recorderStatusAnyInTransition,
-    intervalsForSelection: configHLSRecorders.intervalsForSelection
+    intervalsForSelection: configHLSRecorders.intervalsForSelection,
+    appStat
   }
 }
 
@@ -36,7 +39,8 @@ function mapDispatchToProps(dispatch) {
   return {
     OptionDialogActions: bindActionCreators(optionDialogActions, dispatch),
     HLSPlayerActions: bindActionCreators(hlsPlayersActions, dispatch),
-    HLSRecorderActions: bindActionCreators(hlsRecorderActions, dispatch)
+    HLSRecorderActions: bindActionCreators(hlsRecorderActions, dispatch),
+    StatisticsActions: bindActionCreators(statisticsActions, dispatch)
   };
 }
 

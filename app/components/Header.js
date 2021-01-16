@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Box from '@material-ui/core/Box'
-import BorderedBox from './template/BorderedBox';
+import BorderedList from './template/BorderedList';
 // import IconButton from '@material-ui/core/IconButton';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -15,6 +15,13 @@ import Tooltip from '@material-ui/core/Tooltip';
 import {BasicIconButton} from './template/basicComponents';
 
 const {remote} = require('electron');
+
+import { makeStyles } from '@material-ui/core/styles';
+const useStyles = makeStyles((theme) => ({
+    customWidth: {
+      maxWidth: 500,
+    }
+}));
 
 const Header = (props) => {
     // console.log('$$$$', props)
@@ -43,7 +50,6 @@ const Header = (props) => {
 
     const scheduleButtonColor =  scheduleStatusAllStopped ? 'grey' : 'maroon';
     const recordButtonColor =  recorderStatusAllStopped ? 'grey' : 'maroon';
-
 
     const openDialog = React.useCallback(() => {
         openOptionsDialog();
@@ -74,11 +80,30 @@ const Header = (props) => {
         })
     }
 
-    const myMessage = `111
-    233
-    444
-    444
-    444`
+    const {appStat} = props;
+    console.log('####111', props)
+    const {clearChannelStatNStore, initClipCountInFolder} = props.StatisticsActions;
+    React.useEffect(() => {
+        initClipCountInFolder();
+    },[])
+    const AppStatComponent = () => {
+        const StatLists = Object.entries(appStat).map(([statName, value]) => {
+            if(statName.includes('Time')){
+                const dateString = (new Date(value)).toLocaleString();
+                value = dateString;
+            }
+            return <BorderedList
+                color={"white"}
+                bgcolor={"indigo"}
+                titlewidth={"120px"}
+                subject={statName}
+                content={value}
+            ></BorderedList>
+        })
+        return StatLists
+    }
+
+    const classes = useStyles();
     return (      
         <Box 
             display="flex" 
@@ -127,12 +152,8 @@ const Header = (props) => {
                 </Box>
                 <Tooltip
                     open={tooltipOpen}
-                    title={
-                    <Box>
-                        <Box>111</Box>    
-                        <Box>222</Box>    
-                        <Box>333</Box>    
-                    </Box>}
+                    title={<AppStatComponent></AppStatComponent>}
+                    classes={{ tooltip: classes.customWidth }}
                     arrow
                 >
                     <Box ml="5px" mr={"auto"}>
