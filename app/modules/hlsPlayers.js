@@ -46,7 +46,8 @@ for(let channelNumber=1;channelNumber<=NUMBER_OF_CHANNELS;channelNumber++){
         ...DEFAULT_PLAYER_PROPS,
         source,
         channelName: `${CHANNEL_PREFIX}${channelNumber}`,
-        overlayContent: mkOverlayContent(url)
+        overlayContent: mkOverlayContent(url),
+        mountPlayer: true
     }
     players.set(channelNumber, hlsPlayer);
 }
@@ -55,11 +56,13 @@ for(let channelNumber=1;channelNumber<=NUMBER_OF_CHANNELS;channelNumber++){
 // action types
 const SET_PLAYER = 'hlsPlayers/SET_PLAYER';
 const SET_PLAYER_SOURCE = 'hlsPlayers/SET_PLAYER_SOURCE';
+const SET_PLAYER_MOUNT = 'hlsPlayers/SET_PLAYER_MOUNT';
 const REFRESH_PLAYER = 'hlsPlayers/REFRESH_PLAYER';
 
 // action creator
 export const setPlayer = createAction(SET_PLAYER);
 export const setPlayerSource = createAction(SET_PLAYER_SOURCE);
+export const setPlayerMount = createAction(SET_PLAYER_MOUNT);
 export const refreshPlayer = createAction(REFRESH_PLAYER);
 
 // redux thunk
@@ -76,6 +79,13 @@ export const setSourceNSave = ({channelNumber, url}) => (dispatch, getState) => 
         url
     })
     dispatch(setPlayerSource({channelNumber, url}))
+}
+
+export const remountPlayer = ({channelNumber}) => (dispatch, getState) => {
+    dispatch(setPlayerMount({channelNumber, mountPlayer:false}));
+    setTimeout(() => {
+        dispatch(setPlayerMount({channelNumber, mountPlayer:true}));
+    },1000)
 }
 
 const initialState = {
@@ -115,6 +125,20 @@ export default handleActions({
 
         const players = new Map(state.players);
 
+        players.set(channelNumber, hlsPlayer);
+        return {
+            ...state,
+            players
+        }
+    },
+    [SET_PLAYER_MOUNT]: (state, action) => {
+        // console.log('%%%%%%%%%%%%%%%%', action.payload);
+        const {channelNumber, mountPlayer} = action.payload;
+        const hlsPlayer = {...state.players.get(channelNumber)};
+        // to make state change, use spread operator on source;
+        hlsPlayer.mountPlayer = mountPlayer;
+        state.players.set(channelNumber, hlsPlayer);
+        const players = new Map(state.players);
         players.set(channelNumber, hlsPlayer);
         return {
             ...state,

@@ -25,7 +25,8 @@ function mapStateToProps(state, ownProps) {
     scheduleStatus: hlsRecorder.scheduleStatus,
     autoStartSchedule: hlsRecorder.autoStartSchedule,
     localm3u8: hlsRecorder.localm3u8,
-    source: hlsPlayer.source
+    source: hlsPlayer.source,
+    mountPlayer: hlsPlayer.mountPlayer
   }
 }
 

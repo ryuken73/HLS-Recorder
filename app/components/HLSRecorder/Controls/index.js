@@ -4,6 +4,7 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 import {SmallPaddingIconButton}  from '../../template/smallComponents';
 import log from 'electron-log';
 
@@ -35,7 +36,8 @@ const Controls = props => {
         autoStartSchedule=true,
         localm3u8=null,
         recorderStatus='stopped',
-        scheduleStatus='stopped'
+        scheduleStatus='stopped',
+        mountPlayer=true
     } = props
 
     const recorderIconColor = bgColors[recorderStatus];
@@ -43,6 +45,8 @@ const Controls = props => {
     
     const {
         refreshPlayer=()=>{},
+        remountPlayer=()=>{},
+        setPlayerMount=()=>{}
     } = props.HLSPlayerActions;
 
     const {
@@ -87,6 +91,16 @@ const Controls = props => {
         refreshPlayer({channelNumber});
     }
 
+    const remountChannelPlayer = (event) => {
+        // todo: url can be file url when recording
+        // refreshPlayer({channelNumber, url:source.url});
+        remountPlayer({channelNumber});
+    }
+
+    const toggleMountPlayer = React.useCallback( event => {
+        setPlayerMount({channelNumber, mountPlayer:!mountPlayer})
+    }, [mountPlayer]);
+
     const startRecordChannel = event => {
         startRecording(channelNumber);
     }
@@ -111,7 +125,7 @@ const Controls = props => {
     return (
         <Box display="flex" flexDirection="column" mr="3px">
             <SmallPaddingIconButton padding="1px" size="small" iconcolor="black">
-                <RefreshIcon color="primary" fontSize={"small"} onClick={refreshChannelPlayer}></RefreshIcon>
+                <RefreshIcon color="primary" fontSize={"small"} onClick={remountChannelPlayer}></RefreshIcon>
             </SmallPaddingIconButton>
             <SmallPaddingIconButton disabled={inTransition} padding="1px" size="small" iconcolor={recorderIconColor}>
                 <FiberManualRecordIcon 
@@ -127,13 +141,22 @@ const Controls = props => {
                     onClick={scheduleStatus==="started" ? stopScheduleChannel : startScheduleChannel}
                 ></AccessAlarmIcon>
             </SmallPaddingIconButton>
-            <SmallPaddingIconButton padding="1px" size="small" iconcolor="black">
-                <FolderOpenIcon 
-                    // color="primary" 
-                    fontSize={"small"} 
-                    onClick={openDirectory}
-                ></FolderOpenIcon>
-            </SmallPaddingIconButton>
+            <Box mt="auto" display="flex" flexDirection="column">
+                <SmallPaddingIconButton padding="1px" size="small" iconcolor="black">
+                    <FolderOpenIcon 
+                        // color="primary" 
+                        fontSize={"small"} 
+                        onClick={openDirectory}
+                    ></FolderOpenIcon>
+                </SmallPaddingIconButton>
+                <SmallPaddingIconButton padding="1px" size="small" iconcolor="black">
+                    <AssignmentIcon 
+                        // color="primary" 
+                        fontSize={"small"} 
+                        onClick={toggleMountPlayer}
+                    ></AssignmentIcon>
+                </SmallPaddingIconButton>
+            </Box>
         </Box>
     );
 };

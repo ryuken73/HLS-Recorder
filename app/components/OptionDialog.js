@@ -100,7 +100,8 @@ function OptionDialog(props) {
   const onClickSelectSaveDirectory = () => {
     dialog.showOpenDialog(({properties:['openDirectory']}), filePaths=> {
       if(filePaths === undefined) return;
-      setBaseDirectory(filePaths[0]);      
+      setConfigValue({configName:'BASE_DIRECTORY', value:filePaths[0]});
+      // setBaseDirectory(filePaths[0]);      
     })
   };
  

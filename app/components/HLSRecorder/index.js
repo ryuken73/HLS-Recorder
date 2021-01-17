@@ -43,7 +43,7 @@ const HLSRecorder = (props) => {
                 hidden={hideSourceSelect}
                 channelNumber={channelNumber}
             ></SourceSelectorContainer>
-            <Box display="flex" alignItems="flex-start">
+            <Box display="flex" alignItems="stretch">
                 <ControlsContainer
                     channelNumber={channelNumber}
                     bgColors={bgColors}

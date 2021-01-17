@@ -148,7 +148,9 @@ class VideoPlayer extends Component {
 
     render() {
         return (
-            <video id={this.playerId} className={`video-js vjs-liveui ${this.props.bigPlayButtonCentered? 'vjs-big-play-centered' : ''} ${this.props.className}`}></video>
+            <div>
+                <video id={this.playerId} className={`video-js vjs-liveui ${this.props.bigPlayButtonCentered? 'vjs-big-play-centered' : ''} ${this.props.className}`}></video>
+            </div>
         )
     }
 }

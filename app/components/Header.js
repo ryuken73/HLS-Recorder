@@ -94,7 +94,7 @@ const Header = (props) => {
             }
             return <BorderedList
                 color={"white"}
-                bgcolor={"indigo"}
+                bgcolor={"#232738"}
                 titlewidth={"120px"}
                 subject={statName}
                 content={value}

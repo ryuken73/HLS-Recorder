@@ -14,6 +14,7 @@ const HLSPlayer = (props) => {
         enableAutoRefresh=null, 
         enableOverlay=true,
         overlayContent='Default Overlay Content',
+        mountPlayer = false
     } = props;
     const {
         channelNumber=1,
@@ -26,14 +27,14 @@ const HLSPlayer = (props) => {
         bigPlayButtonCentered=false, 
         source={},
         type='application/x-mpegURL',
-        reMountPlayer=false,
         restorePlaybackRate=true,
         LONG_BUFFERING_MS_SECONDS=3000
     } = props;
 
     const {
         setPlayer=()=>{},
-        refreshPlayer=()=>{}
+        refreshPlayer=()=>{},
+        remountPlayer=()=>{}
     } = props.HLSPlayersActions;
 
     const {
@@ -166,48 +167,48 @@ const HLSPlayer = (props) => {
             setPlaybackRateStore(currentPlaybackRate);
         }
     }
-
     return (
         <Box key={version}>
-            {/* {mountPlayer ? */}
-            <VideoPlayer
-                controls={controls}
-                src={srcObject}
-                // poster={this.state.video.poster}
-                autoplay={autoplay}
-                bigPlayButton={bigPlayButton}
-                bigPlayButtonCentered={bigPlayButtonCentered}
-                width={width}
-                height={height}
-                onCanPlay={onVideoCanPlay}
-                onReady={onPlayerReady}
-                onPlay={onVideoPlay}
-                onPause={onVideoPause}
-                onTimeUpdate={onVideoTimeUpdate}
-                onSeeking={onVideoSeeking}
-                onSeeked={onVideoSeeked}
-                onError={onVideoError}
-                onEnd={onVideoEnd}
-                onOtherEvent={onVideoOtherEvent}
-                handleManifestRedirects={true}
-                liveui={true}
-                enableOverlay={enableOverlay}
-                overlayContent={overlayContent}
-                inactivityTimeout={0}
-            /> 
-            {/* : */}
-            {/* <Box 
-                width={width} 
-                height={height}
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-            >
-                <Box>player dismounted!</Box>
+            {mountPlayer ?
+                <Box>
+                <VideoPlayer
+                    controls={controls}
+                    src={srcObject}
+                    // poster={this.state.video.poster}
+                    autoplay={autoplay}
+                    bigPlayButton={bigPlayButton}
+                    bigPlayButtonCentered={bigPlayButtonCentered}
+                    width={width}
+                    height={height}
+                    onCanPlay={onVideoCanPlay}
+                    onReady={onPlayerReady}
+                    onPlay={onVideoPlay}
+                    onPause={onVideoPause}
+                    onTimeUpdate={onVideoTimeUpdate}
+                    onSeeking={onVideoSeeking}
+                    onSeeked={onVideoSeeked}
+                    onError={onVideoError}
+                    onEnd={onVideoEnd}
+                    onOtherEvent={onVideoOtherEvent}
+                    handleManifestRedirects={true}
+                    liveui={true}
+                    enableOverlay={enableOverlay}
+                    overlayContent={overlayContent}
+                    inactivityTimeout={0}
+                /> 
+                </Box>
+                :
+                <Box 
+                    width={width} 
+                    height={height}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <Box>playback stopped!</Box>
 
-            </Box>
-
-            } */}
+                </Box>
+            }
         </Box>
     );
 };

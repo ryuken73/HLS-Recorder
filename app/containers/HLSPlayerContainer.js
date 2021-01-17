@@ -26,6 +26,7 @@ function mapStateToProps(state, ownProps) {
     enableOverlay: hlsPlayer.enableOverlay,
     overlayContent: hlsPlayer.overlayContent,
     enableAutoRefresh: hlsPlayer.enableAutoRefresh,
+    mountPlayer: hlsPlayer.mountPlayer,
     LONG_BUFFERING_MS_SECONDS: config.LONG_BUFFERING_MS_SECONDS
   }
 }
