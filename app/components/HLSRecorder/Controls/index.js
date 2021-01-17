@@ -5,11 +5,20 @@ import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import Tooltip from '@material-ui/core/Tooltip';
 import {SmallPaddingIconButton}  from '../../template/smallComponents';
+import BorderedList from '../../template/BorderedList';
 import log from 'electron-log';
 
 import HLSRecorder from '../../../lib/RecordHLS_ffmpeg';
 import {getAbsolutePath} from '../../../lib/electronUtil';
+
+import { makeStyles } from '@material-ui/core/styles';
+const useStyles = makeStyles((theme) => ({
+    customWidth: {
+      maxWidth: 500,
+    }
+}));
 
 const rimraf = require('rimraf');
 const path = require('path');
@@ -24,6 +33,7 @@ async function mkdir(directory){
 }
 
 const Controls = props => {
+    const [tooltipOpen, setTooltipOpen] = React.useState(false);
     const {channelNumber, source, bgColors} = props;
     const {
         channelName="channelX",
@@ -117,10 +127,36 @@ const Controls = props => {
         stopSchedule(channelNumber);
     }
 
+    const showStatistics = () => {
+        setTooltipOpen(previous => {
+            return !previous;
+        })
+    }
+
     const {remote} = require('electron');
     const openDirectory = () => {
         remote.shell.openItem(channelDirectory)
     }
+
+    const {channelStat={}} = props;
+    const AppStatComponent = () => {
+        const StatLists = Object.entries(channelStat).map(([statName, value]) => {
+            if(statName.includes('Time')){
+                const dateString = (new Date(value)).toLocaleString();
+                value = dateString;
+            }
+            return <BorderedList
+                color={"white"}
+                bgcolor={"#232738"}
+                titlewidth={"120px"}
+                subject={statName}
+                content={value}
+            ></BorderedList>
+        })
+        return StatLists;
+    }
+
+    const classes = useStyles();
     
     return (
         <Box display="flex" flexDirection="column" mr="3px">
@@ -149,13 +185,24 @@ const Controls = props => {
                         onClick={openDirectory}
                     ></FolderOpenIcon>
                 </SmallPaddingIconButton>
-                <SmallPaddingIconButton padding="1px" size="small" iconcolor="black">
+                <Tooltip
+                    open={tooltipOpen}
+                    title={<AppStatComponent></AppStatComponent>}
+                    classes={{ tooltip: classes.customWidth }}
+                    arrow
+                >
+                <SmallPaddingIconButton 
+                    padding="1px" 
+                    size="small" 
+                    iconcolor="black"
+                    onClick={showStatistics}
+                >
                     <AssignmentIcon 
                         // color="primary" 
                         fontSize={"small"} 
-                        onClick={toggleMountPlayer}
                     ></AssignmentIcon>
                 </SmallPaddingIconButton>
+                </Tooltip>
             </Box>
         </Box>
     );

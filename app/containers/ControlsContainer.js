@@ -10,6 +10,7 @@ function mapStateToProps(state, ownProps) {
   const {channelNumber} = ownProps;
   const hlsPlayer = state.hlsPlayers.players.get(channelNumber);
   const hlsRecorder = state.hlsRecorders.recorders.get(channelNumber);
+  const channelStat = state.statistics.channelStats[channelNumber];
 
   return {
     ...ownProps,
@@ -26,7 +27,8 @@ function mapStateToProps(state, ownProps) {
     autoStartSchedule: hlsRecorder.autoStartSchedule,
     localm3u8: hlsRecorder.localm3u8,
     source: hlsPlayer.source,
-    mountPlayer: hlsPlayer.mountPlayer
+    mountPlayer: hlsPlayer.mountPlayer,
+    channelStat: channelStat
   }
 }
 
