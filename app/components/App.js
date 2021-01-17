@@ -5,8 +5,7 @@ import BottomMenuContainer from '../containers/BottomMenuContainer';;
 import BodyContainer from '../containers/BodyContainer';
 import OptionDialogContainer from '../containers/OptionDialogContainer';
 import HeaderContainer from '../containers/HeaderContainer';
-import ReloadConfirmContainer from '../containers/ReloadConfirmContainer';
-// import ReloadConfirm from './ReloadConfirm';
+import ConfirmContainer from '../containers/ConfirmContainer';
 import MessageContainer from './MessagePanel';
 import AutoReloadDialog from '../containers/AutoReloadContainer';
 import AutoStartDialog from '../containers/AutoStartDialogContainer';
@@ -37,8 +36,9 @@ const {
 
 function App(props) { 
   const [confirmOpen, setConfirmOpen] = React.useState(false);
-  const [dialogTitle, setDialogTitle] = React.useState('Really Reload?');
-  const [dialogText, setDialogText] = React.useState('Reload will stop current recordings and schedules. OK?');
+  const [confirmAction, setConfirmAction] = React.useState('');
+  const [confirmDialogTitle, setConfirmDialogTitle] = React.useState('Really Refresh Player?');
+  const [confirmDialogText, setConfirmDialogText] = React.useState('All Players will be refreshed. OK?');
   const [reloadDialogOpen, setReloadDialogOpen] = React.useState(false);
   const [autoStartDialogOpen, setAutoStartDialogOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -66,6 +66,9 @@ function App(props) {
         <Box display="flex" flexDirection="column" height="1">
           <HeaderContainer 
             setConfirmOpen={setConfirmOpen}
+            setConfirmAction={setConfirmAction}
+            setConfirmDialogTitle={setConfirmDialogTitle}
+            setConfirmDialogText={setConfirmDialogText}
           ></HeaderContainer>
           <BodyContainer></BodyContainer>
           <MessageContainer 
@@ -73,17 +76,19 @@ function App(props) {
             maxMemory={MAX_MEMORY_TO_RELOAD_MB}
             setReloadDialogOpen={setReloadDialogOpen}
           ></MessageContainer> 
-          <ReloadConfirmContainer 
+          <ConfirmContainer 
             open={confirmOpen} 
-            setOpen={setConfirmOpen}
-            dialogTitle={dialogTitle}
-            dialogText={dialogText}
-          ></ReloadConfirmContainer>
+            setConfirmOpen={setConfirmOpen}
+            confirmAction={confirmAction}
+            confirmDialogTitle={confirmDialogTitle}
+            confirmDialogText={confirmDialogText}
+          ></ConfirmContainer>
           <OptionDialogContainer 
             title="Options"
             setConfirmOpen={setConfirmOpen}
-            setDialogTitle={setDialogTitle}
-            setDialogText={setDialogText}
+            setConfirmAction={setConfirmAction}
+            setConfirmDialogTitle={setConfirmDialogTitle}
+            setConfirmDialogText={setConfirmDialogText}
           ></OptionDialogContainer>
           { reloadDialogOpen && 
             <AutoReloadDialog

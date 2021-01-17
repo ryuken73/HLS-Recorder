@@ -205,7 +205,7 @@ const HLSPlayer = (props) => {
                     justifyContent="center"
                     alignItems="center"
                 >
-                    <Box>playback stopped!</Box>
+                    <Box>playback closed!</Box>
 
                 </Box>
             }

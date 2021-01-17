@@ -3,8 +3,10 @@ import * as React from 'react';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import ReloadConfirm from '../components/ReloadConfirm';
+import ConfirmDialog from '../components/ConfirmDialog';
 import * as statisticsActions from '../modules/statistics';
+import * as hlsPlayersActions from '../modules/hlsPlayers';
+
 
 function mapStateToProps(state, ownProps) {
   // console.log('mapStateToProps:',state) 
@@ -15,8 +17,9 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    HLSPlayersActions: bindActionCreators(hlsPlayersActions, dispatch),
     StatisticsActions: bindActionCreators(statisticsActions, dispatch)
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReloadConfirm);
+export default connect(mapStateToProps, mapDispatchToProps)(ConfirmDialog);

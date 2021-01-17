@@ -53,7 +53,7 @@ const OptionRadioButtonWithDefault = props => {
 function OptionDialog(props) {
   console.log('######################## re-render OptionDialog', props);
   const [valueChanged, setValueChanged] = React.useState(false);
-  const {setConfirmOpen, setDialogTitle, setDialogText} = props;
+  const {setConfirmOpen, setConfirmAction, setConfirmDialogTitle, setConfirmDialogText} = props;
   const {title="Dialog Box"} = props;
   const {dialogOpen=true, config} = props;
   const {
@@ -109,12 +109,14 @@ function OptionDialog(props) {
     saveConfig({config});
     handleClose();
     if(valueChanged){
-      setConfirmOpen(true);
-      setDialogTitle('Reload Required!')
-      setDialogText(`
+      setConfirmDialogTitle('Caution! Reload Required!')
+      setConfirmDialogText(`
         Reload is required for changes to take effect.
         scheduled recording will be stopped!
       `)
+      setConfirmAction('reload');
+      setConfirmOpen(true);
+
     }
   }
 

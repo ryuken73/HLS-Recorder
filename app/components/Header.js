@@ -10,6 +10,7 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import HomeIcon from '@material-ui/icons/Home';
 import BugReportIcon from '@material-ui/icons/BugReport';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import OptionSelect from './template/OptionSelect';
 import Tooltip from '@material-ui/core/Tooltip';
 import {BasicIconButton} from './template/basicComponents';
@@ -25,7 +26,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = (props) => {
     // console.log('$$$$', props)
-    const {setConfirmOpen} = props;
+    const {setConfirmOpen=()=>{}, setConfirmAction=()=>{}} = props;
+    const {setConfirmDialogTitle=()=>{}, setConfirmDialogText=()=>{}} = props;
     const {BASE_DIRECTORY="c:/temp"} =  props.config;
     const [tooltipOpen, setTooltipOpen] = React.useState(false);
 
@@ -56,7 +58,20 @@ const Header = (props) => {
         // setOptionsDialogOpen({dialogOpen:true})
     },[])
     
+    const remount = React.useCallback(() => {
+        setConfirmDialogTitle('Really Refresh Player?');
+        setConfirmDialogText("All Players will be refreshed. OK?");
+        setConfirmAction('remount');
+        setConfirmOpen(true);
+        // remote.getCurrentWebContents().reload();
+    },[])
+
     const reload = React.useCallback(() => {
+        setConfirmDialogTitle('Caution! About to Reload Application!');
+        setConfirmDialogText(`
+            Reload will stop currently running recording!
+        `);
+        setConfirmAction('reload');
         setConfirmOpen(true);
         // remote.getCurrentWebContents().reload();
     },[])
@@ -81,7 +96,6 @@ const Header = (props) => {
     }
 
     const {appStat} = props;
-    console.log('####111', props)
     const {clearChannelStatNStore, initClipCountInFolder} = props.StatisticsActions;
     React.useEffect(() => {
         initClipCountInFolder();
@@ -100,7 +114,7 @@ const Header = (props) => {
                 content={value}
             ></BorderedList>
         })
-        return StatLists
+        return StatLists;
     }
 
     const classes = useStyles();
@@ -116,6 +130,14 @@ const Header = (props) => {
             flexShrink="0"
         >
             <Box display="flex" alignItems="center" width="300px">
+                <Box>
+                    <BasicIconButton aria-label="remount" onClick={remount}>
+                        <RefreshIcon 
+                            fontSize="large"
+                            style={{color:"grey"}}
+                        ></RefreshIcon>
+                    </BasicIconButton>
+                </Box>
                 <Box>
                     <BasicIconButton 
                         aria-label="all recording" 
@@ -181,12 +203,12 @@ const Header = (props) => {
             >CCTV Recorder
             </Box>
             <Box display="flex" width="300px">
-                <Box ml="auto">
+                <Box  ml="auto">
                     <BasicIconButton aria-label="reload" onClick={reload}>
-                        <RefreshIcon 
+                        <PowerSettingsNewIcon 
                             fontSize="large"
                             style={{color:"grey"}}
-                        ></RefreshIcon>
+                        ></PowerSettingsNewIcon>
                     </BasicIconButton>
                 </Box>
                 <Box>
