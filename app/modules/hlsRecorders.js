@@ -296,11 +296,10 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
                     saveDirectory,
                     mp4Converted:false
                 }
-    
                 console.log('#######', clipData)
                 if(duration === INITIAL_DURATION){
                     channelLog.error(`useless clip(duration === 00:00:00.00). discard! ${saveDirectory}`);
-                    rimraf(saveDirectory);
+                    saveDirectory.startsWith(BASE_DIRECTORY) && rimraf(saveDirectory);
                     dispatch(setChannelStatNStore({channelNumber, statName:'lastAbortTime', value:Date.now()}))
                     dispatch(increaseChannelStatsNStore({channelNumber, statName:'abortCount'}))
                     dispatch(refreshRecorder({channelNumber}));
