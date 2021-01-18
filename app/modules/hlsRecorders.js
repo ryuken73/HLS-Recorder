@@ -7,7 +7,6 @@ const {getCombinedConfig} = require('../lib/getConfig');
 const sources = cctvFromConfig();
 const config = getCombinedConfig({storeName:'optionStore', electronPath:'home'});
 
-
 const {
     NUMBER_OF_CHANNELS,
     CHANNEL_PREFIX,
@@ -173,7 +172,7 @@ export const createRecorder = (channelNumber, createdByError=false) => (dispatch
               dispatch(refreshPlayer({channelNumber}));
               // resetRecorder => initialize recorder status(duration, status..)
               dispatch(refreshRecorder({channelNumber}));
-              dispatch(setChannelStatNStore({channelNumber, statName:'lastAbrotTime', value:Date.now()}))
+              dispatch(setChannelStatNStore({channelNumber, statName:'lastAbortTime', value:Date.now()}))
               dispatch(increaseChannelStatsNStore({channelNumber, statName:'abortCount'}))
           } else {
               // file is valid. emit normal end event to save clip on clipStore
@@ -235,6 +234,7 @@ export const restartRecording = channelNumber => (dispatch, getState) => {
     scheduleStatus === 'started' && dispatch(startRecording(channelNumber));
 }
 
+const rimraf = require('rimraf');
 export const startRecording = (channelNumber) => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
         console.log(`#### in startRecording:`, channelNumber);
@@ -261,9 +261,11 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
     
         recorder.once('start', (cmd) => {
             channelLog.info(`recorder emitted start (start handler to change playback source) : ${cmd}`)
-            dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
-            dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
+            // dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
+            // dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
             setTimeout(() => {
+                dispatch(setRecorderStatus({channelNumber, recorderStatus: 'started'}));
+                dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
                 dispatch(setPlayerSource({channelNumber, url:localm3u8}))
                 resolve(true);
             },WAIT_SECONDS_MS_FOR_PLAYBACK_CHANGE);
@@ -297,8 +299,9 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
     
                 console.log('#######', clipData)
                 if(duration === INITIAL_DURATION){
-                    channelLog.error(`useless clip(duration === 00:00:00.00). discard!`);
-                    dispatch(setChannelStatNStore({channelNumber, statName:'lastAbrotTime', value:Date.now()}))
+                    channelLog.error(`useless clip(duration === 00:00:00.00). discard! ${saveDirectory}`);
+                    rimraf(saveDirectory);
+                    dispatch(setChannelStatNStore({channelNumber, statName:'lastAbortTime', value:Date.now()}))
                     dispatch(increaseChannelStatsNStore({channelNumber, statName:'abortCount'}))
                     dispatch(refreshRecorder({channelNumber}));
                     return

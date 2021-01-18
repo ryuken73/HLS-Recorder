@@ -102,9 +102,12 @@ const Header = (props) => {
     },[])
     const AppStatComponent = () => {
         const StatLists = Object.entries(appStat).map(([statName, value]) => {
-            if(statName.includes('Time')){
-                const dateString = (new Date(value)).toLocaleString();
-                value = dateString;
+            if(statName.includes('Time')){                
+                if(value === null) {
+                    value = '-';                    
+                } else {
+                    value = (new Date(value)).toLocaleString();
+                }
             }
             return <BorderedList
                 color={"white"}

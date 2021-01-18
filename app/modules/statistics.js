@@ -22,7 +22,7 @@ const clipStore = new Store({
 const getTotalClipInStore = () => { return clipStore.size };
 console.log('#####',getTotalClipInStore())
 
-const getClipCountStore = channelNumber => {
+const getChannelClipCountInStore = channelNumber => {
     const allClips = clipStore.store;
     const count = Object.entries(allClips).filter(([id, clipInfo]) => {
         return clipInfo.channelNumber === channelNumber
@@ -84,8 +84,9 @@ export const initClipCountInFolder = () => (dispatch, getState) => {
 const fs = require('fs');
 export const setChannelStatNStore = ({channelNumber, statName, value}) => (dispatch, getState) => {
     statisticsStore.set(`channelStats.${channelNumber}.${statName}`, value);
-    dispatch(setAppStat({channelNumber, statName, value}));
-    const countInStore = getClipCountStore(channelNumber);
+    dispatch(setAppStatNStore({statName, value}));
+    dispatch(setChannelStat({channelNumber, statName, value}));
+    const countInStore = getChannelClipCountInStore(channelNumber);
     dispatch(setChannelStat({channelNumber, statName:'clipCountSotre', value:countInStore}))
     statisticsStore.set(`channelStats.${channelNumber}.clipCountSotre`, countInStore);
 
@@ -141,7 +142,7 @@ const getInitialState = statisticsStore => {
                 lastRefreshTime: null,
                 lastSuccessTime: null,
                 lastFailureTime: null,
-                lastAbrotTime: null,
+                lastAbortTime: null,
                 clipCountSotre: 0,
                 clipCountFolder: 0
             }

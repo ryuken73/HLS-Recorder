@@ -7,6 +7,7 @@ import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import Tooltip from '@material-ui/core/Tooltip';
 import {SmallPaddingIconButton}  from '../../template/smallComponents';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import BorderedList from '../../template/BorderedList';
 import log from 'electron-log';
 
@@ -127,6 +128,10 @@ const Controls = props => {
         stopSchedule(channelNumber);
     }
 
+    const handleTooltipClose = () => {
+        setTooltipOpen(false);
+    }
+
     const showStatistics = () => {
         setTooltipOpen(previous => {
             return !previous;
@@ -139,11 +144,15 @@ const Controls = props => {
     }
 
     const {channelStat={}} = props;
+
     const AppStatComponent = () => {
         const StatLists = Object.entries(channelStat).map(([statName, value]) => {
-            if(statName.includes('Time')){
-                const dateString = (new Date(value)).toLocaleString();
-                value = dateString;
+            if(statName.includes('Time')){                
+                if(value === null) {
+                    value = '-';                    
+                } else {
+                    value = (new Date(value)).toLocaleString();
+                }
             }
             return <BorderedList
                 color={"white"}
@@ -185,24 +194,26 @@ const Controls = props => {
                         onClick={openDirectory}
                     ></FolderOpenIcon>
                 </SmallPaddingIconButton>
-                <Tooltip
-                    open={tooltipOpen}
-                    title={<AppStatComponent></AppStatComponent>}
-                    classes={{ tooltip: classes.customWidth }}
-                    arrow
-                >
-                <SmallPaddingIconButton 
-                    padding="1px" 
-                    size="small" 
-                    iconcolor="black"
-                    onClick={showStatistics}
-                >
-                    <AssignmentIcon 
-                        // color="primary" 
-                        fontSize={"small"} 
-                    ></AssignmentIcon>
-                </SmallPaddingIconButton>
-                </Tooltip>
+                <ClickAwayListener onClickAway={handleTooltipClose}>
+                    <Tooltip
+                        open={tooltipOpen}
+                        title={<AppStatComponent></AppStatComponent>}
+                        classes={{ tooltip: classes.customWidth }}
+                        arrow
+                    >
+                    <SmallPaddingIconButton 
+                        padding="1px" 
+                        size="small" 
+                        iconcolor="black"
+                        onClick={showStatistics}
+                    >
+                        <AssignmentIcon 
+                            // color="primary" 
+                            fontSize={"small"} 
+                        ></AssignmentIcon>
+                    </SmallPaddingIconButton>
+                    </Tooltip>
+                </ClickAwayListener>
             </Box>
         </Box>
     );
