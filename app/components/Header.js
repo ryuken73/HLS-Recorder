@@ -149,38 +149,59 @@ const Header = (props) => {
             flexShrink="0"
         >
             <Box display="flex" alignItems="center" width="500px">
-                <Box>
-                    <BasicIconButton aria-label="remount" onClick={remount}>
-                        <RefreshIcon 
-                            fontSize="large"
-                            style={{color:"grey"}}
-                        ></RefreshIcon>
-                    </BasicIconButton>
-                </Box>
-                <Box>
-                    <BasicIconButton 
-                        aria-label="all recording" 
-                        iconcolor={recordButtonColor}
-                        onClick={recorderStatusAllStopped ? startRecordAll : stopRecordAll}
-                        disabled={recorderStatusAnyInTransition || !recorderStatusAllSame}
-                    >
-                        <FiberManualRecordIcon 
-                            fontSize="large"
-                        ></FiberManualRecordIcon>
-                    </BasicIconButton>
-                </Box>
-                <Box>
-                    <BasicIconButton 
-                        aria-label="all schedule" 
-                        iconcolor={scheduleButtonColor}
-                        onClick={scheduleStatusAllStopped ? startScheduleAll : stopScheduleAll}
-                        disabled={recorderStatusAnyInTransition || !scheduleStatusAllSame}
-                    >
-                        <AccessAlarmIcon 
-                            fontSize="large"
-                        ></AccessAlarmIcon>
-                    </BasicIconButton>
-                </Box>
+                <Tooltip
+                    disableFocusListener 
+                    disableTouchListener 
+                    title="Refresh All Players"
+                    arrow
+                >
+                    <Box>
+                        <BasicIconButton aria-label="remount" onClick={remount}>
+                            <RefreshIcon 
+                                fontSize="large"
+                                style={{color:"grey"}}
+                            ></RefreshIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
+                <Tooltip
+                    disableFocusListener 
+                    disableTouchListener 
+                    title="Start Recording for All"
+                    arrow
+                >
+                    <Box>
+                        <BasicIconButton 
+                            aria-label="all recording" 
+                            iconcolor={recordButtonColor}
+                            onClick={recorderStatusAllStopped ? startRecordAll : stopRecordAll}
+                            disabled={recorderStatusAnyInTransition || !recorderStatusAllSame}
+                        >
+                            <FiberManualRecordIcon 
+                                fontSize="large"
+                            ></FiberManualRecordIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
+                <Tooltip
+                    disableFocusListener 
+                    disableTouchListener 
+                    title="Start Schedule for All"
+                    arrow
+                >
+                    <Box>
+                        <BasicIconButton 
+                            aria-label="all schedule" 
+                            iconcolor={scheduleButtonColor}
+                            onClick={scheduleStatusAllStopped ? startScheduleAll : stopScheduleAll}
+                            disabled={recorderStatusAnyInTransition || !scheduleStatusAllSame}
+                        >
+                            <AccessAlarmIcon 
+                                fontSize="large"
+                            ></AccessAlarmIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
                 <Box ml="5px">
                     <OptionSelect
                         selectColor={"darkslategrey"}
@@ -239,46 +260,81 @@ const Header = (props) => {
             >CCTV Recorder
             </Box>
             <Box display="flex" width="500px">
-                <Box  ml="auto">
-                    <BasicIconButton aria-label="reload" onClick={reload}>
-                        <PowerSettingsNewIcon 
-                            fontSize="large"
-                            style={{color:"grey"}}
-                        ></PowerSettingsNewIcon>
-                    </BasicIconButton>
-                </Box>
-                <Box>
-                    <BasicIconButton aria-label="home directory" onClick={openHome}>
-                        <HomeIcon 
-                            fontSize="large"
-                            style={{color:"grey"}}
-                        ></HomeIcon>
-                    </BasicIconButton>
-                </Box>
-                <Box>
-                    <BasicIconButton aria-label="open directory" onClick={openDirectory}>
-                        <FolderOpenIcon 
-                            fontSize="large"
-                            style={{color:"grey"}}
-                        ></FolderOpenIcon>
-                    </BasicIconButton>
-                </Box>
-                <Box>
-                    <BasicIconButton aria-label="open log(debug)" onClick={openLogFolder}>
-                        <BugReportIcon 
-                            fontSize="large"
-                            style={{color:"grey"}}
-                        ></BugReportIcon>
-                    </BasicIconButton>
-                </Box>
-                <Box>
-                    <BasicIconButton aria-label="configuration" onClick={openDialog}>
-                        <SettingsIcon 
-                            fontSize="large"
-                            style={{color:"grey"}}
-                        ></SettingsIcon>
-                    </BasicIconButton>
-                </Box>
+                <Tooltip
+                    disableFocusListener 
+                    disableTouchListener 
+                    title="Reload Application"
+                    arrow
+                >
+                    <Box  ml="auto">
+                        <BasicIconButton aria-label="reload" onClick={reload}>
+                            <PowerSettingsNewIcon 
+                                fontSize="large"
+                                style={{color:"grey"}}
+                            ></PowerSettingsNewIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
+                <Tooltip
+                    disableFocusListener 
+                    disableTouchListener 
+                    title="Open Home Directory"
+                    arrow
+                >
+                    <Box>
+                        <BasicIconButton aria-label="home directory" onClick={openHome}>
+                            <HomeIcon 
+                                fontSize="large"
+                                style={{color:"grey"}}
+                            ></HomeIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
+                <Tooltip
+                    disableFocusListener 
+                    disableTouchListener 
+                    title="Open Save Directory"
+                    arrow
+                >
+                    <Box>
+                        <BasicIconButton aria-label="open directory" onClick={openDirectory}>
+                            <FolderOpenIcon 
+                                fontSize="large"
+                                style={{color:"grey"}}
+                            ></FolderOpenIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
+                <Tooltip
+                    disableFocusListener 
+                    disableTouchListener 
+                    title="Open Log Folder"
+                    arrow
+                >
+                    <Box>
+                        <BasicIconButton aria-label="open log(debug)" onClick={openLogFolder}>
+                            <BugReportIcon 
+                                fontSize="large"
+                                style={{color:"grey"}}
+                            ></BugReportIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
+                <Tooltip
+                    disableFocusListener 
+                    disableTouchListener 
+                    title="Open Configuration"
+                    arrow
+                >
+                    <Box>
+                        <BasicIconButton aria-label="configuration" onClick={openDialog}>
+                            <SettingsIcon 
+                                fontSize="large"
+                                style={{color:"grey"}}
+                            ></SettingsIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
             </Box>
         </Box>  
 
