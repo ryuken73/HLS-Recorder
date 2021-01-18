@@ -7,6 +7,7 @@ function ConfirmDialog(props) {
     const {confirmDialogTitle = "Really Refresh Player?"} = props
     const {confirmDialogText = "All Players will be refreshed. OK?"} = props;
     const {setAppStatNStore, increaseAppStatNStore} = props.StatisticsActions;
+    const {clearAppStatNStore, clearAllChannelStatNStore} = props.StatisticsActions;
     const {remountPlayerAll} = props.HLSPlayersActions;
     const executeAction = React.useCallback(() => {
         console.log('#####', confirmAction)
@@ -18,6 +19,11 @@ function ConfirmDialog(props) {
             setAppStatNStore({statName:'reloadTimeManual', value:Date.now()});
             increaseAppStatNStore({statName:'reloadCountManual'});
             remote.getCurrentWebContents().reload();
+            return
+        }
+        if(confirmAction === 'clearStatistics'){
+            clearAllChannelStatNStore();
+            clearAppStatNStore();
             return
         }
     },[confirmAction])

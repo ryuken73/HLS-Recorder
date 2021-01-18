@@ -10,6 +10,7 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import HomeIcon from '@material-ui/icons/Home';
 import BugReportIcon from '@material-ui/icons/BugReport';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import OptionSelect from './template/OptionSelect';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -75,6 +76,16 @@ const Header = (props) => {
         setConfirmOpen(true);
         // remote.getCurrentWebContents().reload();
     },[])
+
+    const clearStatistics = React.useCallback(() => {
+        setConfirmDialogTitle('Clear all statistics. Continue?');
+        setConfirmDialogText(`
+            Do you really need to clear app statistics and all channels' statistics?
+        `);
+        setConfirmAction('clearStatistics');
+        setConfirmOpen(true);
+        // remote.getCurrentWebContents().reload();
+    },[])
     
     const openDirectory = React.useCallback(() => {
         remote.shell.openItem(BASE_DIRECTORY)
@@ -96,7 +107,7 @@ const Header = (props) => {
     }
 
     const {appStat} = props;
-    const {clearChannelStatNStore, initClipCountInFolder} = props.StatisticsActions;
+    const {clearAllChannelStatNStore, clearAppStatNStore, initClipCountInFolder} = props.StatisticsActions;
     React.useEffect(() => {
         initClipCountInFolder();
     },[])
@@ -120,6 +131,11 @@ const Header = (props) => {
         return StatLists;
     }
 
+    // const clearAllStatistics = () => {
+    //     clearAllChannelStatNStore();
+    //     clearAppStatNStore();
+    // }
+
     const classes = useStyles();
     return (      
         <Box 
@@ -132,7 +148,7 @@ const Header = (props) => {
             justifyContent="space-between"
             flexShrink="0"
         >
-            <Box display="flex" alignItems="center" width="300px">
+            <Box display="flex" alignItems="center" width="500px">
                 <Box>
                     <BasicIconButton aria-label="remount" onClick={remount}>
                         <RefreshIcon 
@@ -181,7 +197,7 @@ const Header = (props) => {
                     classes={{ tooltip: classes.customWidth }}
                     arrow
                 >
-                    <Box ml="5px" mr={"auto"}>
+                    <Box ml="5px">
                         <BasicIconButton 
                             aria-label="statistics" 
                             onClick={showStatistics}
@@ -193,7 +209,24 @@ const Header = (props) => {
                         </BasicIconButton>
                     </Box>
                 </Tooltip>
-
+                <Tooltip
+                    disableFocusListener 
+                    disableTouchListener 
+                    title="Clear Statistics"
+                    arrow
+                >
+                    <Box mr={"auto"}>
+                        <BasicIconButton 
+                            aria-label="statistics" 
+                            onClick={clearStatistics}
+                        >
+                            <AssignmentOutlinedIcon 
+                                fontSize="large"
+                                style={{color:"grey"}}
+                            ></AssignmentOutlinedIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
             </Box>
             <Box 
                 fontFamily="Roboto, Helvetica, Arial, sans-serif" 
@@ -205,7 +238,7 @@ const Header = (props) => {
                 // width="95%"
             >CCTV Recorder
             </Box>
-            <Box display="flex" width="300px">
+            <Box display="flex" width="500px">
                 <Box  ml="auto">
                     <BasicIconButton aria-label="reload" onClick={reload}>
                         <PowerSettingsNewIcon 

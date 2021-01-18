@@ -30,6 +30,34 @@ const getChannelClipCountInStore = channelNumber => {
     return count;
 }
 
+// define initial stats
+const INITIAL_APP_STATS = {
+    startTime: Date.now(),
+    reloadTimeManual: null,
+    reloadCountManual: 0,
+    reloadTimeAutomatic: null,
+    reloadCountAutomatic: 0,
+    refreshCount: 0,
+    successCount: 0,
+    failureCount: 0,
+    abortCount: 0,
+    totalClipsInStore: getTotalClipInStore(),
+    totalClipsInFoloer: 'calculating...'
+}
+
+const INITIAL_CHANNEL_STAT = {
+    refreshCount: 0,
+    successCount: 0,
+    failureCount: 0,
+    abortCount:0,
+    lastRefreshTime: null,
+    lastSuccessTime: null,
+    lastFailureTime: null,
+    lastAbortTime: null,
+    clipCountSotre: 0,
+    clipCountFolder: 0
+}
+
 // action types
 const SET_APP_STAT = 'statistics/SET_APP_STAT';
 const SET_CHANNEL_STAT = 'statistics/SET_CHANNEL_STAT';
@@ -62,9 +90,9 @@ export const increaseAppStatNStore = ({statName}) => (dispatch, getState) => {
 
 // clear stat and statStore
 export const clearAppStatNStore = () => (dispatch, getState) => {
-    const [initialAppStats] = getInitialState(statisticsStore);
+    const [initialAppStats] = getInitialState();
     statisticsStore.set(`appStats`, initialAppStats);
-    dispatch(replaceAppStat({initialAppStat}));
+    dispatch(replaceAppStat({initialAppStats}));
 }
 
 export const initClipCountInFolder = () => (dispatch, getState) => {
@@ -99,10 +127,16 @@ export const setChannelStatNStore = ({channelNumber, statName, value}) => (dispa
 }
 
 export const clearChannelStatNStore = ({channelNumber}) => (dispatch, getState) => {
-    const [initialAppStats, initialChannelStats] = getInitialState(statisticsStore);
-    const initialChanelStat = initialChannelStats[channelNumber];
-    statisticsStore.set(`channelStats.${channelNumber}`, initialChanelStat);
-    dispatch(replaceChannelStat({channelNumber, initialChanelStat}));
+    const [initialAppStats, initialChannelStats] = getInitialState();
+    const initialChannelStat = initialChannelStats[channelNumber];
+    statisticsStore.set(`channelStats.${channelNumber}`, initialChannelStat);
+    dispatch(replaceChannelStat({channelNumber, initialChannelStat}));
+}
+
+export const clearAllChannelStatNStore = () => (dispatch, getState) => {
+    for(let channelNumber=1;channelNumber<=NUMBER_OF_CHANNELS;channelNumber++){
+        dispatch(clearChannelStatNStore({channelNumber}));
+    }
 }
 
 export const increaseChannelStatsNStore = ({channelNumber, statName}) => (dispatch, getState) => {
@@ -116,37 +150,12 @@ export const increaseChannelStatsNStore = ({channelNumber, statName}) => (dispat
 }
 
 // set initial status
-
 const getInitialState = statisticsStore => {
-    if(statisticsStore.size === 0){
-        const initialAppStats = {
-            startTime: Date.now(),
-            reloadTimeManual: null,
-            reloadCountManual: 0,
-            reloadTimeAutomatic: null,
-            reloadCountAutomatic: 0,
-            refreshCount: 0,
-            successCount: 0,
-            failureCount: 0,
-            abortCount: 0,
-            totalClipsInStore: getTotalClipInStore(),
-            totalClipsInFoloer: 'calculating...'
-        }
+    if(statisticsStore === undefined || statisticsStore.size === 0){
+        const initialAppStats = INITIAL_APP_STATS;
         const initialChannelStats = {};
         for(let channelNumber=1;channelNumber<=NUMBER_OF_CHANNELS;channelNumber++){
-            const channelStat = {
-                refreshCount: 0,
-                successCount: 0,
-                failureCount: 0,
-                abortCount:0,
-                lastRefreshTime: null,
-                lastSuccessTime: null,
-                lastFailureTime: null,
-                lastAbortTime: null,
-                clipCountSotre: 0,
-                clipCountFolder: 0
-            }
-            initialChannelStats[channelNumber] = channelStat;
+            initialChannelStats[channelNumber] = INITIAL_CHANNEL_STAT;
         }
         return [initialAppStats, initialChannelStats];
     }
