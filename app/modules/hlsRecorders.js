@@ -252,12 +252,12 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
         channelLog.info(`start startRecroding() recorder.createTime:${recorder.createTime}`)
     
         const [saveDirectory, localm3u8, subDirectory] = getOutputName(hlsRecorder, hlsPlayer);
-        mkdir(saveDirectory);
         
         recorder.src = hlsRecorder.playerHttpURL;
         recorder.target = localm3u8;
         recorder.localm3u8 = localm3u8;
         
+        mkdir(saveDirectory);
         dispatch(setRecorderInTransition({channelNumber, inTransition:true}))
         dispatch(setRecorderStatus({channelNumber, recorderStatus: 'starting'}))
     

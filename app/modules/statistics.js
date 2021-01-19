@@ -42,7 +42,7 @@ const INITIAL_APP_STATS = {
     failureCount: 0,
     abortCount: 0,
     totalClipsInStore: getTotalClipInStore(),
-    totalClipsInFoloer: 'calculating...'
+    totalClipsInFolder: 'calculating...'
 }
 
 const INITIAL_CHANNEL_STAT = {
@@ -104,8 +104,9 @@ export const initClipCountInFolder = () => (dispatch, getState) => {
     })
     Promise.all(getCountInSubDir)
     .then(subdirs => {
+        console.log('##### statistics', subdirs)
         const allCount = subdirs.flat().length;
-        dispatch(setAppStatNStore({statName:'totalClipsInFoloer', value:allCount}));
+        dispatch(setAppStatNStore({statName:'totalClipsInFolder', value:allCount}));
     })
 }   
 
@@ -119,10 +120,13 @@ export const setChannelStatNStore = ({channelNumber, statName, value}) => (dispa
     statisticsStore.set(`channelStats.${channelNumber}.clipCountSotre`, countInStore);
 
     const state = getState();
-    const saveFolder = state.hlsRecorders.recorders.get(channelNumber).channelDirectory;
+    const channelRecorder = state.hlsRecorders.recorders.get(channelNumber);
+    const saveFolder = channelRecorder.channelDirectory;
+    const {localm3u8} = channelRecorder;
     fs.readdir(saveFolder, (err, files) => {
-        dispatch(setChannelStat({channelNumber, statName:'clipCountFolder', value:files.length}));
-        statisticsStore.set(`channelStats.${channelNumber}.clipCountFolder`, files.length);
+        const countInFolder = localm3u8 === null ? files.length : files.filter(file => file !== fs.dirname(localm3u8)).length;
+        dispatch(setChannelStat({channelNumber, statName:'clipCountFolder', value: countInFolder}));
+        statisticsStore.set(`channelStats.${channelNumber}.clipCountFolder`, countInFolder);
     })
 }
 
