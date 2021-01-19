@@ -19,15 +19,22 @@ const clipStore = new Store({
     cwd:remote.app.getPath('home')
 })
 
-const getTotalClipInStore = () => { return clipStore.size };
-console.log('#####',getTotalClipInStore())
-
 const getChannelClipCountInStore = channelNumber => {
     const allClips = clipStore.store;
     const count = Object.entries(allClips).filter(([id, clipInfo]) => {
         return clipInfo.channelNumber === channelNumber
     }).length
     return count;
+}
+
+// const getTotalClipInStore = () => { return clipStore.size };
+const getTotalClipInStore = () => {
+    let totalCount = 0;
+    for(let channelNumber=1; channelNumber <= NUMBER_OF_CHANNELS; channelNumber++){
+        const channelClipCountInStore = getChannelClipCountInStore(channelNumber);
+        totalCount += channelClipCountInStore;
+    }
+    return totalCount;
 }
 
 // define initial stats
@@ -41,7 +48,7 @@ const INITIAL_APP_STATS = {
     successCount: 0,
     failureCount: 0,
     abortCount: 0,
-    totalClipsInStore: getTotalClipInStore(),
+    totalClipsInStore: 'calculating',
     totalClipsInFolder: 'calculating...'
 }
 
@@ -95,7 +102,7 @@ export const clearAppStatNStore = () => (dispatch, getState) => {
     dispatch(replaceAppStat({initialAppStats}));
 }
 
-export const initClipCountInFolder = () => (dispatch, getState) => {
+export const initClipCountStatistics = () => (dispatch, getState) => {
     const state = getState();
     const {recorders} = state.hlsRecorders
     const getCountInSubDir = [...recorders].map(async ([channelNumber, recorder]) => {
@@ -107,6 +114,8 @@ export const initClipCountInFolder = () => (dispatch, getState) => {
         console.log('##### statistics', subdirs)
         const allCount = subdirs.flat().length;
         dispatch(setAppStatNStore({statName:'totalClipsInFolder', value:allCount}));
+        const countInStore = getTotalClipInStore();
+        dispatch(setAppStatNStore({statName:'totalClipsInStore', value:countInStore}));
     })
 }   
 

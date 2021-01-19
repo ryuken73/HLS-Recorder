@@ -107,9 +107,9 @@ const Header = (props) => {
     }
 
     const {appStat} = props;
-    const {clearAllChannelStatNStore, clearAppStatNStore, initClipCountInFolder} = props.StatisticsActions;
+    const {clearAllChannelStatNStore, clearAppStatNStore, initClipCountStatistics} = props.StatisticsActions;
     React.useEffect(() => {
-        initClipCountInFolder();
+        initClipCountStatistics();
     },[])
     const AppStatComponent = () => {
         const StatLists = Object.entries(appStat).map(([statName, value]) => {
