@@ -167,7 +167,9 @@ export const createRecorder = (channelNumber, createdByError=false) => (dispatch
         fs.lstat(localm3u8, (error, stats) => {
           if(error){
               // file not exists, delete directory
-              fs.rmdir(path.dirname(localm3u8), err => console.error(err));
+              channelLog.error(`aborted: directory not exists error: ${error}`);
+
+              fs.rmdir(path.dirname(localm3u8), err => channelLog.error(`aborted: rmdir failed. error : ${err}`));
               // resetPlayer => change mode from playback to source streaming
               dispatch(refreshPlayer({channelNumber}));
               // resetRecorder => initialize recorder status(duration, status..)
@@ -298,7 +300,7 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
                 }
                 console.log('#######', clipData)
                 if(duration === INITIAL_DURATION){
-                    channelLog.error(`useless clip(duration === 00:00:00.00). discard! ${saveDirectory}`);
+                    channelLog.error(`aborted: useless clip(duration === 00:00:00.00). discard and delete ${saveDirectory}`);
                     saveDirectory.startsWith(BASE_DIRECTORY) && rimraf(saveDirectory);
                     dispatch(setChannelStatNStore({channelNumber, statName:'lastAbortTime', value:Date.now()}))
                     dispatch(increaseChannelStatsNStore({channelNumber, statName:'abortCount'}))

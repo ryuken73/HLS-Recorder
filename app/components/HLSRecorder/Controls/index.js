@@ -129,7 +129,7 @@ const Controls = props => {
     }
 
     const handleTooltipClose = () => {
-        setTooltipOpen(false);
+        setTooltipOpen(false)
     }
 
     const showStatistics = () => {
@@ -170,7 +170,7 @@ const Controls = props => {
     return (
         <Box display="flex" flexDirection="column" mr="3px">
             <SmallPaddingIconButton padding="1px" size="small" iconcolor="black">
-                <RefreshIcon color="primary" fontSize={"small"} onClick={remountChannelPlayer}></RefreshIcon>
+                <RefreshIcon color="primary" fontSize={"small"} onClick={refreshChannelPlayer}></RefreshIcon>
             </SmallPaddingIconButton>
             <SmallPaddingIconButton disabled={inTransition} padding="1px" size="small" iconcolor={recorderIconColor}>
                 <FiberManualRecordIcon 
