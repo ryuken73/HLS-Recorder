@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Controls from '../components/HLSRecorder/Controls';
 import * as hlsPlayersActions from '../modules/hlsPlayers';
 import * as hlsRecorderActions from '../modules/hlsRecorders';
-
+import * as statisticsActions from '../modules/statistics';
 
 function mapStateToProps(state, ownProps) {
   // console.log('mapStateToProps:',state, ownProps) 
@@ -35,7 +35,8 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return {
     HLSPlayerActions: bindActionCreators(hlsPlayersActions, dispatch),
-    HLSRecorderActions: bindActionCreators(hlsRecorderActions, dispatch)
+    HLSRecorderActions: bindActionCreators(hlsRecorderActions, dispatch),
+    StatisticsActions: bindActionCreators(statisticsActions, dispatch)
   };
 }
 

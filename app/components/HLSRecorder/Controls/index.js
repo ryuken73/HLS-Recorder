@@ -144,6 +144,17 @@ const Controls = props => {
     }
 
     const {channelStat={}} = props;
+    const {
+        clearChannelStatNStore=()=>{},
+        initChannelClipCountStatistics=()=>{}
+    } = props.StatisticsActions;
+    const initializeChannelStatNStore = clearChannelStatNStore;
+    React.useEffect(() => {
+        if(Object.entries(channelStat).length === 0){
+            initializeChannelStatNStore({channelNumber});
+        }
+        initChannelClipCountStatistics({channelNumber});
+    },[])
 
     const AppStatComponent = () => {
         const StatLists = Object.entries(channelStat).map(([statName, value]) => {
