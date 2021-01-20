@@ -170,7 +170,7 @@ const Controls = props => {
             return <BorderedList
                 color={"white"}
                 bgcolor={"#232738"}
-                titlewidth={"120px"}
+                titlewidth={"80px"}
                 subject={statName}
                 content={value}
             ></BorderedList>
@@ -234,6 +234,7 @@ const Controls = props => {
                         open={tooltipOpen}
                         title={<AppStatComponent></AppStatComponent>}
                         classes={{ tooltip: classes.customWidth }}
+                        placement="bottom-start"
                         arrow
                     >
                     <SmallPaddingIconButton 

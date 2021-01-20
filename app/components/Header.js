@@ -78,9 +78,9 @@ const Header = (props) => {
     },[])
 
     const clearStatistics = React.useCallback(() => {
-        setConfirmDialogTitle('Clear all statistics. Continue?');
+        setConfirmDialogTitle('Clear All Statistics. Continue?');
         setConfirmDialogText(`
-            Do you really need to clear app statistics and all channels' statistics?
+            Do you really want to clear app and channel's statistics?
         `);
         setConfirmAction('clearStatistics');
         setConfirmOpen(true);
@@ -142,8 +142,9 @@ const Header = (props) => {
             display="flex" 
             alignItems="center"
             bgcolor="#2d2f3b"
-            mx="5px"
+            mx="30px"
             mt="15px"
+            py="5px"
             alignContent="center"
             justifyContent="space-between"
             flexShrink="0"
@@ -167,7 +168,7 @@ const Header = (props) => {
                 <Tooltip
                     disableFocusListener 
                     disableTouchListener 
-                    title="Start Recording for All"
+                    title="Start Recoding All"
                     arrow
                 >
                     <Box>
@@ -186,7 +187,7 @@ const Header = (props) => {
                 <Tooltip
                     disableFocusListener 
                     disableTouchListener 
-                    title="Start Schedule for All"
+                    title="Start All Scheduled Recording"
                     arrow
                 >
                     <Box>
@@ -202,12 +203,27 @@ const Header = (props) => {
                         </BasicIconButton>
                     </Box>
                 </Tooltip>
+                <Tooltip
+                    disableFocusListener 
+                    disableTouchListener 
+                    title="Home Directory"
+                    arrow
+                >
+                    <Box>
+                        <BasicIconButton aria-label="home directory" onClick={openHome}>
+                            <HomeIcon 
+                                fontSize="large"
+                                style={{color:"grey"}}
+                            ></HomeIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
                 <Box ml="5px">
                     <OptionSelect
                         selectColor={"darkslategrey"}
                         disabled={!scheduleStatusAllStopped || recorderStatusAnyInTransition}
                         intervalsForSelection={intervalsForSelection}
-                        minWidth="200px"
+                        minWidth="135px"
                         onChangeSelect={changeAllIntervals}
                         smallComponent={false}
                     ></OptionSelect>
@@ -257,6 +273,8 @@ const Header = (props) => {
                 // mt="15px"
                 // py="10px"
                 // width="95%"
+                textOverflow="hidden"
+                whiteSpace="nowrap"
             >CCTV Recorder
             </Box>
             <Box display="flex" width="500px">
@@ -278,22 +296,7 @@ const Header = (props) => {
                 <Tooltip
                     disableFocusListener 
                     disableTouchListener 
-                    title="Open Home Directory"
-                    arrow
-                >
-                    <Box>
-                        <BasicIconButton aria-label="home directory" onClick={openHome}>
-                            <HomeIcon 
-                                fontSize="large"
-                                style={{color:"grey"}}
-                            ></HomeIcon>
-                        </BasicIconButton>
-                    </Box>
-                </Tooltip>
-                <Tooltip
-                    disableFocusListener 
-                    disableTouchListener 
-                    title="Open Save Directory"
+                    title="Save Directory"
                     arrow
                 >
                     <Box>
@@ -308,7 +311,7 @@ const Header = (props) => {
                 <Tooltip
                     disableFocusListener 
                     disableTouchListener 
-                    title="Open Log Folder"
+                    title="Log Directory"
                     arrow
                 >
                     <Box>
@@ -323,7 +326,7 @@ const Header = (props) => {
                 <Tooltip
                     disableFocusListener 
                     disableTouchListener 
-                    title="Open Configuration"
+                    title="Configuration"
                     arrow
                 >
                     <Box>
