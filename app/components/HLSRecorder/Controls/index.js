@@ -6,6 +6,8 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import Tooltip from '@material-ui/core/Tooltip';
+import Badge from '@material-ui/core/Badge';
+import { withStyles } from '@material-ui/core/styles';
 import {SmallPaddingIconButton}  from '../../template/smallComponents';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import BorderedList from '../../template/BorderedList';
@@ -176,6 +178,19 @@ const Controls = props => {
         return StatLists;
     }
 
+    const StyledBadge = withStyles((theme) => ({
+        badge: {
+        //   right: 10,
+        //   top: -25,
+          right: -10,
+          top: -8,
+          border: `1.5px solid ${theme.palette.background.paper}`,
+          padding: '0 4px',
+          fontSize: '12px',
+          background: 'darkslategrey'
+        },
+    }))(Badge);
+      
     const classes = useStyles();
     
     return (
@@ -198,13 +213,22 @@ const Controls = props => {
                 ></AccessAlarmIcon>
             </SmallPaddingIconButton>
             <Box mt="auto" display="flex" flexDirection="column">
-                <SmallPaddingIconButton padding="1px" size="small" iconcolor="black">
-                    <FolderOpenIcon 
-                        // color="primary" 
-                        fontSize={"small"} 
-                        onClick={openDirectory}
-                    ></FolderOpenIcon>
-                </SmallPaddingIconButton>
+                <StyledBadge 
+                    badgeContent={channelStat.clipCountFolder} 
+                    color="primary"
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                >
+                    <SmallPaddingIconButton padding="1px" size="small" iconcolor="black">
+                        <FolderOpenIcon 
+                            // color="primary" 
+                            fontSize={"small"} 
+                            onClick={openDirectory}
+                        ></FolderOpenIcon>
+                    </SmallPaddingIconButton>
+                </StyledBadge>
                 <ClickAwayListener onClickAway={handleTooltipClose}>
                     <Tooltip
                         open={tooltipOpen}

@@ -90,7 +90,7 @@ const INITIAL_CHANNEL_STAT = {
     lastSuccessTime: null,
     lastFailureTime: null,
     lastAbortTime: null,
-    clipCountSotre: 0,
+    clipCountStore: 0,
     clipCountFolder: 0
 }
 
@@ -143,7 +143,7 @@ export const initChannelClipCountStatistics = ({channelNumber}) => async (dispat
     const state = getState();
     const countInStore = getChannelClipCountInStore(channelNumber);
     const countInFolder = await getChannelClipCountInDirectory(state, channelNumber);
-    dispatch(setChannelStat({channelNumber, statName:'clipCountSotre', value:countInStore}))
+    dispatch(setChannelStat({channelNumber, statName:'clipCountStore', value:countInStore}))
     dispatch(setChannelStat({channelNumber, statName:'clipCountFolder', value: countInFolder}));
 }  
 
@@ -153,8 +153,8 @@ export const setChannelStatNStore = ({channelNumber, statName, value}) => async 
     dispatch(setAppStatNStore({statName, value}));
     dispatch(setChannelStat({channelNumber, statName, value}));
     const countInStore = getChannelClipCountInStore(channelNumber);
-    dispatch(setChannelStat({channelNumber, statName:'clipCountSotre', value:countInStore}))
-    statisticsStore.set(`channelStats.${channelNumber}.clipCountSotre`, countInStore);
+    dispatch(setChannelStat({channelNumber, statName:'clipCountStore', value:countInStore}))
+    statisticsStore.set(`channelStats.${channelNumber}.clipCountStore`, countInStore);
 
     const state = getState();
     const countInFolder = await getChannelClipCountInDirectory(state, channelNumber);
