@@ -12,6 +12,7 @@ import BugReportIcon from '@material-ui/icons/BugReport';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
+import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 import OptionSelect from './template/OptionSelect';
 import Tooltip from '@material-ui/core/Tooltip';
 import {BasicIconButton} from './template/basicComponents';
@@ -147,7 +148,9 @@ const Header = (props) => {
             display="flex" 
             alignItems="center"
             bgcolor="#2d2f3b"
-            mx="30px"
+            ml="46px"
+            // mr="50px"
+            maxWidth="1638px"
             mt="15px"
             py="5px"
             alignContent="center"
@@ -345,10 +348,10 @@ const Header = (props) => {
                 </Tooltip>
                 <Box>
                     <BasicIconButton aria-label="configuration" onClick={clearCache}>
-                        <SettingsIcon 
+                        <DeleteSweepIcon 
                             fontSize="large"
                             style={{color:"grey"}}
-                        ></SettingsIcon>
+                        ></DeleteSweepIcon>
                     </BasicIconButton>
                 </Box>
             </Box>

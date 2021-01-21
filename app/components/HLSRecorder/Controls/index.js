@@ -240,7 +240,7 @@ const Controls = props => {
                         open={tooltipOpen}
                         title={<AppStatComponent></AppStatComponent>}
                         classes={{ tooltip: classes.customWidth }}
-                        placement="bottom-start"
+                        placement="left"
                         arrow
                     >
                     <SmallPaddingIconButton 
