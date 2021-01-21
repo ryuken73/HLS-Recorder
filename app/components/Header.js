@@ -106,6 +106,11 @@ const Header = (props) => {
         })
     }
 
+    const clearCache = () => {
+        const {webFrame} = require('electron')
+        webFrame.clearCache();
+    }
+
     const {appStat} = props;
     const {clearAllChannelStatNStore, clearAppStatNStore, initClipCountStatistics} = props.StatisticsActions;
     React.useEffect(() => {
@@ -338,6 +343,14 @@ const Header = (props) => {
                         </BasicIconButton>
                     </Box>
                 </Tooltip>
+                <Box>
+                    <BasicIconButton aria-label="configuration" onClick={clearCache}>
+                        <SettingsIcon 
+                            fontSize="large"
+                            style={{color:"grey"}}
+                        ></SettingsIcon>
+                    </BasicIconButton>
+                </Box>
             </Box>
         </Box>  
 
