@@ -7,6 +7,7 @@ import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import Tooltip from '@material-ui/core/Tooltip';
 import Badge from '@material-ui/core/Badge';
+import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import { withStyles } from '@material-ui/core/styles';
 import {SmallPaddingIconButton}  from '../../template/smallComponents';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -76,7 +77,8 @@ const Controls = props => {
         startSchedule=()=>{},
         stopSchedule=()=>{},
         restartRecording=()=>{},
-        createRecorder=()=>{}
+        createRecorder=()=>{},
+        stopRecordingForce=()=>{}
     } = props.HLSRecorderActions;
 
     const createLogger = channelName => {
@@ -120,6 +122,10 @@ const Controls = props => {
 
     const stopRecordChannel = event => {
         stopRecording(channelNumber);
+    }
+
+    const stopRecordChannelForce = event => {
+        stopRecordingForce(channelNumber);
     }
 
     const startScheduleChannel = event => {
@@ -250,6 +256,25 @@ const Controls = props => {
                     </SmallPaddingIconButton>
                     </Tooltip>
                 </ClickAwayListener>
+                <Tooltip
+                        title={"force stop recording"}
+                        placement="right"
+                        disableFocusListener 
+                        disableTouchListener 
+                        arrow
+                    >
+                    <SmallPaddingIconButton 
+                        padding="1px" 
+                        size="small" 
+                        iconcolor="black"
+                        onClick={stopRecordChannelForce}
+                    >
+                        <PowerSettingsNewIcon 
+                            // color="primary" 
+                            fontSize={"small"} 
+                        ></PowerSettingsNewIcon>
+                    </SmallPaddingIconButton>
+                    </Tooltip>
             </Box>
         </Box>
     );

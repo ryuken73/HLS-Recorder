@@ -355,6 +355,18 @@ export const stopRecording = (channelNumber) => (dispatch, getState) => {
     })
 }
 
+export const stopRecordingForce = channelNumber => (dispatch, getState) => {
+    try {
+        const state = getState();
+        const [hlsRecorder, hlsPlayer, channelLog] = getChanneler(state, channelNumber);
+        const {recorder} = hlsRecorder;
+        channelLog.error(`stop recoder force!!`);
+        recorder.destroy()
+    } catch (err) {
+        channelLog.error(`error in stop recorder force. ${err}`)
+    }
+}
+
 export const startRecordAll = () => async (dispatch, getState) => {
     const state = getState();
     const {recorders} = state.hlsRecorders;
