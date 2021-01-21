@@ -15,7 +15,7 @@ import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 import OptionSelect from './template/OptionSelect';
 import Tooltip from '@material-ui/core/Tooltip';
-import {BasicIconButton} from './template/basicComponents';
+import {BasicIconButton, BasicIconButtonWithTooltip} from './template/basicComponents';
 
 const {remote} = require('electron');
 
@@ -141,7 +141,6 @@ const Header = (props) => {
     //     clearAllChannelStatNStore();
     //     clearAppStatNStore();
     // }
-
     const classes = useStyles();
     return (      
         <Box 
@@ -334,6 +333,21 @@ const Header = (props) => {
                 <Tooltip
                     disableFocusListener 
                     disableTouchListener 
+                    title="clear memory"
+                    arrow
+                >
+                    <Box>
+                        <BasicIconButton aria-label="configuration" onClick={clearCache}>
+                            <DeleteSweepIcon 
+                                fontSize="large"
+                                style={{color:"grey"}}
+                            ></DeleteSweepIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
+                <Tooltip
+                    disableFocusListener 
+                    disableTouchListener 
                     title="Configuration"
                     arrow
                 >
@@ -346,14 +360,7 @@ const Header = (props) => {
                         </BasicIconButton>
                     </Box>
                 </Tooltip>
-                <Box>
-                    <BasicIconButton aria-label="configuration" onClick={clearCache}>
-                        <DeleteSweepIcon 
-                            fontSize="large"
-                            style={{color:"grey"}}
-                        ></DeleteSweepIcon>
-                    </BasicIconButton>
-                </Box>
+
             </Box>
         </Box>  
 

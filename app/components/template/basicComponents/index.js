@@ -8,6 +8,8 @@ import Link from '@material-ui/core/Link';
 import deepPurple from '@material-ui/core/colors/deepPurple';
 import teal from '@material-ui/core/colors/teal';
 import blueGrey from '@material-ui/core/colors/blueGrey';
+import Tooltip from '@material-ui/core/Tooltip';
+
 
 const defaultBgColor = deepPurple[800];
 const defaultFontColor = 'white';
@@ -56,9 +58,21 @@ const BasicIconButton = styled(IconButton)`
     }
 `
 
+// const BasicIconButtonWithTooltip = tooltipProps => iconButtonProps => props => {
+//     const {children} = props;
+//     return <Tooltip {...tooltipProps}>
+//                 <Box>
+//                     <BasicIconButton {...iconButtonProps}>
+//                         {children}
+//                     </BasicIconButton>
+//                 </Box>
+//     </Tooltip>
+// }
+
 export {
     BasicButton,
     BasicSelect,
     BasicLink,
-    BasicIconButton
+    BasicIconButton,
+    // BasicIconButtonWithTooltip
 }

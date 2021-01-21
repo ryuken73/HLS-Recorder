@@ -73,6 +73,8 @@ const INITIAL_APP_STATS = {
     reloadCountManual: 0,
     reloadTimeAutomatic: null,
     reloadCountAutomatic: 0,
+    memClearTime: null,
+    memClearCount: 0,
     refreshCount: 0,
     successCount: 0,
     failureCount: 0,

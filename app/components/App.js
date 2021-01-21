@@ -6,7 +6,7 @@ import BodyContainer from '../containers/BodyContainer';
 import OptionDialogContainer from '../containers/OptionDialogContainer';
 import HeaderContainer from '../containers/HeaderContainer';
 import ConfirmContainer from '../containers/ConfirmContainer';
-import MessageContainer from './MessagePanel';
+import MessageContainer from '../containers/MessagePanelContainer';
 import AutoReloadDialog from '../containers/AutoReloadContainer';
 import AutoStartDialog from '../containers/AutoStartDialogContainer';
 const { BrowserView, getCurrentWindow } = require('electron').remote;
@@ -31,7 +31,8 @@ const {
   MAX_MEMORY_RELOAD_WAIT_MS, 
   MAX_MEMORY_TO_RELOAD_MB,
   AUTO_START_SCHEDULE,
-  AUTO_START_SCHEDULE_DELAY_MS
+  AUTO_START_SCHEDULE_DELAY_MS,
+  MEMORY_USAGE_PERCENTAGE_TO_AUTO_CLEAR
 } = config;
 
 function App(props) { 
@@ -74,6 +75,7 @@ function App(props) {
           <MessageContainer 
             mt="auto"
             maxMemory={MAX_MEMORY_TO_RELOAD_MB}
+            memUsageToClear={MEMORY_USAGE_PERCENTAGE_TO_AUTO_CLEAR}
             setReloadDialogOpen={setReloadDialogOpen}
           ></MessageContainer> 
           <ConfirmContainer 
