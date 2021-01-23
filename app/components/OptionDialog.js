@@ -70,7 +70,8 @@ function OptionDialog(props) {
     MAX_MEMORY_TO_RELOAD_MB,
     MAX_MEMORY_RELOAD_WAIT_MS,
     AUTO_START_SCHEDULE,
-    AUTO_START_SCHEDULE_DELAY_MS
+    AUTO_START_SCHEDULE_DELAY_MS,
+    MEMORY_USAGE_PERCENTAGE_TO_AUTO_CLEAR
   } = config;
   const {setOptionsDialogOpen=()=>{}, saveConfig=()=>{}} = props.OptionDialogActions;
   const {setDefaultConfig=()=>{}} = props.OptionDialogActions;
@@ -157,6 +158,7 @@ function OptionDialog(props) {
         <OptionTextInputWithDefault subtitle='Delay All Stopping(ms)' value={SLEEP_MS_BETWEEN_ALL_STOP} onChange={onChangeConfig('SLEEP_MS_BETWEEN_ALL_STOP')}></OptionTextInputWithDefault>
         <OptionTextInputWithDefault subtitle='Delete Schedule Cron' value={DELETE_SCHEDULE_CRON} onChange={onChangeConfig('DELETE_SCHEDULE_CRON')}></OptionTextInputWithDefault>
         <OptionTextInputWithDefault subtitle='Max Memory to Reload' value={MAX_MEMORY_TO_RELOAD_MB} onChange={onChangeConfig('MAX_MEMORY_TO_RELOAD_MB')}></OptionTextInputWithDefault>
+        <OptionTextInputWithDefault subtitle='High Memory Usage(%)' value={MEMORY_USAGE_PERCENTAGE_TO_AUTO_CLEAR} onChange={onChangeConfig('MEMORY_USAGE_PERCENTAGE_TO_AUTO_CLEAR')}></OptionTextInputWithDefault>
         <OptionTextInputWithDefault subtitle='Save Directory' value={BASE_DIRECTORY} onChange={onChangeConfig('BASE_DIRECTORY')} iconButton={SaveDirectoryButton}></OptionTextInputWithDefault>
         <OptionRadioButtonWithDefault subtitle="Schedule Auto Start" currentvalue={AUTO_START_SCHEDULE} onChange={onChangeConfig('AUTO_START_SCHEDULE')}></OptionRadioButtonWithDefault>
         <OptionTextInputWithDefault subtitle='Schedule Start Delay(ms)' value={AUTO_START_SCHEDULE_DELAY_MS} onChange={onChangeConfig('AUTO_START_SCHEDULE_DELAY_MS')}></OptionTextInputWithDefault>
