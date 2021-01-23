@@ -33,6 +33,7 @@ const getChannelClipCountInDirectory = (state, channelNumber) => {
         const saveFolder = channelRecorder.channelDirectory;
         const {localm3u8} = channelRecorder;
         fs.readdir(saveFolder, (err, files) => {
+            console.log(`@@@ channelNumber=${channelNumber} localm3u8=${localm3u8} allFolderCount=${files.length}`)
             const countInFolder = localm3u8 === null ? files.length : files.filter(file => file !== fs.dirname(localm3u8)).length;
             resolve(countInFolder);
         })
@@ -53,14 +54,14 @@ const getTotalClipInFolder = async state => {
     return new Promise((resolve, reject) => {
         const {recorders} = state.hlsRecorders
         const getCountInSubDir = [...recorders].map(async ([channelNumber, recorder]) => {
-            const saveFoler = recorder.channelDirectory;
-            return await fs.promises.readdir(saveFoler);
+            return await getChannelClipCountInDirectory(state, channelNumber);
         })
         Promise.all(getCountInSubDir)
-        .then(subdirs => {
-            console.log('##### statistics', subdirs)
-            const allCount = subdirs.flat().length;
-            resolve(allCount);
+        .then(clipCounts => {
+            const totalCounts = clipCounts.reduce((total, count) => {
+                return total + count;                
+            }, 0)
+            resolve(totalCounts);
         })
     })
 
