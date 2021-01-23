@@ -113,10 +113,15 @@ const Header = (props) => {
     }
 
     const {appStat} = props;
-    const {clearAllChannelStatNStore, clearAppStatNStore, initClipCountStatistics} = props.StatisticsActions;
+    const {refreshChannelClipCountStatistics} = props.StatisticsActions;
+    const {ipcRenderer} = require('electron');
     React.useEffect(() => {
-        initClipCountStatistics();
-    },[])
+        ipcRenderer.on('deleteScheduleDone', (event, channelNumber) => {
+          console.log(`&&&&& got message from main : deleteScheduleDone ${channelNumber}`);
+          refreshChannelClipCountStatistics({channelNumber});
+        })
+     },[])
+    
     const AppStatComponent = () => {
         const StatLists = Object.entries(appStat).map(([statName, value]) => {
             if(statName.includes('Time')){                

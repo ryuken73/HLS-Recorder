@@ -133,7 +133,7 @@ export const clearAppStatNStore = () => (dispatch, getState) => {
     dispatch(replaceAppStat({initialAppStats}));
 }
 
-export const initClipCountStatistics = () => async (dispatch, getState) => {
+const refreshClipCountStatistics = () => async (dispatch, getState) => {
     const state = getState();
     const countInStore = getTotalClipInStore();
     const countInFolder = await getTotalClipInFolder(state)
@@ -141,12 +141,13 @@ export const initClipCountStatistics = () => async (dispatch, getState) => {
     dispatch(setAppStatNStore({statName:'totalClipsInStore', value:countInStore}));
 }   
 
-export const initChannelClipCountStatistics = ({channelNumber}) => async (dispatch, getState) => {
+export const refreshChannelClipCountStatistics = ({channelNumber}) => async (dispatch, getState) => {
     const state = getState();
     const countInStore = getChannelClipCountInStore(channelNumber);
     const countInFolder = await getChannelClipCountInDirectory(state, channelNumber);
     dispatch(setChannelStat({channelNumber, statName:'clipCountStore', value:countInStore}))
     dispatch(setChannelStat({channelNumber, statName:'clipCountFolder', value: countInFolder}));
+    dispatch(refreshClipCountStatistics());
 }  
 
 const fs = require('fs');
@@ -183,7 +184,7 @@ export const increaseChannelStatsNStore = ({channelNumber, statName}) => async (
     statisticsStore.set(`channelStats.${channelNumber}.${statName}`, oldValue + 1);
     dispatch(increaseChannelStat({channelNumber, statName}));
     dispatch(increaseAppStatNStore({statName}));
-    dispatch(initClipCountStatistics());
+    dispatch(refreshClipCountStatistics());
 }
 
 // set initial status

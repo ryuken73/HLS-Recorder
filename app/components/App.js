@@ -10,7 +10,7 @@ import MessageContainer from '../containers/MessagePanelContainer';
 import AutoReloadDialog from '../containers/AutoReloadContainer';
 import AutoStartDialog from '../containers/AutoStartDialogContainer';
 const { BrowserView, getCurrentWindow } = require('electron').remote;
-const { remote, ipcRenderer } = require('electron');
+// const { remote, ipcRenderer } = require('electron');
 const utils = require('../utils');
 
 const theme = createMuiTheme({

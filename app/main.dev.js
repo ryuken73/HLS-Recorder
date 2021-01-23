@@ -166,6 +166,7 @@ app.on('ready', async () => {
     const deleteJobs = channelNumbers.map(channelNumber => {
       const channelDirectory = path.join(BASE_DIRECTORY, `${CHANNEL_PREFIX}${channelNumber}`);
       const args = [
+        channelNumber,
         channelDirectory,
         60 * 60 * KEEP_SAVED_CLIP_AFTER_HOURS, /* seconds */
         '*', /* dir */
@@ -181,8 +182,9 @@ app.on('ready', async () => {
     try {
       if(deleteJobs.length > 0){
         const args = deleteJobs.shift();
-        const channelDirectory = args[0];
-        const deleteBeforeSeconds = args[1]
+        const channelNumber = args[0];
+        const channelDirectory = args[1];
+        const deleteBeforeSeconds = args[2]
         electronLog.info(`Delete Start...[${channelDirectory}]`);
         const results = await deleteDirectoryR(channelDirectory, deleteBeforeSeconds);
         electronLog.info('Delete End:', results);
@@ -192,6 +194,7 @@ app.on('ready', async () => {
             electronLog.info('Delete clipStore too');
           }
         })
+        mainWindow.webContents.send('deleteScheduleDone', channelNumber);
         await sequenceExecute(deleteJobs);
       }
     } catch (error) {
