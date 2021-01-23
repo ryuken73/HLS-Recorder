@@ -9,7 +9,7 @@ class VideoPlayer extends Component {
     playerId = `video-player-${Date.now() + (Math.random()*10000).toFixed(0)}`
     player = {};
     componentDidMount() {
-        console.log('##### player mounted!')
+        console.log('##### player mounted!', this.props)
         this.init_player(this.props);
         this.init_player_events(this.props);
     }
@@ -66,9 +66,10 @@ class VideoPlayer extends Component {
         playerOptions.height = props.height;
         playerOptions.bigPlayButton = props.bigPlayButton;
         playerOptions.liveui = props.liveui;
+        playerOptions.controlBar = {'pictureInPictureToggle': false};
+
         const hidePlaybackRates = props.hidePlaybackRates || props.hideControls.includes('playbackrates');
         if (!hidePlaybackRates) playerOptions.playbackRates = props.playbackRates;
-        // console.log(playerOptions)
         return playerOptions;
     }
 

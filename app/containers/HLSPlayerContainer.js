@@ -9,8 +9,6 @@ function mapStateToProps(state, ownProps) {
   const {channelNumber} = ownProps;
   const {config} = state.hlsPlayers;
   const hlsPlayer = state.hlsPlayers.players.get(channelNumber);
-  // console.log('####', hlsPlayer)
-
   return {
     player: hlsPlayer.player,
     source: hlsPlayer.source,
@@ -20,9 +18,11 @@ function mapStateToProps(state, ownProps) {
     width: hlsPlayer.width,
     height: hlsPlayer.height,
     controls: hlsPlayer.controls,
+    hideControls: hlsPlayer.hideControls,
     autoplay: hlsPlayer.autoplay,
     bigPlayButton: hlsPlayer.bigPlayButton,
     bigPlayButtonCentered: hlsPlayer.bigPlayButtonCentered,
+    inactivityTimeout: hlsPlayer.inactivityTimeout,
     enableOverlay: hlsPlayer.enableOverlay,
     overlayContent: hlsPlayer.overlayContent,
     enableAutoRefresh: hlsPlayer.enableAutoRefresh,

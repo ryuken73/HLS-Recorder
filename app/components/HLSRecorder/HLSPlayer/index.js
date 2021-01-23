@@ -21,10 +21,12 @@ const HLSPlayer = (props) => {
         channelName='preview',
         width=320, 
         height=180, 
-        controls=false, 
+        controls=false,
+        hideControls=[],
         autoplay=true, 
         bigPlayButton=false, 
         bigPlayButtonCentered=false, 
+        inactivityTimeout=3000,
         source={},
         type='application/x-mpegURL',
         restorePlaybackRate=true,
@@ -180,6 +182,7 @@ const HLSPlayer = (props) => {
                     bigPlayButtonCentered={bigPlayButtonCentered}
                     width={width}
                     height={height}
+                    hideControls={hideControls}
                     onCanPlay={onVideoCanPlay}
                     onReady={onPlayerReady}
                     onPlay={onVideoPlay}
@@ -191,10 +194,10 @@ const HLSPlayer = (props) => {
                     onEnd={onVideoEnd}
                     onOtherEvent={onVideoOtherEvent}
                     handleManifestRedirects={true}
-                    liveui={true}
+                    liveui={false}
                     enableOverlay={enableOverlay}
                     overlayContent={overlayContent}
-                    inactivityTimeout={0}
+                    inactivityTimeout={inactivityTimeout}
                 /> 
                 </Box>
                 :

@@ -13,13 +13,15 @@
     "preservePlaybackRate": true,
     "width": 284,
     "height": 170,
-    "controls": false,
+    "controls": true,
+    "hideControls": ["play", "volume", "seekbar", "timer", "playbackrates"],
     "autoplay": true,
     "bigPlayButton": false,
     "bigPlayButtonCentered": false,
     "enableOverlay": true,
     "overlayContent": "Default Overlay",
-    "enableAutoRefresh": true
+    "enableAutoRefresh": true,
+    "inactivityTimeout": 5000
   },
   "DEFAULT_SCHEDULE_PROPS": {
     "defaultInterval": 3600000,
