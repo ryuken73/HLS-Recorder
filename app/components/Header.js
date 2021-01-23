@@ -10,6 +10,7 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import HomeIcon from '@material-ui/icons/Home';
 import BugReportIcon from '@material-ui/icons/BugReport';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import LiveHelpIcon from '@material-ui/icons/LiveHelp';
 import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
@@ -180,6 +181,21 @@ const Header = (props) => {
                 <Tooltip
                     disableFocusListener 
                     disableTouchListener 
+                    title="Reload Application"
+                    arrow
+                >
+                    <Box>
+                        <BasicIconButton aria-label="reload" onClick={reload}>
+                            <PowerSettingsNewIcon 
+                                fontSize="large"
+                                style={{color:"grey"}}
+                            ></PowerSettingsNewIcon>
+                        </BasicIconButton>
+                    </Box>
+                </Tooltip>
+                <Tooltip
+                    disableFocusListener 
+                    disableTouchListener 
                     title="Start Recoding All"
                     arrow
                 >
@@ -215,21 +231,6 @@ const Header = (props) => {
                         </BasicIconButton>
                     </Box>
                 </Tooltip>
-                <Tooltip
-                    disableFocusListener 
-                    disableTouchListener 
-                    title="Home Directory"
-                    arrow
-                >
-                    <Box>
-                        <BasicIconButton aria-label="home directory" onClick={openHome}>
-                            <HomeIcon 
-                                fontSize="large"
-                                style={{color:"grey"}}
-                            ></HomeIcon>
-                        </BasicIconButton>
-                    </Box>
-                </Tooltip>
                 <Box ml="5px">
                     <OptionSelect
                         selectColor={"darkslategrey"}
@@ -251,10 +252,10 @@ const Header = (props) => {
                             aria-label="statistics" 
                             onClick={showStatistics}
                         >
-                            <AssignmentIcon 
+                            <LiveHelpIcon 
                                 fontSize="large"
                                 style={{color:"grey"}}
-                            ></AssignmentIcon>
+                            ></LiveHelpIcon>
                         </BasicIconButton>
                     </Box>
                 </Tooltip>
@@ -293,15 +294,15 @@ const Header = (props) => {
                 <Tooltip
                     disableFocusListener 
                     disableTouchListener 
-                    title="Reload Application"
+                    title="Home Directory"
                     arrow
                 >
-                    <Box  ml="auto">
-                        <BasicIconButton aria-label="reload" onClick={reload}>
-                            <PowerSettingsNewIcon 
+                    <Box ml="auto">
+                        <BasicIconButton aria-label="home directory" onClick={openHome}>
+                            <HomeIcon 
                                 fontSize="large"
                                 style={{color:"grey"}}
-                            ></PowerSettingsNewIcon>
+                            ></HomeIcon>
                         </BasicIconButton>
                     </Box>
                 </Tooltip>
