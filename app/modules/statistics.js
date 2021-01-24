@@ -1,6 +1,7 @@
 import {createAction, handleActions} from 'redux-actions';
  
 const {getCombinedConfig} = require('../lib/getConfig');
+const {reportStatus} = require('../lib/notifyStatus');
 const config = getCombinedConfig({storeName:'optionStore', electronPath:'home'});
 
 const {
@@ -163,10 +164,11 @@ export const setChannelStatNStore = ({channelNumber, statName, value}) => async 
     statisticsStore.set(`channelStats.${channelNumber}.${statName}`, value);
     dispatch(setAppStatNStore({statName, value}));
     dispatch(setChannelStat({channelNumber, statName, value}));
+    // refresh clip count of store on both store and state 
     const countInStore = getChannelClipCountInStore(channelNumber);
     dispatch(setChannelStat({channelNumber, statName:'clipCountStore', value:countInStore}))
     statisticsStore.set(`channelStats.${channelNumber}.clipCountStore`, countInStore);
-
+    // refresh clip count of directory on both store and state 
     const state = getState();
     const countInFolder = await getChannelClipCountInDirectory(state, channelNumber);
     dispatch(setChannelStat({channelNumber, statName:'clipCountFolder', value: countInFolder}));
@@ -175,7 +177,7 @@ export const setChannelStatNStore = ({channelNumber, statName, value}) => async 
 
 export const clearChannelStatNStore = ({channelNumber}) => (dispatch, getState) => {
     const [initialAppStats, initialChannelStats] = getInitialState();
-    const initialChannelStat = initialChannelStats[channelNumber];
+    const initialChannelStat = initialChannelStats[channelNumber];``
     statisticsStore.set(`channelStats.${channelNumber}`, initialChannelStat);
     dispatch(replaceChannelStat({channelNumber, initialChannelStat}));
 }
@@ -226,6 +228,15 @@ export default handleActions({
     [SET_APP_STAT]: (state, action) => {
         // console.log('%%%%%%%%%%%%%%%%', action.payload);
         const {statName, value} = action.payload;
+
+        const report = {
+            type: 'app',
+            source: 'app',
+            name: statName,
+            value
+        }
+        reportStatus(report);
+
         const appStat = {...state.appStat};
         appStat[statName] = value;
         return {
@@ -236,6 +247,13 @@ export default handleActions({
     [SET_CHANNEL_STAT]: (state, action) => {
         // console.log('%%%%%%%%%%%%%%%%', action.payload);
         const {channelNumber, statName, value} = action.payload;
+        const report = {
+            type: 'channel',
+            source: `channel${channelNumber}`,
+            name: statName,
+            value
+        }
+        reportStatus(report);
         const channelStats = {...state.channelStats};
         const channelStat = channelStats[channelNumber];
         channelStat[statName] = value;
