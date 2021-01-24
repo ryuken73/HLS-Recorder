@@ -220,7 +220,7 @@ const Controls = props => {
             </SmallPaddingIconButton>
             <Box mt="auto" display="flex" flexDirection="column">
                 <StyledBadge 
-                    badgeContent={channelStat.clipCountFolder} 
+                    badgeContent={<Box>{channelStat.clipCountFolder}</Box>} 
                     color="primary"
                     anchorOrigin={{
                         vertical: 'bottom',
