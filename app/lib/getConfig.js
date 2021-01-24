@@ -7,8 +7,9 @@ const Store = require('electron-store');
 const valuesToInt = obj => {
     const valuesToInt = Object.entries(obj).reduce((acc, element) => {
         const [key, value] = element;
-        if(typeof(value) === 'string' && value.includes(',')){
-            // this can be cron string like "0,10,20,*,*,*"
+        // if(typeof(value) === 'string' && value.includes(',')){
+        if(typeof(value) === 'string' && key === 'DELETE_SCHEDULE_CRON') {
+            // this can be cron string like "0,10,20 * * *"
             // return original value
             return {...acc, [key]:value};
         }
