@@ -80,6 +80,7 @@ class RecoderHLS extends EventEmitter {
         this._durationRecorded = this.INITIAL_TIMEMARKER;
         this._startTime = null;
         this._rStream = null;
+        this._localm3u8 = null;
         this.log.info(`recoder initialized...`)
     }
 
@@ -96,6 +97,7 @@ class RecoderHLS extends EventEmitter {
     get duration() { return this._durationRecorded }
     get rStream() { return this._rStream }
     get wStream() { return this._wStream }
+    get localm3u8() { return this._localm3u8 }
     get command() { return this._command }
     get elapsed() { 
         const elapsedMS = Date.now() - this.startTime;
@@ -130,7 +132,7 @@ class RecoderHLS extends EventEmitter {
     };
 
     onFFMPEGEnd = (error) => {
-        this.log.info(`ffmpeg ends! : ${this.target}`);
+        this.log.info(`ffmpeg ends! : ${this.target} ${this.localm3u8}`);
         if(error){
             // this.initialize();
             // do not manually initialize

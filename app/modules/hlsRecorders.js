@@ -85,6 +85,7 @@ const SET_DURATION = 'hlsRecorders/SET_DURATION';
 const SET_RECORDER = 'hlsRecorders/SET_RECORDER';
 const SET_RECORDER_STATUS = 'hlsRecorders/SET_RECORDER_STATUS';
 const SET_RECORDER_INTRANSITION = 'hlsRecorders/SET_RECORDER_INTRANSITION';
+const SET_RECORDER_LOCALM3U8 = 'hlsRecorders/SET_RECORDER_LOCALM3U8';
 const SET_SCHEDULE_FUNCTION = 'hlsRecorders/SET_SCHEDULE_FUNCTION';
 const SET_SCHEDULE_INTERVAL = 'hlsRecorders/SET_SCHEDULE_INTERVAL';
 const SET_SCHEDULE_STATUS = 'hlsRecorders/SET_SCHEDULE_STATUS';
@@ -96,6 +97,7 @@ export const setDuration = createAction(SET_DURATION);
 export const setRecorder = createAction(SET_RECORDER);
 export const setRecorderStatus = createAction(SET_RECORDER_STATUS);
 export const setRecorderInTransition = createAction(SET_RECORDER_INTRANSITION);
+export const setRecorderLocalm3u8 = createAction(SET_RECORDER_LOCALM3U8);
 export const setScheduleFunction = createAction(SET_SCHEDULE_FUNCTION);
 export const setScheduleInterval = createAction(SET_SCHEDULE_INTERVAL);
 export const setScheduleStatus = createAction(SET_SCHEDULE_STATUS);
@@ -275,6 +277,7 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
         })
         recorder.once('end', async (clipName, startTimestamp, duration) => {
             try {
+                console.log('####### recorder.once end', hlsRecorder.localm3u8);
                 const endTimestamp = Date.now();
                 const startTime = utils.date.getString(new Date(startTimestamp),{sep:'-'})
                 const endTime = utils.date.getString(new Date(endTimestamp),{sep:'-'})
@@ -299,7 +302,8 @@ export const startRecording = (channelNumber) => (dispatch, getState) => {
                     saveDirectory,
                     mp4Converted:false
                 }
-                console.log('#######', clipData)
+                console.log('#######', clipData);
+                dispatch(setRecorderLocalm3u8({channelNumber, localm3u8:null}));
                 if(duration === INITIAL_DURATION){
                     channelLog.error(`aborted: useless clip(duration === 00:00:00.00). discard and delete ${saveDirectory}`);
                     saveDirectory.startsWith(BASE_DIRECTORY) && rimraf(saveDirectory);
@@ -531,6 +535,18 @@ export default handleActions({
         const {channelNumber, inTransition} = action.payload;
         const channelRecorder = {...state.recorders.get(channelNumber)};
         channelRecorder.inTransition = inTransition;
+        const recorders = new Map(state.recorders);
+        recorders.set(channelNumber, channelRecorder);
+        return {
+            ...state,
+            recorders
+        }
+    },
+    [SET_RECORDER_LOCALM3U8]: (state, action) => {
+        // console.log('%%%%%%%%%%%%%%%%', action.payload);
+        const {channelNumber, localm3u8} = action.payload;
+        const channelRecorder = {...state.recorders.get(channelNumber)};
+        channelRecorder.localm3u8 = localm3u8;
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, channelRecorder);
         return {
