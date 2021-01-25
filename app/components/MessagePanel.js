@@ -35,6 +35,14 @@ function MessagePanel(props) {
     }
   },[memUsageToClear]);
 
+  const {reportStatus} = require('../lib/notifyStatus');
+  reportStatus({
+    type: 'performance',
+    source: 'app',
+    name: 'memUsageMB',
+    value: memUsed
+  })
+
   (memUsed > maxMemory) && setReloadDialogOpen(true);
 
     return (
