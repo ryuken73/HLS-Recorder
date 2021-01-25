@@ -230,7 +230,7 @@ export default handleActions({
         const {statName, value} = action.payload;
 
         const report = {
-            type: 'app',
+            type: 'appStatistics',
             source: 'app',
             name: statName,
             value
@@ -248,7 +248,7 @@ export default handleActions({
         // console.log('%%%%%%%%%%%%%%%%', action.payload);
         const {channelNumber, statName, value} = action.payload;
         const report = {
-            type: 'channel',
+            type: 'channelStatistics',
             source: `channel${channelNumber}`,
             name: statName,
             value
