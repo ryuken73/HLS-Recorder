@@ -1,11 +1,12 @@
 import {createAction, handleActions} from 'redux-actions';
  
 const {getCombinedConfig} = require('../lib/getConfig');
-const {reportStatus} = require('../lib/notifyStatus');
 const config = getCombinedConfig({storeName:'optionStore', electronPath:'home'});
 
 const {
-    NUMBER_OF_CHANNELS
+    NUMBER_OF_CHANNELS,
+    KAFKA_TOPIC=`topic_${Date.now()}`, 
+    KAFKA_KEY='none'
 } = config;
 
 import {remote} from 'electron';
@@ -122,9 +123,21 @@ export const replaceChannelStat= createAction(REPLACE_CHANNEL_STAT);
 export const increaseAppStat= createAction(INCREASE_APP_STAT);
 export const increaseChannelStat= createAction(INCREASE_CHANNEL_STAT);
 
-
+const kafkaSender = require('../lib/kafkaSender')({topic:KAFKA_TOPIC});
 // redux thunk
 export const setAppStatNStore = ({statName, value}) => (dispatch, getState) => {
+    
+    const statusReport = {
+        type: 'appStatistics',
+        source: 'app',
+        name: statName,
+        value
+    }
+    kafkaSender.send({
+        key: KAFKA_KEY,
+        messageJson: statusReport
+    })
+
     statisticsStore.set(`appStats.${statName}`, value);
     dispatch(setAppStat({statName, value}));
 }
@@ -161,6 +174,17 @@ export const refreshChannelClipCountStatistics = ({channelNumber}) => async (dis
 }  
 
 export const setChannelStatNStore = ({channelNumber, statName, value}) => async (dispatch, getState) => {
+    const statusReport = {
+        type: 'channelStatistics',
+        source: `channel${channelNumber}`,
+        name: statName,
+        value
+    }
+    kafkaSender.send({
+        key: KAFKA_KEY,
+        messageJson: statusReport
+    })
+    
     statisticsStore.set(`channelStats.${channelNumber}.${statName}`, value);
     dispatch(setAppStatNStore({statName, value}));
     dispatch(setChannelStat({channelNumber, statName, value}));
@@ -228,15 +252,6 @@ export default handleActions({
     [SET_APP_STAT]: (state, action) => {
         // console.log('%%%%%%%%%%%%%%%%', action.payload);
         const {statName, value} = action.payload;
-
-        const report = {
-            type: 'appStatistics',
-            source: 'app',
-            name: statName,
-            value
-        }
-        reportStatus(report);
-
         const appStat = {...state.appStat};
         appStat[statName] = value;
         return {
@@ -247,13 +262,6 @@ export default handleActions({
     [SET_CHANNEL_STAT]: (state, action) => {
         // console.log('%%%%%%%%%%%%%%%%', action.payload);
         const {channelNumber, statName, value} = action.payload;
-        const report = {
-            type: 'channelStatistics',
-            source: `channel${channelNumber}`,
-            name: statName,
-            value
-        }
-        reportStatus(report);
         const channelStats = {...state.channelStats};
         const channelStat = channelStats[channelNumber];
         channelStat[statName] = value;

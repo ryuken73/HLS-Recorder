@@ -6,13 +6,17 @@ import SectionWithFullHeightFlex from './template/SectionWithFullHeightFlex';
 const {remote, webFrame} = require('electron');
 const {app} = remote;
 
+const {
+  KAFKA_TOPIC=`topic_${Date.now()}`, 
+  KAFKA_KEY='none'} = require('../lib/getConfig').getCombinedConfig();
+
 function MessagePanel(props) {
-    // console.log('######################## re-render MessagePanel', props);
-    const {logLevel="INFO", message="READY", mt="auto"} = props;
-    const {setReloadDialogOpen, maxMemory, memUsageToClear} = props;
-    const [memUsed, setMemUsed] = React.useState(0);
-    const messageText = `[${logLevel}] ${message}`;
-    const {setAppStatNStore, increaseAppStatNStore} = props.StatisticsActions;
+  // console.log('######################## re-render MessagePanel', props);
+  const {logLevel="INFO", message="READY", mt="auto"} = props;
+  const {setReloadDialogOpen, maxMemory, memUsageToClear} = props;
+  const [memUsed, setMemUsed] = React.useState(0);
+  const messageText = `[${logLevel}] ${message}`;
+  const {setAppStatNStore, increaseAppStatNStore} = props.StatisticsActions;
 
   React.useEffect(() => {
     const memChecker = setInterval(() => {
@@ -35,15 +39,22 @@ function MessagePanel(props) {
     }
   },[memUsageToClear]);
 
-  const {reportStatus} = require('../lib/notifyStatus');
-  reportStatus({
-    type: 'performance',
-    source: 'app',
-    name: 'memUsageMB',
-    value: memUsed
-  })
+  React.useEffect(() => {
+    const kafkaSender = require('../lib/kafkaSender')({topic:KAFKA_TOPIC});
+    const reportStatus = {
+      type: 'performance',
+      source: 'app',
+      name: 'memUsageMB',
+      value: memUsed
+    };
+    // kafkaSender.send({
+    //   key: KAFKA_KEY,
+    //   messageJson: reportStatus
+    // })
+    (memUsed > maxMemory) && setReloadDialogOpen(true);
+  }, [memUsed])
 
-  (memUsed > maxMemory) && setReloadDialogOpen(true);
+
 
     return (
         <SectionWithFullHeightFlex outerbgcolor={"#2d2f3b"} className="SectionWithFullHeightFlex ImageBox" flexGrow="0" width="1" mt={mt} mb="2px">
