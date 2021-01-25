@@ -48,7 +48,6 @@ function MessagePanel(props) {
         name: 'memUsageMB',
         value: memUsed
       };
-      console.log('###', kafkaSender)
       const result = await kafkaSender.send({
         key: KAFKA_KEY,
         messageJson: reportStatus

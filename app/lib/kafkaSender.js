@@ -1,7 +1,8 @@
 const {createProducer, sendMessage} = require('./kafkaClient');
 const {
     KAFKA_CLIENT_ID='default_client',
-    KAFKA_BROKERS=[]
+    KAFKA_BROKERS=[],
+    KAFKA_ENABLED=false
 } = require('./getConfig').getCombinedConfig()
 
 class KafkaSender {
@@ -37,6 +38,9 @@ class KafkaSender {
 
 module.exports = topic => {
     const kafkaClient = new KafkaSender(topic);
+    if(KAFKA_ENABLED === false){
+        return { send: () => {} }
+    }
     const client = {
         send: async (params) => {
             return await kafkaClient.send(params)
