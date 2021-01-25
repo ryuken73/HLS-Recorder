@@ -17,6 +17,7 @@ function MessagePanel(props) {
   const [memUsed, setMemUsed] = React.useState(0);
   const messageText = `[${logLevel}] ${message}`;
   const {setAppStatNStore, increaseAppStatNStore} = props.StatisticsActions;
+  const kafkaSender = require('../lib/kafkaSender')({topic:KAFKA_TOPIC});
 
   React.useEffect(() => {
     const memChecker = setInterval(() => {
@@ -40,17 +41,19 @@ function MessagePanel(props) {
   },[memUsageToClear]);
 
   React.useEffect(() => {
-    const kafkaSender = require('../lib/kafkaSender')({topic:KAFKA_TOPIC});
-    const reportStatus = {
-      type: 'performance',
-      source: 'app',
-      name: 'memUsageMB',
-      value: memUsed
-    };
-    // kafkaSender.send({
-    //   key: KAFKA_KEY,
-    //   messageJson: reportStatus
-    // })
+    return async () => {
+      const reportStatus = {
+        type: 'performance',
+        source: 'app',
+        name: 'memUsageMB',
+        value: memUsed
+      };
+      console.log('###', kafkaSender)
+      const result = await kafkaSender.send({
+        key: KAFKA_KEY,
+        messageJson: reportStatus
+      })
+    }
     (memUsed > maxMemory) && setReloadDialogOpen(true);
   }, [memUsed])
 

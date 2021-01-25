@@ -4,43 +4,43 @@ const {
     KAFKA_BROKERS=[]
 } = require('./getConfig').getCombinedConfig()
 
-module.exports = ({topic=`topic_${Date.now()}`}) => {
-    try {   
-        console.log(`@@ kafkaSender required : ${topic}`);
-        const send = async ({key='none', messageJson}) => {
-            console.log(`@@ kafkaSender send called : ${messageJson}`);
-            try {
-                const producer = createProducer({
-                    clientId: KAFKA_CLIENT_ID,
-                    brokers: KAFKA_BROKERS
-                });
-
-                const {type, source, name, value} = messageJson;
-                console.log(producer)
-                console.log(`@@ notify report : type[${type}] source[${source}] name[${name}] value[${value}]`);
-                const payloads = {
-                    topic,
-                    messages: [{
-                        key,
-                        value:JSON.stringify(messageJson)
-                    }]
-                }
-                const result = await sendMessage(producer, payloads);
-                producer.disconnect();
-            } catch (err) {
-                console.error(err);
-                producer.disconnect();   
-            }
-
-        }
-        return {
-            send
-        }
-    } catch (err) {
-        console.error(err);
-        return {
-            send:()=>{}
-        }
+class KafkaSender {
+    constructor({topic=`topic_${Date.now()}`}){
+        this.topic = topic;
+        this.producer = createProducer({
+            clientId: KAFKA_CLIENT_ID,
+            brokers: KAFKA_BROKERS
+        });
     }
 
+    send = async ({key='none', messageJson={}}) => {
+        console.log(`@@ kafkaSender send called : ${messageJson}`);
+        try {
+            const {type, source, name, value} = messageJson;
+            console.log(`@@ notify report : type[${type}] source[${source}] name[${name}] value[${value}]`);
+            const payloads = {
+                topic: this.topic,
+                messages: [{
+                    key,
+                    value:JSON.stringify(messageJson)
+                }]
+            }
+            const result = await sendMessage(this.producer, payloads);
+            console.log('###', result)
+            this.producer.disconnect();
+        } catch (err) {
+            console.error(err);
+        }
+
+    }
+}
+
+module.exports = topic => {
+    const kafkaClient = new KafkaSender(topic);
+    const client = {
+        send: async (params) => {
+            return await kafkaClient.send(params)
+        }
+    }
+    return client;
 }
