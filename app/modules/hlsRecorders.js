@@ -69,6 +69,7 @@ for(let channelNumber=1 ; channelNumber<=NUMBER_OF_CHANNELS ; channelNumber++){
         inTransition: false,
         scheduleFunction: null,
         localm3u8: null,
+        mountRecorder: true,
         recorderStatus: 'stopped',
         scheduleStatus: 'stopped',
         scheduleInterval: intervalStore.get(channelNumber.toString()) || INITIAL_INTERVAL,        
@@ -86,6 +87,7 @@ const SET_RECORDER = 'hlsRecorders/SET_RECORDER';
 const SET_RECORDER_STATUS = 'hlsRecorders/SET_RECORDER_STATUS';
 const SET_RECORDER_INTRANSITION = 'hlsRecorders/SET_RECORDER_INTRANSITION';
 const SET_RECORDER_LOCALM3U8 = 'hlsRecorders/SET_RECORDER_LOCALM3U8';
+const SET_RECORDER_MOUNT = 'hlsRecorders/SET_RECORDER_MOUNT';
 const SET_SCHEDULE_FUNCTION = 'hlsRecorders/SET_SCHEDULE_FUNCTION';
 const SET_SCHEDULE_INTERVAL = 'hlsRecorders/SET_SCHEDULE_INTERVAL';
 const SET_SCHEDULE_STATUS = 'hlsRecorders/SET_SCHEDULE_STATUS';
@@ -98,6 +100,7 @@ export const setRecorder = createAction(SET_RECORDER);
 export const setRecorderStatus = createAction(SET_RECORDER_STATUS);
 export const setRecorderInTransition = createAction(SET_RECORDER_INTRANSITION);
 export const setRecorderLocalm3u8 = createAction(SET_RECORDER_LOCALM3U8);
+export const setRecorderMount = createAction(SET_RECORDER_MOUNT);
 export const setScheduleFunction = createAction(SET_SCHEDULE_FUNCTION);
 export const setScheduleInterval = createAction(SET_SCHEDULE_INTERVAL);
 export const setScheduleStatus = createAction(SET_SCHEDULE_STATUS);
@@ -229,6 +232,29 @@ export const refreshRecorder = ({channelNumber}) => (dispatch, getState) => {
     dispatch(setRecorderInTransition({channelNumber, inTransition:false}));
     dispatch(setDuration({channelNumber, duration:INITIAL_DURATION}));
     dispatch(setPlayerSource({channelNumber, url:hlsRecorder.playerHttpURL}))
+}
+
+export const remountRecorder = ({channelNumber}) => (dispatch, getState) => {
+    dispatch(setRecorderMount({channelNumber, mountRecorder:false}));
+    setTimeout(() => {
+        dispatch(setRecorderMount({channelNumber, mountRecorder:true}));
+    },500)
+}
+
+export const remountRecorderAll = () => (dispatch, getState) => {
+    console.log('#### remountRecorderAll called')
+    const state = getState();
+    const {recorders} = state.hlsRecorders;
+    const recordersArray = [...recorders];
+    console.log('#### remountRecorderAll called', recordersArray)
+
+    for(let index=0; index < recordersArray.length ; index++){
+        const channelNumber = recordersArray[index][0];
+        console.log('#####', channelNumber)
+        setTimeout(() => {
+            dispatch(remountRecorder({channelNumber}));
+        }, index * 100)
+    }    
 }
 
 export const restartRecording = channelNumber => (dispatch, getState) => {
@@ -547,6 +573,18 @@ export default handleActions({
         const {channelNumber, localm3u8} = action.payload;
         const channelRecorder = {...state.recorders.get(channelNumber)};
         channelRecorder.localm3u8 = localm3u8;
+        const recorders = new Map(state.recorders);
+        recorders.set(channelNumber, channelRecorder);
+        return {
+            ...state,
+            recorders
+        }
+    },
+    [SET_RECORDER_MOUNT]: (state, action) => {
+        // console.log('%%%%%%%%%%%%%%%%', action.payload);
+        const {channelNumber, mountRecorder} = action.payload;
+        const channelRecorder = {...state.recorders.get(channelNumber)};
+        channelRecorder.mountRecorder = mountRecorder;
         const recorders = new Map(state.recorders);
         recorders.set(channelNumber, channelRecorder);
         return {

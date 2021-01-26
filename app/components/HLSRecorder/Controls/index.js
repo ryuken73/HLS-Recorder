@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
 const rimraf = require('rimraf');
 const path = require('path');
 import utils from '../../../utils';
+import { setRecorderMount } from '../../../modules/hlsRecorders';
 
 async function mkdir(directory){
     try {
@@ -74,6 +75,7 @@ const Controls = props => {
         startRecording=()=>{},
         stopRecording=()=>{},
         refreshRecorder=()=>{},
+        setRecorderMount=()=>{},
         startSchedule=()=>{},
         stopSchedule=()=>{},
         restartRecording=()=>{},
@@ -115,6 +117,11 @@ const Controls = props => {
     const toggleMountPlayer = React.useCallback( event => {
         setPlayerMount({channelNumber, mountPlayer:!mountPlayer})
     }, [mountPlayer]);
+
+
+    const dismountRecorder = (event) => {
+        setRecorderMount({channelNumber, mountRecorder:false});
+    }
 
     const startRecordChannel = event => {
         startRecording(channelNumber);
@@ -274,7 +281,18 @@ const Controls = props => {
                             fontSize={"small"} 
                         ></PowerSettingsNewIcon>
                     </SmallPaddingIconButton>
-                    </Tooltip>
+                </Tooltip>
+                <SmallPaddingIconButton 
+                        padding="1px" 
+                        size="small" 
+                        iconcolor="black"
+                        onClick={dismountRecorder}
+                    >
+                        <PowerSettingsNewIcon 
+                            // color="primary" 
+                            fontSize={"small"} 
+                        ></PowerSettingsNewIcon>
+                </SmallPaddingIconButton>
             </Box>
         </Box>
     );

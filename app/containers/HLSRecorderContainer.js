@@ -22,6 +22,7 @@ function mapStateToProps(state, ownProps) {
     scheduleFunction: hlsRecorder.scheduleFunction,
     autoStartSchedule: hlsRecorder.autoStartSchedule,
     recorderStatus: hlsRecorder.recorderStatus,
+    mountRecorder: hlsRecorder.mountRecorder
   }
 }
 
