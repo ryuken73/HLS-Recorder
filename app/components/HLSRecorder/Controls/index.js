@@ -81,7 +81,7 @@ const Controls = props => {
         restartRecording=()=>{},
         createRecorder=()=>{},
         stopRecordingForce=()=>{}
-    } = props.HLSRecorderActions;
+    } = props.HLSRecorderActions; 
 
     const createLogger = channelName => {
         return {
