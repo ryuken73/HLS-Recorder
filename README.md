@@ -1,7 +1,7 @@
 # HLS Recorder (based on electron-react-boilerplate)
 
 ## Preview
-<img src="resources/preview/jpg" />
+<img src="resources/preview.jpg" />
 
 ## Install
 
