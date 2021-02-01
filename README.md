@@ -1,7 +1,7 @@
 # HLS Recorder (based on electron-react-boilerplate)
 
 ## Preview
-![Alt Text]https://github.com/ryuken73/HLS-Recorder.git/resources/preview.jpg)
+<img src="resources/preview/jpg" />
 
 ## Install
 
